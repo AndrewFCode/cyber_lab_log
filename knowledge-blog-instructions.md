@@ -8,14 +8,18 @@ Hand this file to a coding agent (Claude Code, Cursor, etc.) or follow it manual
 
 ## 0. Placeholders
 
-| Placeholder | Meaning | Example |
+| Placeholder | Meaning | Resolved value |
 |---|---|---|
-| `<GH_USER>` | GitHub username | `andrew-dev` |
-| `<REPO>` | Repo name | `andrew-dev.github.io` |
+| `<GH_USER>` | GitHub username | `AndrewFCode` |
+| `<REPO>` | Repo name | `AndrewFCode.github.io` |
 | `<SITE_NAME>` | Display name of the site | `Andrew's Notes` |
-| `<SITE_URL>` | Final public URL | `https://andrew-dev.github.io` |
+| `<SITE_URL>` | Final public URL | `https://andrewfcode.github.io` |
 
 > **Repo naming matters.** Name the repo `<GH_USER>.github.io` and the site lives at the domain root with no base path. Any other repo name means the site lives at `/<REPO>/` and every internal link needs a `base` prefix. **Use `<GH_USER>.github.io`** unless there's a reason not to.
+>
+> A name that merely *ends* in `.github.io` does not count. Only an exact match on the
+> username gets the domain root, so `career_roadmap_blog.github.io` would be served from
+> `https://andrewfcode.github.io/career_roadmap_blog.github.io/`.
 
 ---
 
@@ -39,7 +43,7 @@ Hand this file to a coding agent (Claude Code, Cursor, etc.) or follow it manual
 | Layer | Choice | Why |
 |---|---|---|
 | Framework | **Astro** (latest, TypeScript) | Content-first, ships zero JS by default, built-in Markdown/MDX content collections with schema validation. |
-| Styling | **Tailwind CSS** via `@astrojs/tailwind` | Fast, no CSS file sprawl. |
+| Styling | **Tailwind CSS 4** via `@tailwindcss/vite` | Fast, no CSS file sprawl. |
 | Content | Markdown + MDX in `src/content/` | Human-readable, CMS-compatible. |
 | Search | **Pagefind** | Static full-text search, indexes at build, no service needed. |
 | Editing | **Pages CMS** (`pagescms.org`) | Browser CMS that commits straight to GitHub. Needs no backend, so it works with GitHub Pages. |
@@ -54,6 +58,19 @@ npx astro add tailwind mdx sitemap
 npm i @astrojs/rss
 npm i -D pagefind
 ```
+
+> **Tailwind.** `astro add tailwind` now installs `@tailwindcss/vite` + `tailwindcss` v4 and
+> registers the plugin under `vite.plugins` in `astro.config.mjs`. It no longer installs the
+> old `@astrojs/tailwind` integration, whose peer range stops at Astro 5 / Tailwind 3 and so
+> cannot be used here. There is no `tailwind.config.js`; Tailwind 4 is configured from CSS,
+> and `src/styles/global.css` holds `@import "tailwindcss";`. That file must be imported by
+> a layout or page or no styles are emitted.
+
+> **Install only what the current phase needs.** `pagefind` belongs to Phase 3, `@astrojs/rss`
+> and `sitemap` to Phase 6. In particular, do not add `pagefind` to the build script before
+> installing it — CI runs `npm ci`, so the build fails on a missing binary. Content
+> collections need no integration at all; they are part of Astro core. `mdx` is only required
+> once `.mdx` files exist.
 
 ---
 
@@ -196,6 +213,9 @@ Markdown files under `src/content/` are the single source of truth. Pushing to `
 
 `.github/workflows/deploy.yml`:
 
+This is the **finished** workflow. Steps marked `# phase N` must not be added before that
+phase, because each depends on a file or dependency that does not exist yet.
+
 ```yaml
 name: Deploy to GitHub Pages
 
@@ -204,7 +224,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'   # daily rebuild to refresh GitHub activity data
+    - cron: '0 6 * * *'   # phase 5 — daily rebuild to refresh GitHub activity data
 
 permissions:
   contents: read
@@ -219,20 +239,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - run: npm ci
-      - name: Fetch GitHub activity
+      - name: Fetch GitHub activity   # phase 5
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
           GH_USER: <GH_USER>
         run: node scripts/fetch-github.mjs
-      - run: npm run build          # build script must run astro build && pagefind
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -244,10 +264,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 ```
 
-`package.json`:
+Action versions above were current when Phase 0 shipped (`checkout` v7.0.1, `setup-node`
+v7.0.0, `configure-pages` v6.0.0, `upload-pages-artifact` v5.0.0, `deploy-pages` v5.0.1).
+Re-check them rather than trusting this list; see section 11.
+
+`package.json`, **from Phase 3 onward** — until `pagefind` is installed the build script is
+just `astro build`:
 ```json
 "scripts": {
   "build": "astro build && pagefind --site dist",
@@ -255,7 +280,8 @@ jobs:
 }
 ```
 
-In repo **Settings → Pages**, set Source to **GitHub Actions**.
+In repo **Settings → Pages**, set Source to **GitHub Actions**. On the Free plan the repo
+must also be **public**; Pages only publishes from a private repo on a paid plan.
 
 ### 6c. GitHub activity on the site
 
@@ -355,7 +381,7 @@ The CMS field names must stay in sync with `src/content/config.ts`. If they drif
 
 Ship each phase working before starting the next.
 
-- **Phase 0 — Skeleton live.** Astro + Tailwind, one hardcoded page, workflow deploying to Pages. Confirm `<SITE_URL>` loads.
+- **Phase 0 — Skeleton live.** ✅ Astro + Tailwind, one hardcoded page, workflow deploying to Pages. Confirm `<SITE_URL>` loads.
 - **Phase 1 — Content.** Collections, schemas, layouts, three listing pages, article pages. Add two sample entries per collection.
 - **Phase 2 — Navigation.** Tags, tag pages, prev/next, reading time, TOC, code copy buttons, dark mode.
 - **Phase 3 — Search.** Pagefind wired into the build and a `/search` page.
