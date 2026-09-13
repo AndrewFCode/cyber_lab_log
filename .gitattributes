@@ -1,0 +1,10 @@
+# Store text files with LF in the repo and check them out with LF, so the
+# Linux CI runner and Windows working copies agree.
+* text=auto eol=lf
+
+# Assets Git must never line-ending-normalize.
+*.ico binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff2 binary

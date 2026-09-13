@@ -1,0 +1,29 @@
+---
+import '../styles/global.css';
+
+const siteName = "Andrew's Notes";
+const tagline = "Cheat sheets, explainers, and short notes on what I'm learning.";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={tagline} />
+		<title>{siteName}</title>
+	</head>
+	<body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+		<main class="mx-auto max-w-2xl px-6 py-24 leading-relaxed">
+			<h1 class="text-3xl font-bold tracking-tight">{siteName}</h1>
+			<p class="mt-4 text-lg text-zinc-600 dark:text-zinc-400">{tagline}</p>
+			<p
+				class="mt-10 border-t border-zinc-200 pt-6 text-sm text-zinc-500 dark:border-zinc-800"
+			>
+				Phase 0 skeleton — content collections arrive in Phase 1.
+			</p>
+		</main>
+	</body>
+</html>
