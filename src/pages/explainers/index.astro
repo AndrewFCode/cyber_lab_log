@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getExplainers } from '../../lib/collections';
+
+const explainers = await getExplainers();
+---
+
+<BaseLayout
+  title="Explainers"
+  description="Long-form pieces on how things work, written once and dated."
+>
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <h1 class="text-3xl font-semibold tracking-tight text-neutral-900">Explainers</h1>
+    <p class="mt-3 text-lg text-neutral-600">
+      How things actually work, start to finish. Newest first.
+    </p>
+  </header>
+
+  {
+    explainers.length === 0 ? (
+      <p class="text-neutral-600">Nothing here yet.</p>
+    ) : (
+      <div>
+        {explainers.map((entry) => (
+          <PostCard
+            href={`/explainers/${entry.id}`}
+            title={entry.data.title}
+            description={entry.data.description}
+            dateLabel=""
+            date={entry.data.pubDate}
+            draft={entry.data.draft}
+            meta={entry.data.difficulty ? [entry.data.difficulty] : []}
+          />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

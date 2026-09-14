@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Placeholder home page. The mixed recent-items feed and "currently reading"
+// strip are a later phase; this exists so `/` is navigable now.
+const sections = [
+  {
+    href: '/cheatsheets',
+    title: 'Cheat sheets',
+    description: 'Commands and syntax I keep forgetting. Living documents.',
+  },
+  {
+    href: '/explainers',
+    title: 'Explainers',
+    description: 'Long-form pieces on how something actually works.',
+  },
+  {
+    href: '/notes',
+    title: 'Notes',
+    description: 'Short thoughts and opinions, written down before they evaporate.',
+  },
+];
+---
+
+<BaseLayout
+  title="Knowledge Blog"
+  description="Cheat sheets, explainers and notes — a personal reference pile."
+>
+  <p class="max-w-[var(--content-width)] text-lg text-neutral-600">
+    A personal reference pile: things I looked up twice, things I had to explain to understand, and
+    thoughts I did not want to lose.
+  </p>
+
+  <ul class="mt-10 space-y-5">
+    {
+      sections.map((section) => (
+        <li class="border-b border-neutral-200 pb-5 last:border-b-0">
+          <h2 class="text-lg font-medium tracking-tight">
+            <a href={section.href} class="no-underline hover:underline">
+              {section.title}
+            </a>
+          </h2>
+          <p class="mt-1 text-neutral-600">{section.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

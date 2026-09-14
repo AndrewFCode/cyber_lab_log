@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import { getExplainers } from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const explainers = await getExplainers();
+  return explainers.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<ContentLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  label="Explainer"
+  backHref="/explainers"
+  backLabel="Explainers"
+  pubDate={entry.data.pubDate}
+  updated={entry.data.updated}
+  draft={entry.data.draft}
+  meta={entry.data.difficulty ? [entry.data.difficulty] : []}
+>
+  <Content />
+</ContentLayout>

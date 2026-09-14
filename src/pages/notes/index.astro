@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getNotes } from '../../lib/collections';
+
+const notes = await getNotes();
+---
+
+<BaseLayout title="Notes" description="Short thoughts, opinions and work in progress.">
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <h1 class="text-3xl font-semibold tracking-tight text-neutral-900">Notes</h1>
+    <p class="mt-3 text-lg text-neutral-600">
+      Short thoughts and half-formed opinions. Low ceremony, newest first.
+    </p>
+  </header>
+
+  {
+    notes.length === 0 ? (
+      <p class="text-neutral-600">Nothing here yet.</p>
+    ) : (
+      <div>
+        {notes.map((entry) => (
+          <PostCard
+            href={`/notes/${entry.id}`}
+            title={entry.data.title}
+            description={entry.data.description}
+            dateLabel=""
+            date={entry.data.pubDate}
+            draft={entry.data.draft}
+          />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+const links = [
+  { href: '/cheatsheets', label: 'Cheat sheets' },
+  { href: '/explainers', label: 'Explainers' },
+  { href: '/notes', label: 'Notes' },
+];
+
+const current = Astro.url.pathname;
+const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
+---
+
+<header class="border-b border-neutral-200">
+  <div class="mx-auto flex max-w-4xl flex-wrap items-baseline gap-x-6 gap-y-2 px-5 py-5">
+    <a href="/" class="font-mono text-sm font-semibold tracking-tight text-neutral-900 no-underline">
+      knowledge&nbsp;blog
+    </a>
+    <nav aria-label="Sections" class="flex gap-5 text-sm">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'no-underline',
+              isActive(link.href)
+                ? 'font-medium text-neutral-900 underline decoration-[var(--color-accent)] decoration-2 underline-offset-4'
+                : 'text-neutral-600 hover:text-neutral-900',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
