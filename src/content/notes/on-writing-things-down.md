@@ -1,9 +1,11 @@
 ---
-title: On writing things down
-tags: [meta, learning]
+title: On writing things down (AI Example)
+tags:
+  - meta
+  - learning
+draft: false
 pubDate: 2026-09-13
 ---
-
 I have read the same explanation of Kubernetes services four times. I know I have, because each
 time it felt familiar and each time I could not have reproduced it afterwards.
 
