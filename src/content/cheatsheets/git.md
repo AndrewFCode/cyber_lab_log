@@ -1,25 +1,30 @@
 ---
-title: Git
+title: Git (AI Example)
 description: The recovery commands I only need when I am panicking
-tags: [git, cli, version-control]
+tags:
+  - git
+  - cli
+  - version-control
+draft: false
 updated: 2026-09-12
 category: git
 pinned: true
 ---
-
 Everything here is about getting *out* of a state, not into one. The everyday commands I
 remember; these are the ones I look up every single time.
 
 ## Undoing things
 
+
 | Situation | Command |
-| --- | --- |
+| ------------------------------------------------ | ----------------------------- |
 | Staged a file by mistake | `git restore --staged <file>` |
 | Want to discard local changes to a file | `git restore <file>` |
 | Committed too early, want to keep changes staged | `git reset --soft HEAD~1` |
 | Committed too early, want to redo from scratch | `git reset --hard HEAD~1` |
 | Fix the message of the last commit | `git commit --amend` |
 | Undo a commit that is already pushed | `git revert <sha>` |
+
 
 `reset` rewrites history, `revert` adds a new commit that cancels an old one. Use `revert` for
 anything that other people have pulled.
