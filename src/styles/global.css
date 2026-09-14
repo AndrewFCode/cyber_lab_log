@@ -351,3 +351,43 @@ html.dark .astro-code span {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.contrib-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.contrib-graph {
+  display: flex;
+  gap: 3px;
+  width: max-content;
+}
+
+.contrib-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contrib-day {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--chip);
+}
+
+.contrib-day[data-level='1'] {
+  background: color-mix(in oklab, var(--accent) 28%, var(--chip));
+}
+
+.contrib-day[data-level='2'] {
+  background: color-mix(in oklab, var(--accent) 48%, var(--chip));
+}
+
+.contrib-day[data-level='3'] {
+  background: color-mix(in oklab, var(--accent) 72%, var(--chip));
+}
+
+.contrib-day[data-level='4'] {
+  background: var(--accent);
+}

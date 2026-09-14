@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContributionGraph from '../components/ContributionGraph.astro';
+import GitHubRepos from '../components/GitHubRepos.astro';
+import { loadGithubActivity } from '../lib/github';
+
+const activity = loadGithubActivity();
+---
+
+<BaseLayout
+  title="GitHub"
+  description="Recently updated repositories and a contribution graph, fetched at build time."
+>
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">GitHub</h1>
+    <p class="mt-3 text-lg text-muted">
+      Public activity, snapshotted when the site builds. Nothing here is fetched in the browser.
+    </p>
+  </header>
+
+  {
+    activity.ok ? (
+      <>
+        <GitHubRepos repos={activity.repos} />
+        {activity.contributions.weeks.length > 0 && (
+          <ContributionGraph calendar={activity.contributions} />
+        )}
+        {activity.fetchedAt && (
+          <p class="mt-10 font-mono text-xs text-faint">
+            Snapshot
+            <time datetime={activity.fetchedAt}>
+              {new Date(activity.fetchedAt).toISOString().slice(0, 10)}
+            </time>
+          </p>
+        )}
+      </>
+    ) : (
+      <p class="text-muted">
+        Activity is hidden until the next successful build with a valid GitHub token.
+      </p>
+    )
+  }
+</BaseLayout>
