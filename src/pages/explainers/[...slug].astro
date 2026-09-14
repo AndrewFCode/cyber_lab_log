@@ -35,6 +35,7 @@ const { Content, headings } = await render(entry);
   prev={prev}
   next={next}
   meta={entry.data.difficulty ? [entry.data.difficulty] : []}
+  slug={entry.id}
 >
   <Content />
 </ContentLayout>

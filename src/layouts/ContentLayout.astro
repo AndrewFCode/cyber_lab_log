@@ -5,6 +5,8 @@ import TagList from '../components/TagList.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import PrevNext from '../components/PrevNext.astro';
 import {
+  absoluteUrl,
+  entryOgPath,
   formatDate,
   shouldShowToc,
   type Neighbor,
@@ -31,6 +33,7 @@ interface Props {
   next?: Neighbor;
   /** Small pieces of metadata shown next to the dates, e.g. difficulty. */
   meta?: string[];
+  slug: string;
 }
 
 const {
@@ -49,14 +52,33 @@ const {
   prev,
   next,
   meta = [],
+  slug,
 } = Astro.props;
+
+const ogImage = absoluteUrl(entryOgPath(collection, slug), Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description ?? undefined,
+  datePublished: (pubDate ?? updated)?.toISOString(),
+  dateModified: (updated ?? pubDate)?.toISOString(),
+};
 
 // Only worth showing an "Updated" line when it differs from the publish date.
 const showUpdated = updated && (!pubDate || updated.valueOf() !== pubDate.valueOf());
 const showToc = shouldShowToc(collection, headings);
 ---
 
-<BaseLayout title={title} description={description} wide={showToc} indexable={!draft}>
+<BaseLayout
+  title={title}
+  description={description}
+  wide={showToc}
+  indexable={!draft}
+  ogImage={ogImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
   <article data-pagefind-body={draft ? undefined : true}>
     <nav aria-label="Breadcrumb" class="mb-8 text-sm" data-pagefind-ignore>
       <a href={backHref} class="no-underline hover:underline">&larr; {backLabel}</a>

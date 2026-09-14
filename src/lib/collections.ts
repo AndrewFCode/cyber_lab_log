@@ -42,6 +42,15 @@ export function entryHref(entry: WritingEntry) {
   return withBase(`${COLLECTION_PATH[entry.collection]}/${entry.id}`);
 }
 
+export function entryOgPath(collection: WritingCollection, id: string) {
+  return withBase(`/og/${collection}/${id}.png`);
+}
+
+export function absoluteUrl(path: string, site: URL | string | undefined) {
+  if (!site) return path;
+  return new URL(path, site).href;
+}
+
 export function entryDate(entry: WritingEntry) {
   return entry.collection === 'cheatsheets' ? entry.data.updated : entry.data.pubDate;
 }

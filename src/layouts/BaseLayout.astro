@@ -12,15 +12,24 @@ interface Props {
   wide?: boolean;
   /** When true, Pagefind indexes this page's `data-pagefind-body` region. */
   indexable?: boolean;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, wide = false, indexable = false } = Astro.props;
+const { title, description, wide = false, indexable = false, ogImage, ogType, jsonLd } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      ogType={ogType}
+      jsonLd={jsonLd}
+    />
   </head>
   <body
     class="min-h-screen bg-page text-ink"

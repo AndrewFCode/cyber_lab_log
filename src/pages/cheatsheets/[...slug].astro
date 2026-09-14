@@ -36,6 +36,7 @@ const { Content, headings } = await render(entry);
   prev={prev}
   next={next}
   meta={entry.data.category ? [entry.data.category] : []}
+  slug={entry.id}
 >
   <Content />
 </ContentLayout>
