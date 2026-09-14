@@ -1,0 +1,61 @@
+---
+import Search from './Search.astro';
+---
+
+<button
+  type="button"
+  class="search-open sr-only"
+  data-search-open
+  aria-haspopup="dialog"
+  aria-controls="search-modal"
+>
+  Open search
+</button>
+
+<dialog id="search-modal" class="search-modal" aria-labelledby="search-modal-title">
+  <div class="search-modal-panel">
+    <div class="search-modal-head">
+      <h2 id="search-modal-title" class="search-modal-title">Search</h2>
+      <button type="button" class="search-modal-close" data-search-close>
+        Close
+      </button>
+    </div>
+    <Search compact />
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('search-modal');
+  const closeBtn = document.querySelector('[data-search-close]');
+  if (dialog instanceof HTMLDialogElement) {
+    const input = dialog.querySelector<HTMLInputElement>('[data-search-input]');
+
+    function openSearch() {
+      dialog.showModal();
+      input?.focus();
+    }
+
+    function closeSearch() {
+      dialog.close();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'k') return;
+      event.preventDefault();
+
+      const onSearchPage = document.querySelector('main [data-search-input]');
+      if (onSearchPage instanceof HTMLInputElement) {
+        onSearchPage.focus();
+        return;
+      }
+
+      if (dialog.open) closeSearch();
+      else openSearch();
+    });
+
+    closeBtn?.addEventListener('click', () => closeSearch());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeSearch();
+    });
+  }
+</script>

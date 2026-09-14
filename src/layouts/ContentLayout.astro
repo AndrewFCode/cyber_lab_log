@@ -56,9 +56,9 @@ const showUpdated = updated && (!pubDate || updated.valueOf() !== pubDate.valueO
 const showToc = shouldShowToc(collection, headings);
 ---
 
-<BaseLayout title={title} description={description} wide={showToc}>
-  <article>
-    <nav aria-label="Breadcrumb" class="mb-8 text-sm">
+<BaseLayout title={title} description={description} wide={showToc} indexable={!draft}>
+  <article data-pagefind-body={draft ? undefined : true}>
+    <nav aria-label="Breadcrumb" class="mb-8 text-sm" data-pagefind-ignore>
       <a href={backHref} class="no-underline hover:underline">&larr; {backLabel}</a>
     </nav>
 
@@ -70,8 +70,14 @@ const showToc = shouldShowToc(collection, headings);
     >
       <div>
         <header class="mb-10 max-w-[var(--content-width)]">
-          <p class="font-mono text-xs tracking-wide text-faint uppercase">{label}</p>
-          <h1 class="mt-2 text-3xl font-semibold tracking-tight text-ink">
+          <p
+            class="font-mono text-xs tracking-wide text-faint uppercase"
+            data-pagefind-filter="Collection"
+            data-pagefind-meta="collection"
+          >
+            {label}
+          </p>
+          <h1 class="mt-2 text-3xl font-semibold tracking-tight text-ink" data-pagefind-meta="title">
             {title}
             {
               draft && (
@@ -83,7 +89,7 @@ const showToc = shouldShowToc(collection, headings);
           </h1>
           {description && <p class="mt-3 text-lg text-muted">{description}</p>}
 
-          <dl class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-faint">
+          <dl class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-faint" data-pagefind-ignore>
             {
               pubDate && (
                 <div class="flex gap-1.5">
@@ -123,14 +129,14 @@ const showToc = shouldShowToc(collection, headings);
           </dl>
 
           {tags.length > 0 && (
-            <div class="mt-4">
+            <div class="mt-4" data-pagefind-ignore>
               <TagList tags={tags} />
             </div>
           )}
         </header>
 
         {showToc && (
-          <details class="mb-8 max-w-[var(--content-width)] rounded border border-line px-4 py-3 lg:hidden">
+          <details class="mb-8 max-w-[var(--content-width)] rounded border border-line px-4 py-3 lg:hidden" data-pagefind-ignore>
             <summary class="cursor-pointer font-mono text-xs tracking-wide text-faint uppercase">
               On this page
             </summary>
@@ -146,14 +152,14 @@ const showToc = shouldShowToc(collection, headings);
           <slot />
         </div>
 
-        <div class="max-w-[var(--content-width)]">
+        <div class="max-w-[var(--content-width)]" data-pagefind-ignore>
           <PrevNext prev={prev} next={next} />
         </div>
       </div>
 
       {
         showToc && (
-          <aside class="hidden lg:sticky lg:top-8 lg:block">
+          <aside class="hidden lg:sticky lg:top-8 lg:block" data-pagefind-ignore>
             <TableOfContents headings={headings} />
           </aside>
         )

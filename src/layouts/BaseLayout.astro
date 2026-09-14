@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -9,9 +10,11 @@ interface Props {
   description?: string;
   /** Widen the main column so a desktop table of contents can sit beside prose. */
   wide?: boolean;
+  /** When true, Pagefind indexes this page's `data-pagefind-body` region. */
+  indexable?: boolean;
 }
 
-const { title, description, wide = false } = Astro.props;
+const { title, description, wide = false, indexable = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,7 +22,10 @@ const { title, description, wide = false } = Astro.props;
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="min-h-screen bg-page text-ink">
+  <body
+    class="min-h-screen bg-page text-ink"
+    data-pagefind-ignore={indexable ? undefined : 'all'}
+  >
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-page focus:px-3 focus:py-2"
@@ -31,5 +37,6 @@ const { title, description, wide = false } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <SearchModal />
   </body>
 </html>

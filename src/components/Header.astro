@@ -7,6 +7,7 @@ const links = [
   { href: withBase('/explainers'), label: 'Explainers' },
   { href: withBase('/notes'), label: 'Notes' },
   { href: withBase('/tags'), label: 'Tags' },
+  { href: withBase('/search'), label: 'Search' },
 ];
 
 const current = Astro.url.pathname;
@@ -16,7 +17,7 @@ const isActive = (href: string) => {
 };
 ---
 
-<header class="border-b border-line">
+<header class="border-b border-line" data-pagefind-ignore="all">
   <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4">
     <a href={withBase('/')} class="font-mono text-sm font-semibold tracking-tight text-ink no-underline">
       knowledge&nbsp;blog

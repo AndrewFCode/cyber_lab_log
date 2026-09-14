@@ -210,3 +210,144 @@ html.dark .astro-code span {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Custom search UI — site tokens, not Pagefind's default stylesheet. */
+.search-label {
+  display: block;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  background: var(--page);
+  color: var(--ink);
+  font: inherit;
+}
+
+.search-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 1rem;
+  border: 0;
+  padding: 0;
+}
+
+.search-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.search-status {
+  min-height: 1.5rem;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--faint);
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-hit {
+  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 0;
+}
+
+.search-hit-collection {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.search-hit-title {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.search-hit-title:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+.search-hit-excerpt {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+.search-hit-excerpt mark {
+  background: color-mix(in oklab, var(--accent) 25%, transparent);
+  color: inherit;
+  padding: 0 0.1em;
+}
+
+.search-modal {
+  width: min(40rem, calc(100vw - 2rem));
+  max-height: min(36rem, calc(100vh - 2rem));
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--page);
+  color: var(--ink);
+}
+
+.search-modal::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.search-modal-panel {
+  padding: 1.25rem 1.25rem 1.5rem;
+  overflow: auto;
+  max-height: min(36rem, calc(100vh - 2rem));
+}
+
+.search-modal-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.search-modal-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.search-modal-close {
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.search-modal-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

@@ -1,0 +1,64 @@
+---
+import { withBase } from '../lib/collections';
+
+interface Props {
+  autofocus?: boolean;
+  compact?: boolean;
+}
+
+const { autofocus = false, compact = false } = Astro.props;
+const pagefindSrc = withBase('/pagefind/pagefind.js');
+const filterName = compact ? 'collection-modal' : 'collection-page';
+---
+
+<div
+  class:list={['js-search', compact && 'js-search-compact']}
+  data-pagefind-src={pagefindSrc}
+  data-pagefind-ignore="all"
+>
+  <label class="search-label">
+    <span class="sr-only">Search</span>
+    <input
+      class="search-input"
+      type="search"
+      data-search-input
+      placeholder="Search published entries"
+      autocomplete="off"
+      enterkeyhint="search"
+      autofocus={autofocus}
+    />
+  </label>
+
+  <fieldset class="search-filters">
+    <legend class="sr-only">Filter by collection</legend>
+    <label class="search-filter">
+      <input type="radio" name={filterName} value="all" checked />
+      All
+    </label>
+    <label class="search-filter">
+      <input type="radio" name={filterName} value="Cheat sheet" />
+      Cheat sheets
+    </label>
+    <label class="search-filter">
+      <input type="radio" name={filterName} value="Explainer" />
+      Explainers
+    </label>
+    <label class="search-filter">
+      <input type="radio" name={filterName} value="Note" />
+      Notes
+    </label>
+  </fieldset>
+
+  <p class="search-status" data-search-status aria-live="polite"></p>
+  <ol class="search-results" data-search-results></ol>
+</div>
+
+<script>
+  import { bindSearch } from '../scripts/search';
+
+  document.querySelectorAll<HTMLElement>('.js-search').forEach((root) => {
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+    bindSearch(root);
+  });
+</script>
