@@ -1,10 +1,12 @@
 ---
-title: Cache invalidation is a naming problem
+title: Cache invalidation is a naming problem (AI Example)
 description: Why content-addressed keys dissolve most of the difficulty
-tags: [caching, architecture]
+tags:
+  - caching
+  - architecture
+draft: false
 pubDate: 2026-09-08
 ---
-
 The old joke is that the two hard problems are naming things and cache invalidation. I think
 those are one problem.
 
