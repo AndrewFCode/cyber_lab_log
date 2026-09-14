@@ -37,4 +37,29 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { cheatsheets, explainers, notes };
+const projectSchema = z
+  .object({
+    ...base,
+    pubDate: z.coerce.date(),
+    why: z.string(),
+    status: z.enum(['active', 'paused', 'shipped', 'archived']).default('active'),
+    origin: z.enum(['handwritten', 'ai']).default('handwritten'),
+    prompt: z.string().optional(),
+    repo: z.string().url().optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.origin === 'ai' && !value.prompt?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'AI-generated projects must include the initial command in `prompt`.',
+        path: ['prompt'],
+      });
+    }
+  });
+
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
+  schema: projectSchema,
+});
+
+export const collections = { cheatsheets, explainers, notes, projects };

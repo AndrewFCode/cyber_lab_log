@@ -41,7 +41,10 @@ const { label, entries } = Astro.props;
         <PostCard
           href={entryHref(entry)}
           title={entry.data.title}
-          description={entry.data.description}
+          description={
+            entry.data.description ??
+            (entry.collection === 'projects' ? entry.data.why : undefined)
+          }
           dateLabel=""
           date={entryDate(entry)}
           label={COLLECTION_LABELS[entry.collection]}
