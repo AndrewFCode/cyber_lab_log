@@ -1,12 +1,16 @@
 ---
-title: How OAuth actually works
-description: The authorisation code flow, step by step, without the diagrams that explain nothing
-tags: [auth, web, security]
+title: How OAuth actually works (AI Example)
+description: The authorisation code flow, step by step, without the diagrams
+  that explain nothing
+tags:
+  - auth
+  - web
+  - security
+draft: false
 pubDate: 2026-08-22
 updated: 2026-09-10
 difficulty: intermediate
 ---
-
 Every OAuth explanation starts with a sequence diagram containing six arrows, and I have never
 once understood it from the diagram. What follows is the authorisation code flow written as a
 story, because the ordering is the only genuinely hard part.
