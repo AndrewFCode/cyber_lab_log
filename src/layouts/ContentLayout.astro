@@ -10,7 +10,7 @@ import {
   formatDate,
   shouldShowToc,
   type Neighbor,
-  type WritingCollection,
+  type SiteCollection,
 } from '../lib/collections';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   description?: string;
   /** Section label, e.g. "Cheat sheet". */
   label: string;
-  collection: WritingCollection;
+  collection: SiteCollection;
   /** Link back to the section index. */
   backHref: string;
   backLabel: string;

@@ -2,7 +2,10 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 
 export type WritingCollection = 'cheatsheets' | 'explainers' | 'notes';
+export type SiteCollection = WritingCollection | 'projects';
 export type WritingEntry = CollectionEntry<WritingCollection>;
+export type ProjectEntry = CollectionEntry<'projects'>;
+export type SiteEntry = WritingEntry | ProjectEntry;
 
 export interface Neighbor {
   href: string;
@@ -19,16 +22,18 @@ const isPublished = ({ data }: { data: { draft: boolean } }) => showDrafts || !d
 
 const byDateDesc = (a: Date, b: Date) => b.valueOf() - a.valueOf();
 
-const COLLECTION_PATH: Record<WritingCollection, string> = {
+const COLLECTION_PATH: Record<SiteCollection, string> = {
   cheatsheets: '/cheatsheets',
   explainers: '/explainers',
   notes: '/notes',
+  projects: '/projects',
 };
 
-export const COLLECTION_LABELS: Record<WritingCollection, string> = {
+export const COLLECTION_LABELS: Record<SiteCollection, string> = {
   cheatsheets: 'Cheat sheet',
   explainers: 'Explainer',
   notes: 'Note',
+  projects: 'Project',
 };
 
 /** Prefix a site-root path with Astro `base` so GitHub project Pages links resolve. */
@@ -38,11 +43,11 @@ export function withBase(path: string) {
   return `${base}/${path.replace(/^\/+/, '')}`;
 }
 
-export function entryHref(entry: WritingEntry) {
+export function entryHref(entry: SiteEntry) {
   return withBase(`${COLLECTION_PATH[entry.collection]}/${entry.id}`);
 }
 
-export function entryOgPath(collection: WritingCollection, id: string) {
+export function entryOgPath(collection: SiteCollection, id: string) {
   return withBase(`/og/${collection}/${id}.png`);
 }
 
@@ -51,7 +56,7 @@ export function absoluteUrl(path: string, site: URL | string | undefined) {
   return new URL(path, site).href;
 }
 
-export function entryDate(entry: WritingEntry) {
+export function entryDate(entry: SiteEntry) {
   return entry.collection === 'cheatsheets' ? entry.data.updated : entry.data.pubDate;
 }
 
@@ -73,6 +78,12 @@ export async function getExplainers() {
 /** Newest first by `pubDate`. */
 export async function getNotes() {
   const entries = await getCollection('notes', isPublished);
+  return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
+}
+
+/** Newest first by `pubDate`. */
+export async function getProjects() {
+  const entries = await getCollection('projects', isPublished);
   return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
 }
 
@@ -111,8 +122,9 @@ export function tagSlug(tag: string) {
 }
 
 export async function getAllTags() {
-  const entries = await getWriting();
-  const bySlug = new Map<string, { slug: string; label: string; entries: WritingEntry[] }>();
+  const [writing, projects] = await Promise.all([getWriting(), getProjects()]);
+  const entries: SiteEntry[] = [...writing, ...projects];
+  const bySlug = new Map<string, { slug: string; label: string; entries: SiteEntry[] }>();
 
   for (const entry of entries) {
     for (const tag of entry.data.tags) {
@@ -146,7 +158,7 @@ export function tocHeadings(headings: MarkdownHeading[]) {
 }
 
 /** Explainers always get a TOC when they have headings; other entries need 3+. */
-export function shouldShowToc(collection: WritingCollection, headings: MarkdownHeading[]) {
+export function shouldShowToc(collection: SiteCollection, headings: MarkdownHeading[]) {
   const items = tocHeadings(headings);
   if (items.length === 0) return false;
   if (collection === 'explainers') return true;
