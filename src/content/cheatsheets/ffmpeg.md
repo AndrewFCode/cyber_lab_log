@@ -1,11 +1,15 @@
 ---
-title: FFmpeg
+title: FFmpeg (AI Example)
 description: Commands I always forget
-tags: [ffmpeg, video, cli]
+tags:
+  - ffmpeg
+  - video
+  - cli
+draft: false
 updated: 2026-09-05
 category: media
+pinned: false
 ---
-
 FFmpeg's flag order matters: options before `-i` apply to the input, options after apply to the
 output. Most of my mistakes with it come from forgetting that.
 
@@ -52,9 +56,12 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 in.mp4
 
 ## Things that bite
 
+
 | Symptom | Cause |
-| --- | --- |
+| --------------------------- | ---------------------------------------------------------------- |
 | Output is silent | Source audio is in a codec the container rejects; add `-c:a aac` |
 | "Height not divisible by 2" | Scaling with `-1`; use `-2` |
 | Cut starts early | `-c copy` snapped to a keyframe; re-encode for accuracy |
 | Huge output file | No `-crf` set, so a default bitrate was used |
+
+
