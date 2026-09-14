@@ -1,0 +1,35 @@
+---
+import { contributionLevel, type GithubActivity } from '../lib/github';
+
+interface Props {
+  calendar: GithubActivity['contributions'];
+}
+
+const { calendar } = Astro.props;
+const total = calendar.totalContributions.toLocaleString('en-GB');
+---
+
+<section class="mt-14" aria-labelledby="github-graph-heading">
+  <h2 id="github-graph-heading" class="text-xl font-semibold tracking-tight text-ink">
+    Contributions
+  </h2>
+  <p class="mt-2 text-muted">{total} in the last year</p>
+
+  <div class="contrib-scroll mt-6" role="img" aria-label={`${total} contributions in the last year`}>
+    <div class="contrib-graph">
+      {
+        calendar.weeks.map((week) => (
+          <div class="contrib-week">
+            {week.contributionDays.map((day) => (
+              <span
+                class="contrib-day"
+                data-level={contributionLevel(day.contributionCount)}
+                title={`${day.date}: ${day.contributionCount} contribution${day.contributionCount === 1 ? '' : 's'}`}
+              />
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

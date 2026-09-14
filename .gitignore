@@ -14,6 +14,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# generated at build by scripts/fetch-github.mjs
+src/data/github.json
+
 # editors / OS
 .DS_Store
 Thumbs.db

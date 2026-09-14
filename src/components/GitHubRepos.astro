@@ -1,0 +1,42 @@
+---
+import { formatDate } from '../lib/collections';
+import type { GithubRepo } from '../lib/github';
+
+interface Props {
+  repos: GithubRepo[];
+}
+
+const { repos } = Astro.props;
+---
+
+<section aria-labelledby="github-repos-heading">
+  <h2 id="github-repos-heading" class="text-xl font-semibold tracking-tight text-ink">
+    Recently updated
+  </h2>
+  <p class="mt-2 text-muted">Six repos, newest push first.</p>
+
+  <ul class="mt-6">
+    {
+      repos.map((repo) => (
+        <li class="border-b border-line py-5 last:border-b-0">
+          <h3 class="text-lg font-medium tracking-tight">
+            <a href={repo.html_url} class="no-underline hover:underline">
+              {repo.name}
+            </a>
+          </h3>
+          {repo.description && <p class="mt-1.5 text-muted">{repo.description}</p>}
+          <p class="mt-2 flex flex-wrap gap-x-4 text-sm text-faint">
+            {repo.language && <span>{repo.language}</span>}
+            <span>
+              {repo.stargazers_count} {repo.stargazers_count === 1 ? 'star' : 'stars'}
+            </span>
+            <span>
+              Pushed
+              <time datetime={repo.pushed_at}>{formatDate(new Date(repo.pushed_at))}</time>
+            </span>
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
