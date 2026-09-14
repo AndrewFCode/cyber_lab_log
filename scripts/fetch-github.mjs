@@ -65,7 +65,7 @@ function headers() {
   return {
     Accept: 'application/vnd.github+json',
     Authorization: `Bearer ${token}`,
-    'User-Agent': 'knowledge-blog-github-activity',
+    'User-Agent': 'cyber-journey-github-activity',
     'X-GitHub-Api-Version': '2022-11-28',
   };
 }
