@@ -1,0 +1,156 @@
+# Pages CMS — field names and types follow src/content.config.ts.
+media:
+  input: public/media
+  output: /media
+  categories: [image]
+  rename: safe
+
+content:
+  - name: cheatsheets
+    label: Cheat sheets
+    type: collection
+    path: src/content/cheatsheets
+    format: yaml-frontmatter
+    filename:
+      template: "{title}.md"
+      field: create
+    view:
+      fields: [title, category, updated, pinned, draft]
+      primary: title
+      sort: [updated, title]
+      default:
+        sort: updated
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: string
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+      - name: updated
+        label: Updated
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: category
+        label: Category
+        type: string
+        description: e.g. git, sql, ffmpeg
+      - name: pinned
+        label: Pinned
+        type: boolean
+        default: false
+      - name: body
+        label: Body
+        type: rich-text
+
+  - name: explainers
+    label: Explainers
+    type: collection
+    path: src/content/explainers
+    format: yaml-frontmatter
+    filename:
+      template: "{title}.md"
+      field: create
+    view:
+      fields: [title, pubDate, difficulty, draft]
+      primary: title
+      sort: [pubDate, title]
+      default:
+        sort: pubDate
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: string
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+      - name: pubDate
+        label: Published
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updated
+        label: Updated
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+      - name: difficulty
+        label: Difficulty
+        type: select
+        options:
+          values:
+            - beginner
+            - intermediate
+            - advanced
+      - name: body
+        label: Body
+        type: rich-text
+
+  - name: notes
+    label: Notes
+    type: collection
+    path: src/content/notes
+    format: yaml-frontmatter
+    filename:
+      template: "{title}.md"
+      field: create
+    view:
+      fields: [title, pubDate, draft]
+      primary: title
+      sort: [pubDate, title]
+      default:
+        sort: pubDate
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: string
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+      - name: pubDate
+        label: Published
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: body
+        label: Body
+        type: rich-text
+
+settings:
+  commit:
+    identity: user
