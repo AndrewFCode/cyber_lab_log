@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import {
+  COLLECTION_LABELS,
+  entryDate,
+  entryHref,
+  getAllTags,
+} from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    params: { tag: tag.slug },
+    props: { label: tag.label, entries: tag.entries },
+  }));
+}) satisfies GetStaticPaths;
+
+const { label, entries } = Astro.props;
+---
+
+<BaseLayout title={`Tag: ${label}`} description={`Entries tagged “${label}”.`}>
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm">
+      <a href="/tags" class="no-underline hover:underline">&larr; Tags</a>
+    </nav>
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">
+      <span class="font-mono text-faint">#</span>
+      {label}
+    </h1>
+    <p class="mt-3 text-lg text-muted">
+      {entries.length === 1 ? '1 entry' : `${entries.length} entries`} across collections.
+    </p>
+  </header>
+
+  <div>
+    {
+      entries.map((entry) => (
+        <PostCard
+          href={entryHref(entry)}
+          title={entry.data.title}
+          description={entry.data.description}
+          dateLabel=""
+          date={entryDate(entry)}
+          label={COLLECTION_LABELS[entry.collection]}
+          draft={entry.data.draft}
+        />
+      ))
+    }
+  </div>
+</BaseLayout>

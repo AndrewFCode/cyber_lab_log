@@ -1,12 +1,22 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
-import { formatDate } from '../lib/collections';
+import TagList from '../components/TagList.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import PrevNext from '../components/PrevNext.astro';
+import {
+  formatDate,
+  shouldShowToc,
+  type Neighbor,
+  type WritingCollection,
+} from '../lib/collections';
 
 interface Props {
   title: string;
   description?: string;
   /** Section label, e.g. "Cheat sheet". */
   label: string;
+  collection: WritingCollection;
   /** Link back to the section index. */
   backHref: string;
   backLabel: string;
@@ -14,72 +24,144 @@ interface Props {
   pubDate?: Date;
   updated?: Date;
   draft?: boolean;
+  tags?: string[];
+  readingTime?: string;
+  headings?: MarkdownHeading[];
+  prev?: Neighbor;
+  next?: Neighbor;
   /** Small pieces of metadata shown next to the dates, e.g. difficulty. */
   meta?: string[];
 }
 
-const { title, description, label, backHref, backLabel, pubDate, updated, draft, meta = [] } =
-  Astro.props;
+const {
+  title,
+  description,
+  label,
+  collection,
+  backHref,
+  backLabel,
+  pubDate,
+  updated,
+  draft,
+  tags = [],
+  readingTime,
+  headings = [],
+  prev,
+  next,
+  meta = [],
+} = Astro.props;
 
 // Only worth showing an "Updated" line when it differs from the publish date.
-const showUpdated =
-  updated && (!pubDate || updated.valueOf() !== pubDate.valueOf());
+const showUpdated = updated && (!pubDate || updated.valueOf() !== pubDate.valueOf());
+const showToc = shouldShowToc(collection, headings);
 ---
 
-<BaseLayout title={title} description={description}>
-  <article class="prose-wrapper">
+<BaseLayout title={title} description={description} wide={showToc}>
+  <article>
     <nav aria-label="Breadcrumb" class="mb-8 text-sm">
       <a href={backHref} class="no-underline hover:underline">&larr; {backLabel}</a>
     </nav>
 
-    <header class="mb-10 max-w-[var(--content-width)]">
-      <p class="font-mono text-xs tracking-wide text-neutral-500 uppercase">{label}</p>
-      <h1 class="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">
-        {title}
-        {
-          draft && (
-            <span class="ml-2 align-middle rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 font-mono text-xs font-normal tracking-wide text-amber-700 uppercase">
-              Draft
-            </span>
-          )
-        }
-      </h1>
-      {description && <p class="mt-3 text-lg text-neutral-600">{description}</p>}
+    <div
+      class:list={[
+        showToc &&
+          'lg:grid lg:grid-cols-[minmax(0,var(--content-width))_14rem] lg:items-start lg:gap-12',
+      ]}
+    >
+      <div>
+        <header class="mb-10 max-w-[var(--content-width)]">
+          <p class="font-mono text-xs tracking-wide text-faint uppercase">{label}</p>
+          <h1 class="mt-2 text-3xl font-semibold tracking-tight text-ink">
+            {title}
+            {
+              draft && (
+                <span class="ml-2 align-middle rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 font-mono text-xs font-normal tracking-wide text-amber-700 uppercase dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                  Draft
+                </span>
+              )
+            }
+          </h1>
+          {description && <p class="mt-3 text-lg text-muted">{description}</p>}
 
-      <dl class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-neutral-500">
-        {
-          pubDate && (
-            <div class="flex gap-1.5">
-              <dt class="sr-only">Published</dt>
-              <dd>
-                <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-              </dd>
-            </div>
-          )
-        }
-        {
-          showUpdated && (
-            <div class="flex gap-1.5">
-              <dt>Updated</dt>
-              <dd>
-                <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time>
-              </dd>
-            </div>
-          )
-        }
-        {
-          meta.map((item) => (
-            <div>
-              <dt class="sr-only">Detail</dt>
-              <dd>{item}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </header>
+          <dl class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-faint">
+            {
+              pubDate && (
+                <div class="flex gap-1.5">
+                  <dt class="sr-only">Published</dt>
+                  <dd>
+                    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+                  </dd>
+                </div>
+              )
+            }
+            {
+              showUpdated && (
+                <div class="flex gap-1.5">
+                  <dt>Updated</dt>
+                  <dd>
+                    <time datetime={updated!.toISOString()}>{formatDate(updated!)}</time>
+                  </dd>
+                </div>
+              )
+            }
+            {
+              readingTime && (
+                <div>
+                  <dt class="sr-only">Reading time</dt>
+                  <dd>{readingTime}</dd>
+                </div>
+              )
+            }
+            {
+              meta.map((item) => (
+                <div>
+                  <dt class="sr-only">Detail</dt>
+                  <dd>{item}</dd>
+                </div>
+              ))
+            }
+          </dl>
 
-    <div class="prose prose-neutral max-w-[var(--content-width)] prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-[var(--color-accent)] prose-code:font-mono prose-code:text-[0.9em]">
-      <slot />
+          {tags.length > 0 && (
+            <div class="mt-4">
+              <TagList tags={tags} />
+            </div>
+          )}
+        </header>
+
+        {showToc && (
+          <details class="mb-8 max-w-[var(--content-width)] rounded border border-line px-4 py-3 lg:hidden">
+            <summary class="cursor-pointer font-mono text-xs tracking-wide text-faint uppercase">
+              On this page
+            </summary>
+            <div class="mt-3">
+              <TableOfContents headings={headings} showTitle={false} />
+            </div>
+          </details>
+        )}
+
+        <div
+          class="prose prose-neutral max-w-[var(--content-width)] prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-accent prose-code:font-mono prose-code:text-[0.9em] dark:prose-invert"
+        >
+          <slot />
+        </div>
+
+        <div class="max-w-[var(--content-width)]">
+          <PrevNext prev={prev} next={next} />
+        </div>
+      </div>
+
+      {
+        showToc && (
+          <aside class="hidden lg:sticky lg:top-8 lg:block">
+            <TableOfContents headings={headings} />
+          </aside>
+        )
+      }
     </div>
   </article>
 </BaseLayout>
+
+<script>
+  import '../scripts/copy-code';
+</script>

@@ -7,9 +7,11 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** Widen the main column so a desktop table of contents can sit beside prose. */
+  wide?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, wide = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,15 +19,15 @@ const { title, description } = Astro.props;
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="min-h-screen">
+  <body class="min-h-screen bg-page text-ink">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-page focus:px-3 focus:py-2"
     >
       Skip to content
     </a>
     <Header />
-    <main id="main" class="mx-auto max-w-4xl px-5 py-10">
+    <main id="main" class:list={['mx-auto px-5 py-10', wide ? 'max-w-6xl' : 'max-w-4xl']}>
       <slot />
     </main>
     <Footer />

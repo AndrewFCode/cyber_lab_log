@@ -23,20 +23,20 @@ for (const entry of cheatsheets) {
   description="Dense reference material — commands, syntax and tables I keep forgetting."
 >
   <header class="mb-8 max-w-[var(--content-width)]">
-    <h1 class="text-3xl font-semibold tracking-tight text-neutral-900">Cheat sheets</h1>
-    <p class="mt-3 text-lg text-neutral-600">
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">Cheat sheets</h1>
+    <p class="mt-3 text-lg text-muted">
       Dense reference material, updated whenever I trip over something again.
     </p>
   </header>
 
   {
     cheatsheets.length === 0 ? (
-      <p class="text-neutral-600">Nothing here yet.</p>
+      <p class="text-muted">Nothing here yet.</p>
     ) : (
       <div class="space-y-10">
         {[...groups].map(([category, entries]) => (
           <section>
-            <h2 class="border-b border-neutral-300 pb-1 font-mono text-xs tracking-widest text-neutral-500 uppercase">
+            <h2 class="border-b border-line pb-1 font-mono text-xs tracking-widest text-faint uppercase">
               {category}
             </h2>
             {entries.map((entry) => (

@@ -2,29 +2,38 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import ContentLayout from '../../layouts/ContentLayout.astro';
-import { getExplainers } from '../../lib/collections';
+import { getExplainers, neighbors, readingTime } from '../../lib/collections';
 
 export const getStaticPaths = (async () => {
   const explainers = await getExplainers();
   return explainers.map((entry) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: {
+      entry,
+      ...neighbors(explainers, entry.id, (item) => `/explainers/${item.id}`),
+    },
   }));
 }) satisfies GetStaticPaths;
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
 ---
 
 <ContentLayout
   title={entry.data.title}
   description={entry.data.description}
   label="Explainer"
+  collection="explainers"
   backHref="/explainers"
   backLabel="Explainers"
   pubDate={entry.data.pubDate}
   updated={entry.data.updated}
   draft={entry.data.draft}
+  tags={entry.data.tags}
+  readingTime={readingTime(entry.body)}
+  headings={headings}
+  prev={prev}
+  next={next}
   meta={entry.data.difficulty ? [entry.data.difficulty] : []}
 >
   <Content />

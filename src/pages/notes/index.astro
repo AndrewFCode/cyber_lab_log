@@ -8,15 +8,15 @@ const notes = await getNotes();
 
 <BaseLayout title="Notes" description="Short thoughts, opinions and work in progress.">
   <header class="mb-8 max-w-[var(--content-width)]">
-    <h1 class="text-3xl font-semibold tracking-tight text-neutral-900">Notes</h1>
-    <p class="mt-3 text-lg text-neutral-600">
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">Notes</h1>
+    <p class="mt-3 text-lg text-muted">
       Short thoughts and half-formed opinions. Low ceremony, newest first.
     </p>
   </header>
 
   {
     notes.length === 0 ? (
-      <p class="text-neutral-600">Nothing here yet.</p>
+      <p class="text-muted">Nothing here yet.</p>
     ) : (
       <div>
         {notes.map((entry) => (

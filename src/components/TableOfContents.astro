@@ -1,0 +1,31 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { tocHeadings } from '../lib/collections';
+
+interface Props {
+  headings: MarkdownHeading[];
+  showTitle?: boolean;
+}
+
+const { headings, showTitle = true } = Astro.props;
+const items = tocHeadings(headings);
+---
+
+{
+  items.length > 0 && (
+    <nav aria-label="On this page">
+      {showTitle && (
+        <p class="font-mono text-xs tracking-wide text-faint uppercase">On this page</p>
+      )}
+      <ol class:list={['space-y-1.5 text-sm', showTitle && 'mt-3']}>
+        {items.map((heading) => (
+          <li class:list={heading.depth === 3 && 'ml-4'}>
+            <a href={`#${heading.slug}`} class="no-underline hover:underline">
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

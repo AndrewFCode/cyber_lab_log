@@ -1,0 +1,34 @@
+---
+interface Props {
+  prev?: { href: string; title: string };
+  next?: { href: string; title: string };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+  (prev || next) && (
+    <nav
+      aria-label="Nearby in this collection"
+      class="mt-16 grid gap-6 border-t border-line pt-8 sm:grid-cols-2"
+    >
+      {prev ? (
+        <a href={prev.href} class="group no-underline">
+          <span class="block font-mono text-xs tracking-wide text-faint uppercase">Previous</span>
+          <span class="mt-1 block text-ink group-hover:underline">{prev.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <a href={next.href} class="group no-underline sm:text-right">
+          <span class="block font-mono text-xs tracking-wide text-faint uppercase">Next</span>
+          <span class="mt-1 block text-ink group-hover:underline">{next.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  )
+}

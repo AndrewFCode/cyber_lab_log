@@ -18,28 +18,28 @@ interface Props {
 const { href, title, description, dateLabel, date, label, pinned, draft, meta = [] } = Astro.props;
 ---
 
-<article class="border-b border-neutral-200 py-5 last:border-b-0">
+<article class="border-b border-line py-5 last:border-b-0">
   <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
     <h3 class="text-lg font-medium tracking-tight">
       <a href={href} class="no-underline hover:underline">{title}</a>
     </h3>
     {
       pinned && (
-        <span class="font-mono text-xs tracking-wide text-neutral-500 uppercase">Pinned</span>
+        <span class="font-mono text-xs tracking-wide text-faint uppercase">Pinned</span>
       )
     }
     {
       draft && (
-        <span class="rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 font-mono text-xs tracking-wide text-amber-700 uppercase">
+        <span class="rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 font-mono text-xs tracking-wide text-amber-700 uppercase dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300">
           Draft
         </span>
       )
     }
   </div>
 
-  {description && <p class="mt-1.5 text-neutral-600">{description}</p>}
+  {description && <p class="mt-1.5 text-muted">{description}</p>}
 
-  <p class="mt-2 flex flex-wrap gap-x-4 text-sm text-neutral-500">
+  <p class="mt-2 flex flex-wrap gap-x-4 text-sm text-faint">
     {label && <span class="font-mono text-xs tracking-wide uppercase">{label}</span>}
     <span>
       {dateLabel}
