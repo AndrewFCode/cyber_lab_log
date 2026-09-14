@@ -1,8 +1,11 @@
-# pnpm 10+ reads these settings here rather than from the `pnpm` field in package.json.
+# pnpm 11+ reads these settings here rather than from the `pnpm` field in package.json.
 #
-# esbuild only arrives transitively through Vite, which loads its own prebuilt
-# platform package, so skipping esbuild's postinstall does not affect the build.
-# Note: pnpm 12.4.1 still exits 1 with ERR_PNPM_IGNORED_BUILDS despite this
-# declaration; run `pnpm approve-builds esbuild` once locally to silence it.
-ignoredBuiltDependencies:
-  - esbuild
+# `strictDepBuilds` is on by default, so an unreviewed postinstall (esbuild)
+# fails CI with ERR_PNPM_IGNORED_BUILDS. `allowBuilds` is the replacement for
+# ignoredBuiltDependencies / onlyBuiltDependencies.
+#
+# esbuild: Vite's bundler; the postinstall selects the platform binary.
+# sharp: satori OG images at /og/...png; Linux CI needs the native install.
+allowBuilds:
+  esbuild: true
+  sharp: true
