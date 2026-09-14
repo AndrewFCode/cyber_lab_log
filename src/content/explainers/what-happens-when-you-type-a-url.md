@@ -1,11 +1,14 @@
 ---
-title: What happens when you type a URL
+title: What happens when you type a URL (AI Example)
 description: DNS, TCP, TLS and the first byte, in the order they actually occur
-tags: [networking, dns, http]
+tags:
+  - networking
+  - dns
+  - http
+draft: false
 pubDate: 2026-09-03
 difficulty: beginner
 ---
-
 A deliberately complete walk through one navigation, because the interesting failures all live
 in the gaps between these steps.
 
@@ -46,10 +49,10 @@ client → server   ACK
 Now the connection gets encrypted. In TLS 1.3 this is one more round trip, during which:
 
 - The client sends the protocol versions and cipher suites it supports, plus the hostname it
-  wants via **SNI** — necessary because one IP commonly serves thousands of sites.
+wants via **SNI** — necessary because one IP commonly serves thousands of sites.
 - The server returns a certificate chain.
 - The client verifies that chain up to a root it trusts, checks the hostname matches, and checks
-  the dates.
+the dates.
 - Both sides derive session keys.
 
 A certificate error is this step failing. So is the "wrong site" you occasionally see behind a
@@ -73,7 +76,7 @@ The server returns headers and an HTML body. The browser parses as bytes arrive,
 meets a subresource it starts fetching:
 
 - A stylesheet blocks rendering, because the browser will not paint text it might have to
-  restyle.
+restyle.
 - A plain `<script>` blocks parsing, because the script could call `document.write`.
 - `<script defer>` waits until parsing finishes; `async` runs whenever it lands.
 
@@ -84,11 +87,13 @@ Then layout, paint, composite — and the page appears.
 Almost every "the site is slow" complaint maps to exactly one of these steps, and they have
 completely different fixes:
 
+
 | Symptom | Step | Fix |
-| --- | --- | --- |
+| ----------------------------------- | --------- | -------------------------------------------- |
 | Long delay before anything happens | DNS | Lower TTLs, faster resolver, DNS prefetch |
 | Slow on first visit only | TCP + TLS | Keep-alive, HTTP/2, a CDN closer to the user |
 | Fast headers, slow content | Server | Caching, a faster query, streaming |
 | Content arrives but nothing renders | Waterfall | Inline critical CSS, defer scripts |
+
 
 Measuring before guessing is the whole point of knowing the sequence.
