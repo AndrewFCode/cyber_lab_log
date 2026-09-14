@@ -1,0 +1,64 @@
+<button
+  type="button"
+  id="theme-toggle"
+  class="theme-toggle ml-auto inline-flex h-11 w-11 items-center justify-center rounded border border-line text-ink"
+  aria-label="Switch to dark theme"
+  title="Toggle colour theme"
+>
+  <svg
+    class="icon-sun h-4 w-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+  </svg>
+  <svg
+    class="icon-moon h-4 w-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"></path>
+  </svg>
+</button>
+
+<script>
+  const root = document.documentElement;
+
+  function isDark() {
+    return root.classList.contains('dark');
+  }
+
+  function apply(theme: 'light' | 'dark') {
+    root.classList.toggle('dark', theme === 'dark');
+    root.classList.toggle('light', theme === 'light');
+    root.style.colorScheme = theme;
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      /* private mode */
+    }
+    syncButton();
+  }
+
+  function syncButton() {
+    const button = document.getElementById('theme-toggle');
+    if (!(button instanceof HTMLButtonElement)) return;
+    const dark = isDark();
+    button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    button.setAttribute('aria-pressed', String(dark));
+  }
+
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    apply(isDark() ? 'light' : 'dark');
+  });
+
+  syncButton();
+  requestAnimationFrame(() => root.classList.add('theme-ready'));
+</script>

@@ -1,0 +1,44 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { withBase } from '../lib/collections';
+
+const links = [
+  { href: withBase('/cheatsheets'), label: 'Cheat sheets' },
+  { href: withBase('/explainers'), label: 'Explainers' },
+  { href: withBase('/notes'), label: 'Notes' },
+  { href: withBase('/tags'), label: 'Tags' },
+];
+
+const current = Astro.url.pathname;
+const isActive = (href: string) => {
+  const normalised = href.replace(/\/$/, '');
+  return current === href || current === normalised || current.startsWith(`${normalised}/`);
+};
+---
+
+<header class="border-b border-line">
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4">
+    <a href={withBase('/')} class="font-mono text-sm font-semibold tracking-tight text-ink no-underline">
+      knowledge&nbsp;blog
+    </a>
+    <nav aria-label="Sections" class="flex gap-5 text-sm">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'no-underline',
+              isActive(link.href)
+                ? 'font-medium text-ink underline decoration-accent decoration-2 underline-offset-4'
+                : 'text-muted hover:text-ink',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <ThemeToggle />
+  </div>
+</header>

@@ -1,29 +1,49 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/collections';
 
-const siteName = "Andrew's Notes";
-const tagline = "Cheat sheets, explainers, and short notes on what I'm learning.";
+// Placeholder home page. The mixed recent-items feed and "currently reading"
+// strip are a later phase; this exists so `/` is navigable now.
+const sections = [
+  {
+    href: withBase('/cheatsheets'),
+    title: 'Cheat sheets',
+    description: 'Commands and syntax I keep forgetting. Living documents.',
+  },
+  {
+    href: withBase('/explainers'),
+    title: 'Explainers',
+    description: 'Long-form pieces on how something actually works.',
+  },
+  {
+    href: withBase('/notes'),
+    title: 'Notes',
+    description: 'Short thoughts and opinions, written down before they evaporate.',
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content={tagline} />
-		<title>{siteName}</title>
-	</head>
-	<body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-		<main class="mx-auto max-w-2xl px-6 py-24 leading-relaxed">
-			<h1 class="text-3xl font-bold tracking-tight">{siteName}</h1>
-			<p class="mt-4 text-lg text-zinc-600 dark:text-zinc-400">{tagline}</p>
-			<p
-				class="mt-10 border-t border-zinc-200 pt-6 text-sm text-zinc-500 dark:border-zinc-800"
-			>
-				Phase 0 skeleton — content collections arrive in Phase 1.
-			</p>
-		</main>
-	</body>
-</html>
+<BaseLayout
+  title="Knowledge Blog"
+  description="Cheat sheets, explainers and notes — a personal reference pile."
+>
+  <p class="max-w-[var(--content-width)] text-lg text-muted">
+    A personal reference pile: things I looked up twice, things I had to explain to understand, and
+    thoughts I did not want to lose.
+  </p>
+
+  <ul class="mt-10 space-y-5">
+    {
+      sections.map((section) => (
+        <li class="border-b border-line pb-5 last:border-b-0">
+          <h2 class="text-lg font-medium tracking-tight">
+            <a href={section.href} class="no-underline hover:underline">
+              {section.title}
+            </a>
+          </h2>
+          <p class="mt-1 text-muted">{section.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

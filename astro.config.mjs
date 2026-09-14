@@ -1,14 +1,28 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
-
+import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
+import { satteri } from '@astrojs/markdown-satteri';
+import { codeCopyPlugin } from './src/lib/code-copy-plugin.ts';
 
-// https://astro.build/config
+// GitHub Pages project site: https://andrewfcode.github.io/cyber_lab_log/
 export default defineConfig({
-  // Repo is named AndrewFCode.github.io, so the site is served from the
-  // domain root and needs no `base` prefix on internal links.
   site: 'https://andrewfcode.github.io',
+  base: '/cyber_lab_log',
+  trailingSlash: 'ignore',
+  integrations: [mdx()],
+  markdown: {
+    processor: satteri({
+      hastPlugins: [codeCopyPlugin()],
+    }),
+    shikiConfig: {
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+      defaultColor: false,
+    },
+  },
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+  },
 });

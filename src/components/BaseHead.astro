@@ -1,0 +1,37 @@
+---
+import { withBase } from '../lib/collections';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+
+const siteName = 'Knowledge Blog';
+const pageTitle = title === siteName ? title : `${title} — ${siteName}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{pageTitle}</title>
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical} />
+<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+<script is:inline>
+  (function () {
+    try {
+      var stored = localStorage.getItem('theme');
+      var theme =
+        stored === 'dark' || stored === 'light'
+          ? stored
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+      document.documentElement.classList.toggle('light', theme === 'light');
+      document.documentElement.style.colorScheme = theme;
+    } catch (e) {}
+  })();
+</script>
