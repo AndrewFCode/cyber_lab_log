@@ -2,12 +2,12 @@
 title: Linux Command Line
 description: "These are the abbreviations I have learnt. "
 draft: false
-updated: 2026-09-14
+updated: 2026-09-15
 category: Linux
 pinned: false
 ---
 Linux Command Line is one of the more interesting topics I have engaged with so far. I think it is because I sort of understand the basics from previous dipping of interest into the area.   
-  
+
 Currently I am working my way through The Linux Command Line by Schotts. All definitions come through here and I am working through this in accordance to my cyber roadmap which I created using AI to help me focus on my studies. 
 
 Week 1: Ending 30 August (Chapter 1)
@@ -60,9 +60,7 @@ Shortcuts for cd
 | cd "user_name" | Changes the working directory to the home directory of user_name |  |
 
 
-
-
-Week Ending 13 September (Chapter 3-4)
+**Week Ending 13 September (Chapter 3-4)**
 
 
 | Command | What it does |
@@ -301,7 +299,7 @@ Soft Link
 ln -s item link
 ```
 
-Week 4: Ending 20 September (Chapter 5-6)
+**Week 4: Ending 20 September (Chapter 5-6)**
 
 
 | Command | What it does |
@@ -323,4 +321,125 @@ Week 4: Ending 20 September (Chapter 5-6)
 | tail | Output the last part of the file |
 | tee | Read from standard input and write to standard output and files |
 
+
+**What exactly are commands?**
+
+
+|  |  |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| An Executable Programme | Programmes can be compiled binaries, such as programmes written in C & C++, or programmes written in scripting languages, such as shell, perl, python, ruby and so on |
+| A command built into the shell itself | bash supports a number of commands internally called shell builtins. |
+| A shell function | Miniature shell scripts incorporated into the environment |
+| An alias | Commands we can define ourselves, built from other commands |
+
+
+**Identifying Commands**
+
+*type- Display a commands type* 
+
+- This is a builtin command that displays the kind of command the shell will execute
+
+*which- Displays an executable's location*
+
+- Sometime there is m ore than one version of an executable programme installed on the system
+- This is not common on desktops but more on larger servers.
+
+**Getting a command's documentation**
+
+*help- Get help for shell builtins*
+
+- bash has a built in facility available for each of the shell builtins
+
+> A quick note: When square brackets appear in the description of a command's syntax, they indicate optional items. A vertical bar character indicates mutually exclusive items. ~Take the previous cd command, for example...
+
+```
+cd [-L][-P[-e]]] [dir]
+```
+
+> This notation says that the command cd may be followed optionally by either a -L or a -P; further, if the -P option is specified, the -e option may be included followed by the optional argument dir.
+>
+> While the output of help for the cd commands is concise and accurate, it is by no means tutorial, and as we see.
+
+*--help- Display Usage Information*
+
+- Many executable programmes support a --help option that displays a description of the command's supported syntax and options.
+
+*man- Displays a Programmes Manual Page*
+
+- Most executable programmes intended for command line use provide a formal piece of documentation called a manual or man pages. A special paging programme called man is used to view them.
+
+**Man Pages Structure**
+
+- A title (the page's name)
+- A synopsis of the command's syntax
+- A description of the command's purpose
+- A listing and description of each of the commands options
+
+**Man Page Organisation**
+
+
+|  |  |
+| --- | ---------------------------------------------- |
+| 1 | User commands |
+| 2 | Programming interfaces for kernal system calls |
+| 3 | Programming interfaces to the C library |
+| 4 | Special files such as device nodes and drivers |
+| 5 | File formats |
+| 6 | Games and amusements such as screen savers |
+| 7 | Miscellaneous |
+| 8 | System administration commands |
+
+
+Example
+
+```
+man 5 passwd
+```
+
+This will display the man page describing the file format of the /etc/passwd file
+
+*apropos- Display appropriate commands*
+
+- It is possible to search the list of man pages for possible matches based on a search term.
+
+*whatis- Display one-line manual page description*
+
+- Displays the name and a one-line description of a man page.
+
+*info- Displays a programmes info entry.*
+
+- The GNU project provides an alternative to man pages for their programmes.
+
+**info Commands**
+
+
+| Command | Action |
+| -------------------- | --------------------------------------------------------------------------- |
+| ? | Display command help |
+| PAGE UP or BACKSPACE | Display previous page |
+| PAGE DOWN or SPACE | Display next page |
+| n | Next: Display the next node |
+| p | Previous: Display the previous node |
+| u | Up: Display the parent node of the currently displayed node, usually a menu |
+| ENTER | Follow the hyperlink at the cursor location |
+| q | Quit |
+
+
+*README and Other Programme Documentation Files*
+
+- Many of the packages installed on the system have documentation files reading in the usr/share/doc directroy
+
+**Creating Our Own Commands with alias**
+
+- It is possible to put more than one command on a line by separating each command with a semicolon.
+
+```
+command1; command2; command3...
+
+cd /usr; ls; cd -
+```
+
+- First we change the directory to /usr
+- Then list the directory
+- Then return to the original directory. 
 
