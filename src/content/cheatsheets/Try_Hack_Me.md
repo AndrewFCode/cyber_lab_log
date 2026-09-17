@@ -287,8 +287,72 @@ Task Manager has five tabs to help you keep track of your system.
 4. **Details**: A more technical view of running processes, including process IDs (PIDs)
 5. **Services**: Windows services and their current status (running or stopped)
 
+*Native Windows Security:*
+
+> Windows offers built-in security tools designed to help protect your system from threats such as malware, insecure applications, and unauthorized network access. These are enabled by default and allow the monitoring and control of your system's security. 
+
+The **Windows Security** application is your central dashboard for managing Windows' built-in protection measures. It is divided into four main sections, each focusing on a different area of system security.
+
+
+| **Virus & threat protection** | Helps detect and remove malicious software using real-time protection and customizable scans |
+| --------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Firewall & network protection** | Controls incoming and outgoing network traffic to help prevent unauthorized access |
+| **App & browser control** | Protects users from potentially unsafe apps, files, and websites |
+| **Device security** | Provides hardware-based protections that help secure the system |
+
+
+*Windows Defender Firewall*
+
+> **Windows Defender Firewall** is a built-in firewall designed to help protect your computer from unauthorized network traffic. It monitors network connections and applies rules that determine whether the connections are allowed or denied. The firewall operates on different network profiles, allowing you to create custom rules or specify applications that are permitted.
+
+
+| **Domain** | Used when a system is connected to an organization’s domain network |
+| ----------- | ------------------------------------------------------------------- |
+| **Private** | Intended for trusted networks, such as a home or lab environment |
+| **Public** | Used for untrusted networks, such as public Wi-Fi |
+
+
 **Linux CLI Basics**
 
+
+| Command | What It Does |
+| -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| pwd | Where Am I? |
+| ls | What's Around Me |
+| ls -l | The output displays important information about the files and directories like file sizes, permissions, dates, and more. |
+| ls -al | What's Around Me (Including The Hidden Files) |
+| cd | Move Around |
+| cd .. | Go Back One Level |
+| find | Locate Files Within The System |
+| cat | Read The File |
+| whoami | Prints Current Username |
+| uname -a | What Is The System |
+| df -h | Check Disk & Storage Info |
+
+
 **Windows CLI Basics**
+
+The **terminal** is a text-based interface for interacting with the Windows OS. Instead of clicking windows and folders, you type commands that tell the computer exactly what to do. cyber security professionals use it because:
+
+- It's faster than clicking around
+- It gives more control
+- Many security tools only run in the terminal
+
+
+|  |  |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| cd | Where Am I? |
+| dir | What's Around Me? |
+| dir /a | Are There Hidden Files? |
+| cd folder_name | Move Around |
+| dir /s | Find A File On The Disk - /s looks through subfolders |
+| type | Prints Content Of Files |
+| whoami | Who Am I Logged In As? |
+| hostname | What Is The Name Of The Computer? |
+| systeminfo | What Version Of Windwes Is This? |
+| ipconfig | How Is The Machine Connected To The Network? (Look for an IPv4 Address, A Default Gateway) |
+|  |  |
+|  |  |
+
 
 **Operating System Security**
