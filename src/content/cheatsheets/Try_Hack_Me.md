@@ -81,6 +81,87 @@ GET
 
 **Visualisation Basics**
 
+Before the concept of virtualization, the rule of thumb in IT was: **“One server = one application.”**
+
+The problems were obvious:
+
+- **High cost**: Buying multiple physical servers is expensive, not just the hardware, but also electricity, cooling, maintenance, and data center space.
+- **Low utilization**: Most applications don’t use the server’s full capacity. Many servers stayed at 5–20% usage, wasting ++CPU++, memory, and storage resources.
+- **Slow deployment**: Setting up new physical servers could take days or weeks.
+- **Hard to scale**: If an application suddenly needed more resources, you often had to buy yet another server.
+
+**Analogy For Virtualisation**
+
+
+|  |  |
+| -------------------- | -------------------------------------------------------------- |
+| The building | The physical server |
+| The apartments | Lab machines |
+| The tenants | Applications or operating systems |
+| The building manager | The hypervisor (the software that divides the building safely) |
+
+
+> Each virtual computer, known as a Lab Machine (VM), **acts as an independent system** with its own operating system, apps, and settings, even though they all share the same physical hardware underneath.
+
+***Hypervisor***
+
+> A **hypervisor** is the core technology behind virtualization. It's the software that creates and manages lab machines.
+
+It is a special piece of software that:
+
+- Divides a physical computer into multiple virtual ones.
+- Gives each lab machine its own share of ++CPU++, memory, and storage.
+- Keeps everything isolated and safe.
+- Manages the lifecycle of lab machines (start, stop, pause, clone, delete).
+
+Hypervisors have two main types of implementation, each of which is used for specific scenarios, from home labs to large data centers:
+
+- **Type 1** hypervisors run directly on the physical hardware, making them fast, efficient, and ideal for servers and professional environments.
+- **Type 2** hypervisors run within an existing operating system, making them easier to install and ideal for learning, testing, or small setups.
+
+
+|  |  |  |
+| -------------------- | ---------- | ---------- |
+| **Use Case** | **Type 1** | **Type 2** |
+| Test Malicious Files |  | X |
+| Production Server | X |  |
+| Database Server | X |  |
+| Software Testing |  | X |
+| Kali ++Linux++ |  | X |
+| Data Center | X |  |
+
+
+***Lab Manchines***
+
+A **Lab Machine (++VM++)** is a virtual computer created by the hypervisor.  
+Even though it’s virtual, it behaves as a real machine:
+
+- It has its own virtual CPU, ++RAM++, storage, and network.
+- It can run any operating system (Windows, Linux, etc.).
+- It’s completely isolated from other VMs. This means that if one VM breaks, the others continue to work.
+
+You can deploy VMs on your own computer using tools such as ++**Oracle VirtualBox and VMware Workstation.**++ This type of software acts as a type 2 hypervisor and lets you run multiple operating systems, such as Windows, Linux, and macOS.
+
+Since you have learned what a hypervisor and VM are, let's take some examples where you might need them:
+
+- You need to work on a different ++OS++ like Kali Linux, but you can't buy another whole system, so you install a hypervisor and run a Kali Linux VM on it.
+- You want to test whether a file is malicious, so you set up an isolated lab machine to protect your main computer from being infected.
+
+***Containers***
+
+> A ++**container**++ is a lightweight, isolated environment that runs a single application and all the necessary components to support it. Instead of bringing a whole separate operating system, a container borrows the core of the existing system by running on the kernel, which is the part of an operating system that communicates with the hardware and manages resources such as memory and running programs.
+
+Because containers share this kernel, they start quickly and use fewer resources than full lab machines, but it also means they must match the host system’s type. For example, you can’t run a Windows container on a Linux machine.
+
+Containers behave like small, self-contained spaces because:
+
+- They package the application and its dependencies (libraries, tools, versions).
+- They share the host’s operating system, so they start almost instantly.
+- They remain isolated from each other, so a misbehaving container doesn’t affect the others.
+- They can run consistently on any machine, making them perfect for development, testing, and scalable deployments.
+
+The easiest way to deploy containers in a VM is using Docker.
+
 **Cloud Computing Fundamentals**
 
 ## **Section 3: Operating Systems Basics**
