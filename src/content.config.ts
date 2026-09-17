@@ -62,4 +62,14 @@ const projects = defineCollection({
   schema: projectSchema,
 });
 
-export const collections = { cheatsheets, explainers, notes, projects };
+const labs = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/labs' }),
+  schema: z.object({
+    ...base,
+    pubDate: z.coerce.date(),
+    series: z.enum(['powershell', 'linux']),
+    lab: z.string().optional(),
+  }),
+});
+
+export const collections = { cheatsheets, explainers, notes, projects, labs };

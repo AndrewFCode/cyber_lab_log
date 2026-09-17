@@ -223,6 +223,60 @@ content:
         label: Body
         type: rich-text
 
+  - name: labs
+    label: Labs
+    type: collection
+    path: src/content/labs
+    format: yaml-frontmatter
+    filename:
+      template: "{title}.md"
+      field: create
+    view:
+      fields: [title, series, lab, pubDate, draft]
+      primary: title
+      sort: [pubDate, title]
+      default:
+        sort: pubDate
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: string
+      - name: series
+        label: Series
+        type: select
+        required: true
+        options:
+          values:
+            - powershell
+            - linux
+        description: powershell = Learn Windows PowerShell; linux = The Linux Command Line
+      - name: lab
+        label: Lab / activity
+        type: string
+        description: e.g. Lab 3 or Playground Ch. 4
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+      - name: pubDate
+        label: Published
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: body
+        label: Body
+        type: rich-text
+
 settings:
   commit:
     identity: user
