@@ -250,11 +250,42 @@ Account Types:
 Two Main Areas:
 
 
-|  |  |  |
-| --- | --- | --- |
-|  |  |  |
-|  |  |  |
+|  |  |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| **Desktop** | The main workspace where files, folders, and shortcuts live |
+| **Taskbar** | A control strip that provides access to applications, system tools, settings, and notifications |
 
+
+*Core Components:* 
+
+
+|  |  |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Desktop icons** | Shortcuts to items like the Recycle Bin, folders, and frequently used applications. It is fully customizable |
+| **Start menu** | Primary way to access applications, settings, and power options. From here, you can log out, restart, or power off your machine |
+| **Search** | Quickly find applications, files, folders, and system settings by using keywords |
+| **Task View** | Allows you to see all currently open windows and quickly switch between them |
+| **Pinned Applications and Folders** | Your most used applications and folders can be pinned here |
+| **Network and Audio settings** | This section can be customized to suit your needs |
+| **Date and Time** | Opens up to a full calendar. Date and time settings can be accessed here, too |
+| **Notifications** | Displays computer or application notifications. Network and other settings can also be accessed |
+
+
+*Built In Tools & Apps:*
+
+> Windows ships with many useful built-in tools and applications that you will use daily
+
+*Task Manager:*
+
+> **Task Manager** is a built-in Windows tool that allows you to monitor what is happening on your system in real time. It allows you to view running applications and background processes, as well as check system performance, including CPU and memory usage
+
+Task Manager has five tabs to help you keep track of your system.
+
+1. **Processes**: Currently running apps and background processes, and their resource usage
+2. **Performance**: Graphs and statistics for system resources such as CPU, memory, and network
+3. **Users**: Currently logged-in users and used resources 
+4. **Details**: A more technical view of running processes, including process IDs (PIDs)
+5. **Services**: Windows services and their current status (running or stopped)
 
 **Linux CLI Basics**
 
