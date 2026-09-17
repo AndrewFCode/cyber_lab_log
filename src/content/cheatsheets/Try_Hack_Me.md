@@ -219,9 +219,42 @@ Cloud Benefits & Characteristics:
 
 > These companies use the cloud because it lets them scale easily, reduce costs, stay reliable, and **focus on improving their products instead of managing hardware**.
 
+**Basic Cloud Terminology**
+
+
+|  |  |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **EC2 (Virtual Computer / Server)** | EC2 represents a virtual computer in the cloud. Just like a real computer, it has a CPU and memory (RAM) and can run applications. Whenever you add an EC2 instance, you are adding a computer to your environment. |
+| **Instance Type (for example: t2, t3, m5)** | Instance types describe how powerful the virtual computer is. Some have more CPU and RAM and are therefore more expensive. You choose the Instance Type based on your needs, knowing that:- Bigger instances = more power + higher cost- Minor instances = less power + lower cost |
+
+
 ## **Section 3: Operating Systems Basics**
 
 **Windows Basics**
+
+***Logging in & Auth:***
+
+> Before gaining access to the Windows Desktop, you must authenticate (prove your identity) to the system.
+
+Account Types:
+
+
+| **Guest** | A restricted account intended for temporary access, with minimal permissions and no ability to change system settings |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Standard** | A user account for everyday tasks, such as running applications and changing personal settings, without access to system-wide changes |
+| **Administrator** | A privileged account with full control over the system, including software installation, configuration changes, and user management |
+
+
+***Windows Desktop:***
+
+Two Main Areas:
+
+
+|  |  |  |
+| --- | --- | --- |
+|  |  |  |
+|  |  |  |
+
 
 **Linux CLI Basics**
 
