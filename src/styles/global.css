@@ -152,6 +152,15 @@ html.dark .theme-toggle .icon-moon {
   font-size: 0.875rem;
 }
 
+.prose :where(img):not(:where(.not-prose *)) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.25rem;
+  background-color: var(--chip);
+}
+
 .prose-wrapper :where(.prose),
 .prose {
   max-width: var(--content-width);
