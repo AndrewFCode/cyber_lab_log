@@ -24,8 +24,6 @@ pinned: false
 | **Graphics Card (GPU)** | Creates the visuals shown on the screen and processes images, video, and 3D graphics. | PCIe x16 slot on the motherboard |
 
 
-
-
 **Computer Types**
 
 
@@ -48,9 +46,17 @@ pinned: false
 
 > **IoT vs Embedded:** Both can be small and single-purpose. The difference is connectivity. IoT devices connect to a network to report data or receive commands. Embedded computers might not connect to anything; they do their job inside the machine, often for years without anyone knowing they exist.
 
-
-
 **Client Server**
+
+
+|  |  |
+| ----------------------- | --- |
+| Service, Client, Server |  |
+| Request & Response |  |
+| Protocol |  |
+| Port |  |
+| DNS |  |
+
 
 **Visualisation Basics**
 
