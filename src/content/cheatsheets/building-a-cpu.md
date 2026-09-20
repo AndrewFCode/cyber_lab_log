@@ -11,6 +11,10 @@ draft: false
 updated: 2026-09-17
 category: code-book
 pinned: false
+kind: resource
+resource: "Code (2nd ed.)"
+module: "Chapters 20–22"
+moduleOrder: 7
 ---
 
 *Covers Code (2nd ed.) chapters 20–22.*

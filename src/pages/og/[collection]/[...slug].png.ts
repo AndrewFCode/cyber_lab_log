@@ -1,5 +1,5 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
-import { COLLECTION_LABELS, getLabs, getProjects, getWriting } from '../../../lib/collections';
+import { entryLabel, getLabs, getProjects, getWriting } from '../../../lib/collections';
 import { renderOgImage } from '../../../lib/og';
 
 export const getStaticPaths = (async () => {
@@ -8,7 +8,7 @@ export const getStaticPaths = (async () => {
     params: { collection: entry.collection, slug: entry.id },
     props: {
       title: entry.data.title,
-      label: COLLECTION_LABELS[entry.collection],
+      label: entryLabel(entry),
     },
   }));
 }) satisfies GetStaticPaths;

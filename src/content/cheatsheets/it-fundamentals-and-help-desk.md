@@ -9,6 +9,10 @@ draft: false
 updated: 2026-09-17
 category: help-desk
 pinned: false
+kind: resource
+resource: "IT Fundamentals"
+module: "Help desk"
+moduleOrder: 1
 ---
 
 > **In one line:** the IT department deploys, administers and supports the technology a business runs on — and help desk is the front door to it.

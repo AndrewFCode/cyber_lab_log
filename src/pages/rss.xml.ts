@@ -1,6 +1,6 @@
 import type { APIContext } from 'astro';
 import rss from '@astrojs/rss';
-import { COLLECTION_LABELS, entryDate, getWriting, withBase } from '../lib/collections';
+import { entryDate, entryLabel, getWriting, withBase } from '../lib/collections';
 
 export async function GET(context: APIContext) {
   const site = context.site;
@@ -13,7 +13,7 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'Cyber Journey',
-    description: 'Cheat sheets, explainers and notes — a personal reference pile.',
+    description: 'Ultimate and resource cheat sheets, explainers and notes — a personal reference pile.',
     site: feedUrl,
     trailingSlash: false,
     items: entries
@@ -24,7 +24,7 @@ export async function GET(context: APIContext) {
         description: entry.data.description ?? '',
         pubDate: entryDate(entry),
         link: `${entry.collection}/${entry.id}`,
-        categories: [COLLECTION_LABELS[entry.collection], ...entry.data.tags],
+        categories: [entryLabel(entry), ...entry.data.tags],
       })),
   });
 }

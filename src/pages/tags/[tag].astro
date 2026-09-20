@@ -3,9 +3,9 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import {
-  COLLECTION_LABELS,
   entryDate,
   entryHref,
+  entryLabel,
   getAllTags,
   withBase,
 } from '../../lib/collections';
@@ -47,7 +47,7 @@ const { label, entries } = Astro.props;
           }
           dateLabel=""
           date={entryDate(entry)}
-          label={COLLECTION_LABELS[entry.collection]}
+          label={entryLabel(entry)}
           draft={entry.data.draft}
         />
       ))

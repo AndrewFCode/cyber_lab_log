@@ -10,6 +10,10 @@ draft: false
 updated: 2026-09-17
 category: hardware
 pinned: false
+kind: resource
+resource: "PC Hardware & Repair"
+module: "Course"
+moduleOrder: 1
 ---
 
 > **In one line:** know what each component does, break the system down to the lowest testable part, and test cheapest-and-easiest first.

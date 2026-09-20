@@ -10,6 +10,10 @@ draft: false
 updated: 2026-09-17
 category: computing
 pinned: false
+kind: resource
+resource: "Computing fundamentals"
+module: "Overview"
+moduleOrder: 1
 ---
 
 > **In one line:** everything a computer does is millions of electrical switches being on (1) or off (0) — every layer above that is a convention for interpreting those switches.

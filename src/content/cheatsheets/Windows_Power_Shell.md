@@ -5,6 +5,10 @@ draft: false
 updated: 2026-09-14
 category: windows power shell
 pinned: false
+kind: resource
+resource: "Learn Windows PowerShell"
+module: "Commands"
+moduleOrder: 1
 ---
 **Week 1: Ending 13 September**
 

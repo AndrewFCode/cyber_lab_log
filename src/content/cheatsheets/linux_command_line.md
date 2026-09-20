@@ -5,6 +5,10 @@ draft: false
 updated: 2026-09-15
 category: Linux
 pinned: false
+kind: resource
+resource: "The Linux Command Line"
+module: "Commands"
+moduleOrder: 1
 ---
 Linux Command Line is one of the more interesting topics I have engaged with so far. I think it is because I sort of understand the basics from previous dipping of interest into the area.   
 

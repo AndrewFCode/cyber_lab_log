@@ -11,6 +11,10 @@ draft: false
 updated: 2026-09-17
 category: CODE
 pinned: false
+kind: resource
+resource: "Code (2nd ed.)"
+module: "Chapters 11–13"
+moduleOrder: 4
 ---
 # Bits, Bytes & Character Encoding
 

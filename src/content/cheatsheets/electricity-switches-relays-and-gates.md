@@ -11,6 +11,10 @@ draft: false
 updated: 2026-09-17
 category: code-book
 pinned: false
+kind: resource
+resource: "Code (2nd ed.)"
+module: "Chapters 4–8"
+moduleOrder: 2
 ---
 
 *Covers Code (2nd ed.) chapters 4–8.*

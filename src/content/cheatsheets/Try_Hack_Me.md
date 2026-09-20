@@ -5,6 +5,10 @@ draft: false
 updated: 2026-09-17
 category: tryhackme
 pinned: false
+kind: resource
+resource: "TryHackMe"
+module: "Pre-Security"
+moduleOrder: 1
 ---
 ## **Section 2: Computer Fundamentals**
 

@@ -3,11 +3,12 @@ title: The Linux Command Line — Playground
 description: Playground activities from The Linux Command Line (Shotts). Commands plus a screenshot of the terminal.
 series: linux
 lab: Playground
+example: Playground
 tags: [linux, command-line, labs]
 pubDate: 2026-09-17
 ---
 
-Walkthroughs of the **playground activities** in *The Linux Command Line*. Each heading is what you typed; the screenshot is what the terminal showed.
+Walkthroughs of the **playground activities** in *The Linux Command Line*. Commands in a code block; the screenshot is what the terminal showed. The matching example project (code only) is linked at the top of this page when that file is published.
 
 ## How to add a screenshot
 

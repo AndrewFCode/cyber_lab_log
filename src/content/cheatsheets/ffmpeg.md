@@ -9,6 +9,10 @@ draft: false
 updated: 2026-09-05
 category: media
 pinned: false
+kind: resource
+resource: "FFmpeg"
+module: "Commands"
+moduleOrder: 1
 ---
 FFmpeg's flag order matters: options before `-i` apply to the input, options after apply to the
 output. Most of my mistakes with it come from forgetting that.

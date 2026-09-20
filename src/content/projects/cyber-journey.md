@@ -13,9 +13,11 @@ pubDate: 2026-09-14
 
 This repo is both the site and the exercise. Each collection is a different kind of note-taking:
 
-- **Cheat sheets** are the commands I forget under pressure.
+- **Ultimate Cheatsheet** is the one living sheet, hyperlinked out.
+- **Resource Cheatsheets** are the broken-down notes, one tab per book or course, modules and chapters inside.
 - **Explainers** are the "how X actually works" pieces I could not have reproduced from memory.
 - **Notes** are short and allowed to stay unfinished.
-- **Projects** are the things I am building, and *why*, including the prompt when an agent wrote the first draft.
+- **Example Projects** are the book exercises — the code only.
+- **Full Picture Projects** are those same exercises with screenshots, linked back to the code.
 
 The name on the site is Cyber Journey. The GitHub repo is still `cyber_lab_log`.

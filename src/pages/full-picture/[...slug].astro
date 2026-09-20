@@ -1,0 +1,67 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import {
+  getLabs,
+  getProjects,
+  LAB_SERIES_LABELS,
+  neighbors,
+  readingTime,
+  withBase,
+} from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const labs = await getLabs();
+  const projects = await getProjects();
+  return labs.map((entry) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      example: entry.data.example
+        ? projects.find((project) => project.id === entry.data.example)
+        : undefined,
+      ...neighbors(labs, entry.id, (item) => `/full-picture/${item.id}`),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry, example, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const seriesLabel = LAB_SERIES_LABELS[entry.data.series];
+const meta = [seriesLabel, entry.data.lab].filter((item): item is string => Boolean(item));
+---
+
+<ContentLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  label="Full Picture"
+  collection="labs"
+  backHref={withBase('/full-picture')}
+  backLabel="Full Picture Projects"
+  pubDate={entry.data.pubDate}
+  draft={entry.data.draft}
+  tags={entry.data.tags}
+  readingTime={readingTime(entry.body)}
+  headings={headings}
+  prev={prev}
+  next={next}
+  meta={meta}
+  slug={entry.id}
+>
+  {
+    example && (
+      <section class="not-prose mb-10 rounded border border-line px-4 py-4">
+        <h2 class="font-mono text-xs tracking-wide text-faint uppercase">Example project (code)</h2>
+        <p class="mt-2 text-muted">
+          The commands live on{' '}
+          <a href={withBase(`/example-projects/${example.id}`)} class="no-underline hover:underline">
+            {example.data.title}
+          </a>
+          . This page is the full picture — screenshots of the results.
+        </p>
+      </section>
+    )
+  }
+  <Content />
+</ContentLayout>

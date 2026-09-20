@@ -5,6 +5,10 @@ draft: false
 updated: 2026-09-14
 category: resources
 pinned: false
+kind: resource
+resource: "Reading list"
+module: "Month by month"
+moduleOrder: 1
 ---
 **Month 1: 24 August - 20 September**
 

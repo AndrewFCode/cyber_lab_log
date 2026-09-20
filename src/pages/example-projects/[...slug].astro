@@ -1,0 +1,73 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import { getProjects, neighbors, readingTime, withBase } from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((entry) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      ...neighbors(projects, entry.id, (item) => `/example-projects/${item.id}`),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const { why, origin, prompt, repo, status } = entry.data;
+---
+
+<ContentLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  label="Example Project"
+  collection="projects"
+  backHref={withBase('/example-projects')}
+  backLabel="Example Projects"
+  pubDate={entry.data.pubDate}
+  draft={entry.data.draft}
+  tags={entry.data.tags}
+  readingTime={readingTime(entry.body)}
+  headings={headings}
+  prev={prev}
+  next={next}
+  meta={[
+    { active: 'Active', paused: 'Paused', shipped: 'Shipped', archived: 'Archived' }[status],
+    origin === 'ai' ? 'AI-generated' : 'Handwritten',
+  ]}
+  slug={entry.id}
+>
+  <section class="not-prose mb-10 rounded border border-line px-4 py-4">
+    <h2 class="font-mono text-xs tracking-wide text-faint uppercase">Why this exists</h2>
+    <p class="mt-2 text-muted">{why}</p>
+    {
+      repo && (
+        <p class="mt-3 text-sm">
+          <a href={repo} class="no-underline hover:underline">
+            Repository
+          </a>
+        </p>
+      )
+    }
+    <p class="mt-3 text-sm">
+      <a href={withBase('/full-picture')} class="no-underline hover:underline">
+        Full Picture Projects
+      </a>
+      — screenshots of results for the matching exercise.
+    </p>
+  </section>
+
+  {
+    origin === 'ai' && prompt && (
+      <section class="not-prose mb-10">
+        <h2 class="font-mono text-xs tracking-wide text-faint uppercase">Initial command</h2>
+        <pre class="mt-3 overflow-x-auto rounded border border-line bg-chip p-4 font-mono text-sm text-ink whitespace-pre-wrap">{prompt.trim()}</pre>
+      </section>
+    )
+  }
+
+  <Content />
+</ContentLayout>

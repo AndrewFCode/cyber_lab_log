@@ -2,13 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../lib/collections';
 
-// Placeholder home page. The mixed recent-items feed and "currently reading"
-// strip are a later phase; this exists so `/` is navigable now.
 const sections = [
   {
     href: withBase('/cheatsheets'),
-    title: 'Cheat sheets',
-    description: 'Commands and syntax I keep forgetting. Living documents.',
+    title: 'Ultimate Cheatsheet',
+    description: 'One living sheet, added to as I go, hyperlinked into the detailed resource notes.',
+  },
+  {
+    href: withBase('/resources'),
+    title: 'Resource Cheatsheets',
+    description: 'Each book or course has its own tab; each tab is modules and chapters, broken down.',
   },
   {
     href: withBase('/explainers'),
@@ -21,21 +24,21 @@ const sections = [
     description: 'Short thoughts and opinions, written down before they evaporate.',
   },
   {
-    href: withBase('/projects'),
-    title: 'Projects',
-    description: 'What I am building, why it exists, and the prompt when an agent started it.',
+    href: withBase('/example-projects'),
+    title: 'Example Projects',
+    description: 'Book example projects — the code only.',
   },
   {
-    href: withBase('/labs'),
-    title: 'Labs',
-    description: 'PowerShell Learn labs and Linux Command Line playgrounds, with screenshots.',
+    href: withBase('/full-picture'),
+    title: 'Full Picture Projects',
+    description: 'The same exercises with screenshots of what happened, linked back to the code.',
   },
 ];
 ---
 
 <BaseLayout
   title="Cyber Journey"
-  description="Cheat sheets, explainers, notes, projects and labs — a personal reference pile."
+  description="Ultimate and resource cheat sheets, example projects, and full-picture walkthroughs — a personal reference pile."
 >
   <p class="max-w-[var(--content-width)] text-lg text-muted">
     A personal reference pile: things I looked up twice, things I had to explain to understand, and

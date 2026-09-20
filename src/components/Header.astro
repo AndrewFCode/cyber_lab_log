@@ -3,11 +3,12 @@ import ThemeToggle from './ThemeToggle.astro';
 import { withBase } from '../lib/collections';
 
 const links = [
-  { href: withBase('/cheatsheets'), label: 'Cheat sheets' },
+  { href: withBase('/cheatsheets'), label: 'Ultimate Cheatsheet' },
+  { href: withBase('/resources'), label: 'Resource Cheatsheets' },
   { href: withBase('/explainers'), label: 'Explainers' },
   { href: withBase('/notes'), label: 'Notes' },
-  { href: withBase('/projects'), label: 'Projects' },
-  { href: withBase('/labs'), label: 'Labs' },
+  { href: withBase('/example-projects'), label: 'Example Projects' },
+  { href: withBase('/full-picture'), label: 'Full Picture' },
   { href: withBase('/tags'), label: 'Tags' },
   { href: withBase('/github'), label: 'GitHub' },
   { href: withBase('/search'), label: 'Search' },
@@ -25,7 +26,7 @@ const isActive = (href: string) => {
     <a href={withBase('/')} class="font-mono text-sm font-semibold tracking-tight text-ink no-underline">
       cyber&nbsp;journey
     </a>
-    <nav aria-label="Sections" class="flex gap-5 text-sm">
+    <nav aria-label="Sections" class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
       {
         links.map((link) => (
           <a

@@ -11,12 +11,26 @@ const base = {
 
 const cheatsheets = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/cheatsheets' }),
-  schema: z.object({
-    ...base,
-    updated: z.coerce.date(),
-    category: z.string().optional(), // e.g. "git", "sql", "ffmpeg"
-    pinned: z.boolean().default(false),
-  }),
+  schema: z
+    .object({
+      ...base,
+      updated: z.coerce.date(),
+      category: z.string().optional(), // e.g. "git", "sql", "ffmpeg"
+      pinned: z.boolean().default(false),
+      kind: z.enum(['ultimate', 'resource']).default('resource'),
+      resource: z.string().optional(), // book or course tab, e.g. "Code (2nd ed.)"
+      module: z.string().optional(), // chapter / module label inside that resource
+      moduleOrder: z.number().optional(),
+    })
+    .superRefine((value, ctx) => {
+      if (value.kind === 'resource' && !value.resource?.trim()) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Resource cheat sheets need `resource` (the book or course they belong to).',
+          path: ['resource'],
+        });
+      }
+    }),
 });
 
 const explainers = defineCollection({
@@ -69,6 +83,7 @@ const labs = defineCollection({
     pubDate: z.coerce.date(),
     series: z.enum(['powershell', 'linux']),
     lab: z.string().optional(),
+    example: z.string().optional(), // id of the matching example project (code only)
   }),
 });
 

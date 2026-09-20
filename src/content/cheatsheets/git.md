@@ -9,6 +9,10 @@ draft: false
 updated: 2026-09-12
 category: git
 pinned: true
+kind: resource
+resource: "Git"
+module: "Recovery"
+moduleOrder: 1
 ---
 Everything here is about getting *out* of a state, not into one. The everyday commands I
 remember; these are the ones I look up every single time.
