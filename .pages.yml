@@ -15,7 +15,7 @@ content:
       template: "{title}.md"
       field: create
     view:
-      fields: [title, kind, resource, module, updated, pinned, draft]
+      fields: [title, kind, resource, module, unit, updated, pinned, draft]
       primary: title
       sort: [updated, title]
       default:
@@ -55,15 +55,19 @@ content:
       - name: resource
         label: Resource
         type: string
-        description: Book or course tab, e.g. Code (2nd ed.). Required when kind is resource.
+        description: Tab key for the URL, e.g. code, tcm-help-desk, tryhackme, a-plus-core-1, linux, powershell. Required when kind is resource.
       - name: module
         label: Module / chapter
         type: string
-        description: Tab label inside the resource, e.g. Chapters 1–3
+        description: Tab label inside the resource, e.g. Ch. 1
       - name: moduleOrder
         label: Module order
         type: number
         description: Lower numbers appear first in the resource tab
+      - name: unit
+        label: Unit
+        type: number
+        description: Chapter or section number used in /resources/{key}/{unit}
       - name: category
         label: Category
         type: string
@@ -132,7 +136,7 @@ content:
         type: rich-text
 
   - name: notes
-    label: Notes
+    label: Lesson Notes
     type: collection
     path: src/content/notes
     format: yaml-frontmatter

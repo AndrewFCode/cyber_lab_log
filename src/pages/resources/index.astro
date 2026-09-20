@@ -5,6 +5,7 @@ import PostCard from '../../components/PostCard.astro';
 import {
   getResourceCheatsheets,
   groupResourceCheatsheets,
+  resourceSheetPath,
   withBase,
 } from '../../lib/collections';
 
@@ -46,7 +47,7 @@ const groups = groupResourceCheatsheets(await getResourceCheatsheets());
             </h2>
             {group.entries.map((entry) => (
               <PostCard
-                href={withBase(`/resources/${group.slug}/${entry.id}`)}
+                href={withBase(resourceSheetPath(entry, group))}
                 title={entry.data.title}
                 description={entry.data.description}
                 dateLabel="Updated "
