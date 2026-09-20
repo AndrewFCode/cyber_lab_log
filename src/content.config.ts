@@ -18,9 +18,10 @@ const cheatsheets = defineCollection({
       category: z.string().optional(), // e.g. "git", "sql", "ffmpeg"
       pinned: z.boolean().default(false),
       kind: z.enum(['ultimate', 'resource']).default('resource'),
-      resource: z.string().optional(), // book or course tab, e.g. "Code (2nd ed.)"
+      resource: z.string().optional(), // tab key, e.g. code, tcm-help-desk, tryhackme
       module: z.string().optional(), // chapter / module label inside that resource
       moduleOrder: z.number().optional(),
+      unit: z.number().int().optional(), // book chapter / course section for /resources/{key}/{unit}
     })
     .superRefine((value, ctx) => {
       if (value.kind === 'resource' && !value.resource?.trim()) {

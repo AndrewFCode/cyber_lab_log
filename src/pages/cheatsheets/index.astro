@@ -5,6 +5,7 @@ import {
   getResourceCheatsheets,
   getUltimateCheatsheet,
   groupResourceCheatsheets,
+  resourceSheetPath,
   withBase,
 } from '../../lib/collections';
 
@@ -69,8 +70,8 @@ const groups = groupResourceCheatsheets(await getResourceCheatsheets());
               <ul class="mt-2 space-y-1">
                 {group.entries.map((entry) => (
                   <li>
-                    <a href={withBase(`/resources/${group.slug}/${entry.id}`)}>
-                      {entry.data.module ? `${entry.data.module}: ${entry.data.title}` : entry.data.title}
+                    <a href={withBase(resourceSheetPath(entry, group))}>
+                      {entry.data.title}
                     </a>
                   </li>
                 ))}

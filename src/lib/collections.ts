@@ -14,19 +14,29 @@ export const LAB_SERIES_LABELS = {
   linux: 'The Linux Command Line',
 } as const;
 
-/** Preferred tab order on Resource Cheatsheets. Unknown names sort after these. */
+/** Preferred tab order on Resource Cheatsheets. Unknown keys sort after these. */
 export const RESOURCE_ORDER = [
-  'Code (2nd ed.)',
-  'Computing fundamentals',
-  'PC Hardware & Repair',
-  'IT Fundamentals',
-  'TryHackMe',
-  'The Linux Command Line',
-  'Learn Windows PowerShell',
-  'Git',
-  'FFmpeg',
-  'Reading list',
+  'code',
+  'tcm-help-desk',
+  'tryhackme',
+  'a-plus-core-1',
+  'linux',
+  'powershell',
 ];
+
+/** Display names for resource tab keys stored in frontmatter. */
+export const RESOURCE_LABELS: Record<string, string> = {
+  code: 'Code (2nd ed.)',
+  'tcm-help-desk': 'Help Desk',
+  tryhackme: 'TryHackMe',
+  'a-plus-core-1': 'A+ Core 1',
+  linux: 'The Linux Command Line',
+  powershell: 'Learn Windows PowerShell',
+};
+
+export function resourceLabel(resource: string) {
+  return RESOURCE_LABELS[resource] ?? resource;
+}
 
 export interface Neighbor {
   href: string;
@@ -60,7 +70,7 @@ const COLLECTION_PATH: Record<SiteCollection, string> = {
 export const COLLECTION_LABELS: Record<SiteCollection, string> = {
   cheatsheets: 'Cheat sheet',
   explainers: 'Explainer',
-  notes: 'Note',
+  notes: 'Lesson Note',
   projects: 'Example Project',
   labs: 'Full Picture',
 };
@@ -76,11 +86,26 @@ export function resourceSlug(resource: string) {
   return tagSlug(resource);
 }
 
-/** Site-root path (no `base` prefix) so `neighbors()` can wrap it with `withBase`. */
+export function sheetUnit(entry: CheatsheetEntry) {
+  return typeof entry.data.unit === 'number' ? entry.data.unit : undefined;
+}
+
+/** Canonical unique URL. Unit hubs (one sheet per unit) also exist without `id`. */
 export function cheatsheetPath(entry: CheatsheetEntry) {
   if (entry.data.kind === 'ultimate') return '/cheatsheets';
   const resource = resourceSlug(entry.data.resource ?? entry.data.category ?? 'uncategorised');
+  const unit = sheetUnit(entry);
+  if (unit != null) return `/resources/${resource}/${unit}/${entry.id}`;
   return `/resources/${resource}/${entry.id}`;
+}
+
+/** Prefers `/resources/{key}/{unit}` when that unit has a single sheet. */
+export function resourceSheetPath(entry: CheatsheetEntry, group: ResourceGroup) {
+  const unit = sheetUnit(entry);
+  if (unit == null) return `/resources/${group.slug}/${entry.id}`;
+  const sameUnit = group.entries.filter((item) => sheetUnit(item) === unit);
+  if (sameUnit.length <= 1) return `/resources/${group.slug}/${unit}`;
+  return `/resources/${group.slug}/${unit}/${entry.id}`;
 }
 
 export function cheatsheetHref(entry: CheatsheetEntry) {
@@ -151,9 +176,9 @@ export function groupResourceCheatsheets(entries: CheatsheetEntry[]): ResourceGr
       const byPreferred = orderIndex(a[0]) - orderIndex(b[0]);
       return byPreferred !== 0 ? byPreferred : a[0].localeCompare(b[0]);
     })
-    .map(([resource, sheets]) => ({
-      resource,
-      slug: resourceSlug(resource),
+    .map(([key, sheets]) => ({
+      resource: resourceLabel(key),
+      slug: resourceSlug(key),
       entries: sheets.slice().sort((a, b) => {
         const order = (a.data.moduleOrder ?? 0) - (b.data.moduleOrder ?? 0);
         return order !== 0 ? order : a.data.title.localeCompare(b.data.title);

@@ -10,6 +10,7 @@ import {
   groupResourceCheatsheets,
   neighbors,
   readingTime,
+  resourceSheetPath,
   withBase,
   type CheatsheetEntry,
   type ResourceGroup,
@@ -19,22 +20,70 @@ export const getStaticPaths = (async () => {
   const groups = groupResourceCheatsheets(await getResourceCheatsheets());
 
   return groups.flatMap((group) => {
-    const hub = {
-      params: { slug: group.slug },
-      props: { group, groups, entry: undefined as CheatsheetEntry | undefined },
-    };
+    const hrefFor = (item: CheatsheetEntry) => resourceSheetPath(item, group);
 
-    const sheets = group.entries.map((entry) => ({
-      params: { slug: `${group.slug}/${entry.id}` },
+    const paths: {
+      params: { slug: string };
       props: {
-        group,
-        groups,
-        entry,
-        ...neighbors(group.entries, entry.id, (item) => `/resources/${group.slug}/${item.id}`),
+        group: ResourceGroup;
+        groups: ResourceGroup[];
+        entry?: CheatsheetEntry;
+        unit?: number;
+        unitEntries?: CheatsheetEntry[];
+        prev?: { href: string; title: string };
+        next?: { href: string; title: string };
+      };
+    }[] = [
+      {
+        params: { slug: group.slug },
+        props: { group, groups },
       },
-    }));
+    ];
 
-    return [hub, ...sheets];
+    const byUnit = new Map<number, CheatsheetEntry[]>();
+    const noUnit: CheatsheetEntry[] = [];
+
+    for (const entry of group.entries) {
+      const unit = entry.data.unit;
+      if (typeof unit === 'number') {
+        const list = byUnit.get(unit) ?? [];
+        list.push(entry);
+        byUnit.set(unit, list);
+      } else {
+        noUnit.push(entry);
+      }
+    }
+
+    for (const [unit, sheets] of byUnit) {
+      if (sheets.length === 1) {
+        const entry = sheets[0]!;
+        paths.push({
+          params: { slug: `${group.slug}/${unit}` },
+          props: { group, groups, entry, unit, ...neighbors(group.entries, entry.id, hrefFor) },
+        });
+      } else {
+        paths.push({
+          params: { slug: `${group.slug}/${unit}` },
+          props: { group, groups, unit, unitEntries: sheets },
+        });
+      }
+
+      for (const entry of sheets) {
+        paths.push({
+          params: { slug: `${group.slug}/${unit}/${entry.id}` },
+          props: { group, groups, entry, unit, ...neighbors(group.entries, entry.id, hrefFor) },
+        });
+      }
+    }
+
+    for (const entry of noUnit) {
+      paths.push({
+        params: { slug: `${group.slug}/${entry.id}` },
+        props: { group, groups, entry, ...neighbors(group.entries, entry.id, hrefFor) },
+      });
+    }
+
+    return paths;
   });
 }) satisfies GetStaticPaths;
 
@@ -42,11 +91,13 @@ interface Props {
   group: ResourceGroup;
   groups: ResourceGroup[];
   entry?: CheatsheetEntry;
+  unit?: number;
+  unitEntries?: CheatsheetEntry[];
   prev?: { href: string; title: string };
   next?: { href: string; title: string };
 }
 
-const { group, groups, entry, prev, next } = Astro.props;
+const { group, groups, entry, unit, unitEntries, prev, next } = Astro.props;
 
 const resourceTabs = groups.map((item) => ({
   href: withBase(`/resources/${item.slug}`),
@@ -55,12 +106,14 @@ const resourceTabs = groups.map((item) => ({
 }));
 
 const moduleTabs = group.entries.map((item) => ({
-  href: withBase(`/resources/${group.slug}/${item.id}`),
+  href: withBase(resourceSheetPath(item, group)),
   label: item.data.module ?? item.data.title,
   current: entry?.id === item.id,
 }));
 
 const rendered = entry ? await render(entry) : null;
+const listed = unitEntries ?? (entry ? undefined : group.entries);
+const listTitle = unitEntries ? `${group.resource} · ${unit}` : group.resource;
 ---
 
 {
@@ -87,7 +140,7 @@ const rendered = entry ? await render(entry) : null;
     </ContentLayout>
   ) : (
     <BaseLayout
-      title={group.resource}
+      title={listTitle}
       description={`Modules and chapters from ${group.resource}.`}
     >
       <header class="mb-8 max-w-[var(--content-width)]">
@@ -96,9 +149,13 @@ const rendered = entry ? await render(entry) : null;
             &larr; Resource Cheatsheets
           </a>
         </nav>
-        <h1 class="text-3xl font-semibold tracking-tight text-ink">{group.resource}</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-ink">{listTitle}</h1>
         <p class="mt-3 text-lg text-muted">
-          Each tab is a module or chapter — the broken-down cheat sheet for this resource.
+          {
+            unitEntries
+              ? 'Sheets in this section. Open one for the full notes.'
+              : 'Each tab is a module or chapter — the broken-down cheat sheet for this resource.'
+          }
         </p>
       </header>
 
@@ -106,9 +163,9 @@ const rendered = entry ? await render(entry) : null;
         <ResourceTabs resources={resourceTabs} modules={moduleTabs} />
       </div>
 
-      {group.entries.map((item) => (
+      {listed?.map((item) => (
         <PostCard
-          href={withBase(`/resources/${group.slug}/${item.id}`)}
+          href={withBase(resourceSheetPath(item, group))}
           title={item.data.title}
           description={item.data.description}
           dateLabel="Updated "
