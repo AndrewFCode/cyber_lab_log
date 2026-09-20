@@ -6,6 +6,7 @@ export type SiteCollection = WritingCollection | 'projects' | 'labs';
 export type WritingEntry = CollectionEntry<WritingCollection>;
 export type ProjectEntry = CollectionEntry<'projects'>;
 export type LabEntry = CollectionEntry<'labs'>;
+export type CheatsheetEntry = CollectionEntry<'cheatsheets'>;
 export type SiteEntry = WritingEntry | ProjectEntry | LabEntry;
 
 export const LAB_SERIES_LABELS = {
@@ -13,9 +14,29 @@ export const LAB_SERIES_LABELS = {
   linux: 'The Linux Command Line',
 } as const;
 
+/** Preferred tab order on Resource Cheatsheets. Unknown names sort after these. */
+export const RESOURCE_ORDER = [
+  'Code (2nd ed.)',
+  'Computing fundamentals',
+  'PC Hardware & Repair',
+  'IT Fundamentals',
+  'TryHackMe',
+  'The Linux Command Line',
+  'Learn Windows PowerShell',
+  'Git',
+  'FFmpeg',
+  'Reading list',
+];
+
 export interface Neighbor {
   href: string;
   title: string;
+}
+
+export interface ResourceGroup {
+  resource: string;
+  slug: string;
+  entries: CheatsheetEntry[];
 }
 
 /**
@@ -32,16 +53,16 @@ const COLLECTION_PATH: Record<SiteCollection, string> = {
   cheatsheets: '/cheatsheets',
   explainers: '/explainers',
   notes: '/notes',
-  projects: '/projects',
-  labs: '/labs',
+  projects: '/example-projects',
+  labs: '/full-picture',
 };
 
 export const COLLECTION_LABELS: Record<SiteCollection, string> = {
   cheatsheets: 'Cheat sheet',
   explainers: 'Explainer',
   notes: 'Note',
-  projects: 'Project',
-  labs: 'Lab',
+  projects: 'Example Project',
+  labs: 'Full Picture',
 };
 
 /** Prefix a site-root path with Astro `base` so GitHub project Pages links resolve. */
@@ -51,8 +72,31 @@ export function withBase(path: string) {
   return `${base}/${path.replace(/^\/+/, '')}`;
 }
 
+export function resourceSlug(resource: string) {
+  return tagSlug(resource);
+}
+
+/** Site-root path (no `base` prefix) so `neighbors()` can wrap it with `withBase`. */
+export function cheatsheetPath(entry: CheatsheetEntry) {
+  if (entry.data.kind === 'ultimate') return '/cheatsheets';
+  const resource = resourceSlug(entry.data.resource ?? entry.data.category ?? 'uncategorised');
+  return `/resources/${resource}/${entry.id}`;
+}
+
+export function cheatsheetHref(entry: CheatsheetEntry) {
+  return withBase(cheatsheetPath(entry));
+}
+
 export function entryHref(entry: SiteEntry) {
+  if (entry.collection === 'cheatsheets') return cheatsheetHref(entry);
   return withBase(`${COLLECTION_PATH[entry.collection]}/${entry.id}`);
+}
+
+export function entryLabel(entry: SiteEntry) {
+  if (entry.collection === 'cheatsheets') {
+    return entry.data.kind === 'ultimate' ? 'Ultimate Cheatsheet' : 'Resource Cheatsheet';
+  }
+  return COLLECTION_LABELS[entry.collection];
 }
 
 export function entryOgPath(collection: SiteCollection, id: string) {
@@ -77,6 +121,46 @@ export async function getCheatsheets() {
   });
 }
 
+export async function getResourceCheatsheets() {
+  const entries = await getCheatsheets();
+  return entries.filter((entry) => entry.data.kind !== 'ultimate');
+}
+
+export async function getUltimateCheatsheet() {
+  const entries = await getCheatsheets();
+  return entries.find((entry) => entry.data.kind === 'ultimate');
+}
+
+export function groupResourceCheatsheets(entries: CheatsheetEntry[]): ResourceGroup[] {
+  const groups = new Map<string, CheatsheetEntry[]>();
+
+  for (const entry of entries) {
+    const key = entry.data.resource?.trim() || 'Uncategorised';
+    const group = groups.get(key);
+    if (group) group.push(entry);
+    else groups.set(key, [entry]);
+  }
+
+  const orderIndex = (name: string) => {
+    const index = RESOURCE_ORDER.indexOf(name);
+    return index === -1 ? RESOURCE_ORDER.length : index;
+  };
+
+  return [...groups.entries()]
+    .sort((a, b) => {
+      const byPreferred = orderIndex(a[0]) - orderIndex(b[0]);
+      return byPreferred !== 0 ? byPreferred : a[0].localeCompare(b[0]);
+    })
+    .map(([resource, sheets]) => ({
+      resource,
+      slug: resourceSlug(resource),
+      entries: sheets.slice().sort((a, b) => {
+        const order = (a.data.moduleOrder ?? 0) - (b.data.moduleOrder ?? 0);
+        return order !== 0 ? order : a.data.title.localeCompare(b.data.title);
+      }),
+    }));
+}
+
 /** Newest first by `pubDate`. */
 export async function getExplainers() {
   const entries = await getCollection('explainers', isPublished);
@@ -89,13 +173,13 @@ export async function getNotes() {
   return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
 }
 
-/** Newest first by `pubDate`. */
+/** Newest first by `pubDate`. Code-only book examples live here. */
 export async function getProjects() {
   const entries = await getCollection('projects', isPublished);
   return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
 }
 
-/** Newest first by `pubDate`. */
+/** Newest first by `pubDate`. Screenshot walkthroughs that link to example projects. */
 export async function getLabs() {
   const entries = await getCollection('labs', isPublished);
   return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));

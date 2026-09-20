@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResourceTabs from '../../components/ResourceTabs.astro';
+import PostCard from '../../components/PostCard.astro';
+import {
+  getResourceCheatsheets,
+  groupResourceCheatsheets,
+  withBase,
+} from '../../lib/collections';
+
+const groups = groupResourceCheatsheets(await getResourceCheatsheets());
+---
+
+<BaseLayout
+  title="Resource Cheatsheets"
+  description="Each book or course has its own tab. Inside a tab, each module or chapter is a broken-down cheat sheet."
+>
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">Resource Cheatsheets</h1>
+    <p class="mt-3 text-lg text-muted">
+      Each resource has its own tab. Open a tab for the modules and chapters — those are the
+      broken-down sheets. The <a href={withBase('/cheatsheets')}>Ultimate Cheatsheet</a> pulls from
+      all of them.
+    </p>
+  </header>
+
+  {
+    groups.length === 0 ? (
+      <p class="text-muted">Nothing here yet.</p>
+    ) : (
+      <div class="space-y-8">
+        <ResourceTabs
+          resources={groups.map((group) => ({
+            href: withBase(`/resources/${group.slug}`),
+            label: group.resource,
+            current: false,
+          }))}
+        />
+
+        {groups.map((group) => (
+          <section>
+            <h2 class="border-b border-line pb-1 font-mono text-xs tracking-widest text-faint uppercase">
+              <a href={withBase(`/resources/${group.slug}`)} class="no-underline hover:underline">
+                {group.resource}
+              </a>
+            </h2>
+            {group.entries.map((entry) => (
+              <PostCard
+                href={withBase(`/resources/${group.slug}/${entry.id}`)}
+                title={entry.data.title}
+                description={entry.data.description}
+                dateLabel="Updated "
+                date={entry.data.updated}
+                pinned={entry.data.pinned}
+                draft={entry.data.draft}
+                meta={entry.data.module ? [entry.data.module] : []}
+              />
+            ))}
+          </section>
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

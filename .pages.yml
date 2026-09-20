@@ -15,7 +15,7 @@ content:
       template: "{title}.md"
       field: create
     view:
-      fields: [title, category, updated, pinned, draft]
+      fields: [title, kind, resource, module, updated, pinned, draft]
       primary: title
       sort: [updated, title]
       default:
@@ -43,6 +43,27 @@ content:
         required: true
         options:
           format: yyyy-MM-dd
+      - name: kind
+        label: Kind
+        type: select
+        default: resource
+        options:
+          values:
+            - ultimate
+            - resource
+        description: ultimate = the one living sheet; resource = a book/course chapter
+      - name: resource
+        label: Resource
+        type: string
+        description: Book or course tab, e.g. Code (2nd ed.). Required when kind is resource.
+      - name: module
+        label: Module / chapter
+        type: string
+        description: Tab label inside the resource, e.g. Chapters 1–3
+      - name: moduleOrder
+        label: Module order
+        type: number
+        description: Lower numbers appear first in the resource tab
       - name: category
         label: Category
         type: string
@@ -152,7 +173,7 @@ content:
         type: rich-text
 
   - name: projects
-    label: Projects
+    label: Example Projects
     type: collection
     path: src/content/projects
     format: yaml-frontmatter
@@ -224,7 +245,7 @@ content:
         type: rich-text
 
   - name: labs
-    label: Labs
+    label: Full Picture Projects
     type: collection
     path: src/content/labs
     format: yaml-frontmatter
@@ -259,6 +280,10 @@ content:
         label: Lab / activity
         type: string
         description: e.g. Lab 3 or Playground Ch. 4
+      - name: example
+        label: Example project
+        type: string
+        description: Filename (without .md) of the matching Example Project that holds the code
       - name: tags
         label: Tags
         type: string

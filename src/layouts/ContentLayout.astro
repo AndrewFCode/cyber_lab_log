@@ -79,6 +79,13 @@ const showToc = shouldShowToc(collection, headings);
   ogType="article"
   jsonLd={jsonLd}
 >
+  {
+    Astro.slots.has('chrome') && (
+      <div class="mb-8" data-pagefind-ignore>
+        <slot name="chrome" />
+      </div>
+    )
+  }
   <article data-pagefind-body={draft ? undefined : true}>
     <nav aria-label="Breadcrumb" class="mb-8 text-sm" data-pagefind-ignore>
       <a href={backHref} class="no-underline hover:underline">&larr; {backLabel}</a>

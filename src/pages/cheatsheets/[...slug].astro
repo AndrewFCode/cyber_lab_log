@@ -1,42 +1,15 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { render } from 'astro:content';
-import ContentLayout from '../../layouts/ContentLayout.astro';
-import { getCheatsheets, neighbors, readingTime, withBase } from '../../lib/collections';
+import { cheatsheetPath, getResourceCheatsheets, withBase } from '../../lib/collections';
 
-// Drafts are filtered here as well as in the listing, so a production build
-// never emits a page for them — not even at a direct URL.
+// Old /cheatsheets/[slug] URLs land on the matching Resource Cheatsheets tab.
 export const getStaticPaths = (async () => {
-  const cheatsheets = await getCheatsheets();
+  const cheatsheets = await getResourceCheatsheets();
   return cheatsheets.map((entry) => ({
     params: { slug: entry.id },
-    props: {
-      entry,
-      ...neighbors(cheatsheets, entry.id, (item) => `/cheatsheets/${item.id}`),
-    },
+    props: { href: withBase(cheatsheetPath(entry)) },
   }));
 }) satisfies GetStaticPaths;
 
-const { entry, prev, next } = Astro.props;
-const { Content, headings } = await render(entry);
+return Astro.redirect(Astro.props.href, 301);
 ---
-
-<ContentLayout
-  title={entry.data.title}
-  description={entry.data.description}
-  label="Cheat sheet"
-  collection="cheatsheets"
-  backHref={withBase('/cheatsheets')}
-  backLabel="Cheat sheets"
-  updated={entry.data.updated}
-  draft={entry.data.draft}
-  tags={entry.data.tags}
-  readingTime={readingTime(entry.body)}
-  headings={headings}
-  prev={prev}
-  next={next}
-  meta={entry.data.category ? [entry.data.category] : []}
-  slug={entry.id}
->
-  <Content />
-</ContentLayout>

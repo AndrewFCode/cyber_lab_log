@@ -1,0 +1,123 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import ResourceTabs from '../../components/ResourceTabs.astro';
+import PostCard from '../../components/PostCard.astro';
+import {
+  getResourceCheatsheets,
+  groupResourceCheatsheets,
+  neighbors,
+  readingTime,
+  withBase,
+  type CheatsheetEntry,
+  type ResourceGroup,
+} from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const groups = groupResourceCheatsheets(await getResourceCheatsheets());
+
+  return groups.flatMap((group) => {
+    const hub = {
+      params: { slug: group.slug },
+      props: { group, groups, entry: undefined as CheatsheetEntry | undefined },
+    };
+
+    const sheets = group.entries.map((entry) => ({
+      params: { slug: `${group.slug}/${entry.id}` },
+      props: {
+        group,
+        groups,
+        entry,
+        ...neighbors(group.entries, entry.id, (item) => `/resources/${group.slug}/${item.id}`),
+      },
+    }));
+
+    return [hub, ...sheets];
+  });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  group: ResourceGroup;
+  groups: ResourceGroup[];
+  entry?: CheatsheetEntry;
+  prev?: { href: string; title: string };
+  next?: { href: string; title: string };
+}
+
+const { group, groups, entry, prev, next } = Astro.props;
+
+const resourceTabs = groups.map((item) => ({
+  href: withBase(`/resources/${item.slug}`),
+  label: item.resource,
+  current: item.slug === group.slug,
+}));
+
+const moduleTabs = group.entries.map((item) => ({
+  href: withBase(`/resources/${group.slug}/${item.id}`),
+  label: item.data.module ?? item.data.title,
+  current: entry?.id === item.id,
+}));
+
+const rendered = entry ? await render(entry) : null;
+---
+
+{
+  entry && rendered ? (
+    <ContentLayout
+      title={entry.data.title}
+      description={entry.data.description}
+      label="Resource Cheatsheet"
+      collection="cheatsheets"
+      backHref={withBase(`/resources/${group.slug}`)}
+      backLabel={group.resource}
+      updated={entry.data.updated}
+      draft={entry.data.draft}
+      tags={entry.data.tags}
+      readingTime={readingTime(entry.body)}
+      headings={rendered.headings}
+      prev={prev}
+      next={next}
+      meta={[group.resource, entry.data.module].filter((item): item is string => Boolean(item))}
+      slug={entry.id}
+    >
+      <ResourceTabs slot="chrome" resources={resourceTabs} modules={moduleTabs} />
+      <rendered.Content />
+    </ContentLayout>
+  ) : (
+    <BaseLayout
+      title={group.resource}
+      description={`Modules and chapters from ${group.resource}.`}
+    >
+      <header class="mb-8 max-w-[var(--content-width)]">
+        <nav aria-label="Breadcrumb" class="mb-6 text-sm">
+          <a href={withBase('/resources')} class="no-underline hover:underline">
+            &larr; Resource Cheatsheets
+          </a>
+        </nav>
+        <h1 class="text-3xl font-semibold tracking-tight text-ink">{group.resource}</h1>
+        <p class="mt-3 text-lg text-muted">
+          Each tab is a module or chapter — the broken-down cheat sheet for this resource.
+        </p>
+      </header>
+
+      <div class="mb-8">
+        <ResourceTabs resources={resourceTabs} modules={moduleTabs} />
+      </div>
+
+      {group.entries.map((item) => (
+        <PostCard
+          href={withBase(`/resources/${group.slug}/${item.id}`)}
+          title={item.data.title}
+          description={item.data.description}
+          dateLabel="Updated "
+          date={item.data.updated}
+          pinned={item.data.pinned}
+          draft={item.data.draft}
+          meta={item.data.module ? [item.data.module] : []}
+        />
+      ))}
+    </BaseLayout>
+  )
+}
