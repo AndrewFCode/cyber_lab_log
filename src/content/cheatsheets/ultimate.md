@@ -46,6 +46,7 @@ pinned: true
 | Clear the ARP cache | `Remove-NetNeighbor -InterfaceAlias 'Ethernet'` | `sudo ip neigh flush dev eth0` | `arp -d *` |
 | Interface error counters | `Get-NetAdapterStatistics` | `ip -s link` | `netstat -e` |
 | MAC address of each NIC | `Get-NetAdapter` | `ip link` | `getmac /v` |
+| Set a static IPv4 address | `New-NetIPAddress -InterfaceAlias Ethernet -IPAddress <ip> -PrefixLength 24 -DefaultGateway <gw>` | `sudo ip addr add <ip>/24 dev eth0` (until reboot) | `netsh interface ip set address name="Ethernet" static <ip> <mask> <gw>` |
 
 ---
 
@@ -305,7 +306,8 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 ### Addressing, DNS and DHCP `A+1 D2`
 
-- **Special addresses:** `169.254.x.x` = APIPA (DHCP failed) · `127.0.0.1` / `::1` = loopback.
+- **Assigning:** IP + subnet mask + default gateway (+ DNS) · static = typed on the device (routers, DHCP and DNS servers) · reservation = DHCP always gives one MAC the same IP · dynamic = from the pool. Clients pick up changes at lease renewal.
+- **Special addresses:** `169.254.1.0`–`169.254.254.255` = APIPA (DHCP failed; local segment only; chosen after an ARP probe) · `127.0.0.1` / `::1` = loopback.
 - **DNS records:** A · AAAA · CNAME · MX · TXT (SPF / DKIM / DMARC) · PTR.
 - **DHCP:** DORA (Discover, Offer, Request, Acknowledge) · scope · lease · reservation · exclusion.
 - **Commands:**
@@ -380,6 +382,7 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 - **Managed switch hygiene:** management on its own VLAN, SNMPv3 (v1/v2c send community strings in clear text), unused ports disabled; port mirroring feeds IDS. → [A+ Core 1 2.5](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **NAT is not a firewall:** port forwards, UPnP and inside-initiated connections pass straight through. IPv6 usually has no NAT at all, so write and test IPv6 firewall rules too. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Normalise IPv6 before matching:** `2001:db8::1` = `2001:0db8:0:0:0:0:0:1`, so text-based blocklists and log searches miss variants. Compare the compressed form. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **Rogue DHCP and starvation:** clients take the first offer, so a rogue server can hand out its own gateway and DNS; draining the pool pushes clients onto APIPA. Use DHCP snooping, and treat a spike in 169.254 addresses as a possible attack. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -387,6 +390,7 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | Added A+ Core 1 2.6 (Assigning IP addresses): Assigning bullet and precise APIPA range in Addressing, DNS and DHCP; one Rosetta stone row; one security quick hit |
 | 2026-09-22 | Added A+ Core 1 2.6 (IPv4 and IPv6): new IPv4 and IPv6 addressing topic (private ranges moved in from Addressing, DNS and DHCP), two security quick hits |
 | 2026-09-22 | Added A+ Core 1 2.5 (Network devices): new Network devices, PoE and ISP handoff topic (device line moved out of the renamed Wireless and cabling topic, PoE++ figures corrected), one Rosetta stone row, two security quick hits |
 | 2026-09-22 | Added Networking for Sysadmins ch. 2 (`NfSA 2`): new Ethernet topic, transceiver line and tag on Devices, five Rosetta stone rows, two security quick hits |
