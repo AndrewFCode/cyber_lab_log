@@ -22,6 +22,7 @@ export const RESOURCE_ORDER = [
   'a-plus-core-1',
   'linux',
   'powershell',
+  'networking-sysadmins',
 ];
 
 /** Display names for resource tab keys stored in frontmatter. */
@@ -32,6 +33,7 @@ export const RESOURCE_LABELS: Record<string, string> = {
   'a-plus-core-1': 'A+ Core 1',
   linux: 'The Linux Command Line',
   powershell: 'Learn Windows PowerShell',
+  'networking-sysadmins': 'Networking for Sysadmins',
 };
 
 export function resourceLabel(resource: string) {
