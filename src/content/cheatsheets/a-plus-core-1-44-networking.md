@@ -3,7 +3,7 @@ title: "A+ Core 1: Networking"
 description: "Professor Messer A+ 220-1201 section 2 — IP, TCP/UDP and ports, wireless, network services, DNS/DHCP/VLAN/VPN, devices, IP addressing, connection types and tools."
 tags: ["a-plus", "comptia", "messer", "networking"]
 draft: false
-updated: "2026-09-18"
+updated: "2026-09-22"
 kind: "resource"
 resource: "a-plus-core-1"
 module: "Networking"
@@ -194,11 +194,11 @@ ipconfig /renew
 | ONT | Optical network terminal — fibre in, Ethernet out |
 | NIC | The host's network interface; holds the MAC address |
 
-| PoE standard | Power per port |
-|---|---|
-| 802.3af (PoE) | 15.4 W |
-| 802.3at (PoE+) | 30 W |
-| 802.3bt (PoE++) | 60 W / 100 W |
+| PoE standard | At the switch | At the device |
+|---|---|---|
+| 802.3af (PoE) | 15.4 W | 12.95 W |
+| 802.3at (PoE+) | 30 W | 25.5 W |
+| 802.3bt (PoE++) | 60 W / 90 W | 51 W / 71.3 W |
 
 ---
 
