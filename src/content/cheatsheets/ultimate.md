@@ -3,7 +3,7 @@ title: "The Ultimate IT & Cyber Cheat Sheet"
 description: "The short version of everything I study — key commands and facts by topic, each linking to the full chapter notes."
 tags: ["cheat-sheet", "powershell", "linux", "windows", "networking", "hardware"]
 draft: false
-updated: "2026-09-18"
+updated: "2026-09-22"
 kind: "ultimate"
 pinned: true
 ---
@@ -34,6 +34,18 @@ pinned: true
 | Env variable | `$env:PATH` | `echo $PATH` | `echo %PATH%` |
 | Processes / kill | `Get-Process` / `Stop-Process -Id` | `ps aux` / `kill` | `tasklist` / `taskkill /PID` |
 | Output to file / discard errors | `>` `>>` / `2>$null` | `>` `>>` / `2>/dev/null` | `>` `>>` / `2>nul` |
+| Link status | `Get-NetAdapter` | `ip -br link` | `netsh interface show interface` |
+| IP addresses | `Get-NetIPAddress` | `ip -br addr` | `ipconfig` |
+| Routing table | `Get-NetRoute` | `ip route` | `route print` |
+| ARP / neighbour cache | `Get-NetNeighbor` | `ip neigh` | `arp -a` |
+| Listening ports | `Get-NetTCPConnection -State Listen` | `sudo ss -tlnp` | `netstat -ano \| findstr LISTENING` |
+| Test a TCP port | `Test-NetConnection host -Port 443` | `nc -zv host 443` | — |
+| IPv6 neighbours | `Get-NetNeighbor -AddressFamily IPv6` | `ip -6 neigh` | `netsh interface ipv6 show neighbors` |
+| Show MTU | `Get-NetIPInterface` | `ip link` | `netsh interface ipv4 show subinterfaces` |
+| Test the MTU (don't fragment) | `Test-Connection host -MtuSize` (PS 7) | `ping -M do -s 1472 host` | `ping -f -l 1472 host` |
+| Clear the ARP cache | `Remove-NetNeighbor -InterfaceAlias 'Ethernet'` | `sudo ip neigh flush dev eth0` | `arp -d *` |
+| Interface error counters | `Get-NetAdapterStatistics` | `ip -s link` | `netstat -e` |
+| MAC address of each NIC | `Get-NetAdapter` | `ip link` | `getmac /v` |
 
 ---
 
@@ -245,6 +257,25 @@ The build-up across *Code*, each stage linking to its chapter:
 
 ## Networking
 
+### Network layers and troubleshooting `NfSA 1`
+
+- **Layers:** 1 physical (signals) · 2 datalink (frames, MAC, switches) · 3 network (packets, IP, routers) · 4 transport (TCP/UDP ports) · then the application.
+- **Per hop:** MAC addresses are rewritten at every router; IP addresses stay the same end to end (unless NAT). A frame for a remote host goes to the gateway's MAC.
+- **Troubleshoot bottom-up:** link → neighbour (ARP) → ping → port → application. Ping proves layers 1–3 only.
+- **Failure clues:** refused = nothing listening · timeout = something dropping · works by IP but not by name = DNS.
+
+**Full notes →** [Ch. 1 Network layers](/cyber_lab_log/resources/networking-sysadmins/1/)
+
+### Ethernet, MTU, ARP and VLANs `NfSA 2`
+
+- **MTU:** 1,500 (jumbo 9,000). Don't-fragment ping data = MTU − 28: `ping -M do -s 1472` · `ping -f -l 1472` · FreeBSD `ping -D -s 1472`. Pings work but big transfers stall = PMTU black hole.
+- **Autonegotiation:** leave it on at both ends. Hard-setting one side causes a duplex mismatch (slow, late collisions, CRC errors).
+- **ARP and NDP:** the cache only holds local hosts. IPv6 uses Neighbor Discovery (ICMPv6 133–137): `ip -6 neigh` · `Get-NetNeighbor -AddressFamily IPv6` · `ndp -an`.
+- **VLANs:** 802.1Q tag, IDs 1–4094. Access port = one untagged VLAN; trunk = many tagged. Crossing VLANs needs a router.
+- **Errors:** counters are cumulative since boot — compare two readings before blaming hardware.
+
+**Full notes →** [Ch. 2 Ethernet](/cyber_lab_log/resources/networking-sysadmins/2/)
+
 ### Ports `A+1 D2`
 
 | Port | Protocol | Port | Protocol |
@@ -275,15 +306,25 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
 
-### Devices, wireless and cabling `A+1 D2` `A+1 D3`
+### Network devices, PoE and ISP handoff `A+1 D2`
 
-- **Devices:** hub (layer 1) → switch (layer 2, MAC) → router (layer 3, IP). PoE 15.4 W / PoE+ 30 W / PoE++ 60–100 W.
+- **Forwarding:** hub (layer 1) → switch (layer 2, MAC) → router (layer 3, IP). An access point bridges Wi-Fi to wired by MAC; it doesn't route. Layer 3 switch = switch + routing.
+- **Switches:** unmanaged = plug-and-play, one big VLAN, no SNMP or logs · managed = VLANs, QoS, redundancy, port mirroring, SNMP.
+- **Firewalls:** traditional = IP, protocol and port rules · next-gen = application-aware. Often also router, VPN concentrator and proxy.
+- **PoE at the switch / device:** af 15.4 / 12.95 W · at (PoE+) 30 / 25.5 W · bt (PoE++) 60 / 51 W and 90 / 71.3 W. Switch = endspan, injector = midspan.
+- **ISP handoff:** cable modem (coax, DOCSIS) · DSL (phone line, asymmetric, slower with distance) · ONT (fibre in, Ethernet out; marks the demarc).
+
+**Full notes →** [A+ Core 1 2.5 Network devices](/cyber_lab_log/resources/a-plus-core-1/2/)
+
+### Wireless and cabling `A+1 D2` `A+1 D3` `NfSA 2`
+
 - **Wi-Fi:** 4 = n · 5 = ac · 6/6E = ax · 7 = be. On 2.4 GHz use channels 1, 6 and 11.
 - **Copper:** Cat 5e 1 Gbps · Cat 6a 10 Gbps at 100 m.
 - **Wiring:** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br.
 - **Fibre:** single-mode (long) vs multimode (short). Connectors ST, SC, LC.
+- **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
 
-**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
+**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
 
 ---
 
@@ -322,6 +363,12 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 - **Failed SSH by IP:** `grep "Failed password" auth.log | grep -o "from [0-9.]*" | sort | uniq -c | sort -rn`. → [Linux ch. 6](/cyber_lab_log/resources/linux/6/)
 - **Injection:** unquoted variables and glued-together input cause shell and SQL injection. → [Linux ch. 7](/cyber_lab_log/resources/linux/7/) · [TryHackMe module 4](/cyber_lab_log/resources/tryhackme/4/)
 - **Insecure → secure:** Telnet → SSH · FTP → SFTP · HTTP → HTTPS · LDAP → LDAPS · SNMP v1/v2c → v3. Never expose RDP 3389 or SMB 445. → [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **ARP spoofing:** ARP has no authentication — a gateway MAC that changes in `ip neigh` / `Get-NetNeighbor` without a hardware swap is worth investigating. → [Networking ch. 1](/cyber_lab_log/resources/networking-sysadmins/1/)
+- **Listening address:** `0.0.0.0` / `::` = reachable from the network; `127.0.0.1` = local only. Audit with `ss -tlnp` / `Get-NetTCPConnection -State Listen`. → [Networking ch. 1](/cyber_lab_log/resources/networking-sysadmins/1/)
+- **Rogue IPv6 router adverts:** hosts on "IPv4-only" networks still accept them (mitm6). Use RA Guard, and check `ip -6 route` / `Get-NetRoute -AddressFamily IPv6` for unexpected routers. → [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
+- **VLAN hopping:** disable automatic trunking, avoid VLAN 1 as the native VLAN, park unused ports in a dead VLAN. → [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
+- **Unmanaged switches and rogue APs:** an unmanaged switch has no logs, VLANs or port security, and an access point just bridges — either one plugged into a wall socket silently extends the LAN. Use port security or 802.1X. → [A+ Core 1 2.5](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **Managed switch hygiene:** management on its own VLAN, SNMPv3 (v1/v2c send community strings in clear text), unused ports disabled; port mirroring feeds IDS. → [A+ Core 1 2.5](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -329,6 +376,9 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | Added A+ Core 1 2.5 (Network devices): new Network devices, PoE and ISP handoff topic (device line moved out of the renamed Wireless and cabling topic, PoE++ figures corrected), one Rosetta stone row, two security quick hits |
+| 2026-09-22 | Added Networking for Sysadmins ch. 2 (`NfSA 2`): new Ethernet topic, transceiver line and tag on Devices, five Rosetta stone rows, two security quick hits |
+| 2026-09-22 | Added Networking for Sysadmins ch. 1 (`NfSA 1`): new Network layers topic, six Rosetta stone rows, two security quick hits |
 | 2026-09-18 | Added all 28 Code (Petzold) chapter sheets; expanded the "How a computer works" topic into a per-chapter map |
 | 2026-09-18 | Added TCM 1–6, A+1 D1–D2 and THM 1–3 sheets. Ports corrected to the 220-1201 list (LDAPS in; NetBIOS and SNMP out). New Windows tools topic; hardware, networking and help desk commands |
 | 2026-09-18 | Restructured: short topics with Full notes links; resource list now generated automatically |

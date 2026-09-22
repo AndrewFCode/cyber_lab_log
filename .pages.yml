@@ -55,7 +55,7 @@ content:
       - name: resource
         label: Resource
         type: string
-        description: Tab key for the URL, e.g. code, tcm-help-desk, tryhackme, a-plus-core-1, linux, powershell. Required when kind is resource.
+        description: Tab key for the URL, e.g. code, tcm-help-desk, tryhackme, a-plus-core-1, linux, powershell, networking-sysadmins. Required when kind is resource.
       - name: module
         label: Module / chapter
         type: string
