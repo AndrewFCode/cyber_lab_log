@@ -293,9 +293,18 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
 
+### IPv4 and IPv6 addressing `A+1 D2`
+
+- **IPv4:** 32 bits = four octets of 0–255 · 2³² ≈ 4.29 billion addresses.
+- **Private (RFC 1918) + NAT:** `10/8` · `172.16/12` (172.16–172.31 only) · `192.168/16`. NAT lets many private hosts share one public address.
+- **IPv6:** 128 bits = eight groups of four hex digits · ≈ 340 undecillion addresses · LANs are `/64` (64-bit prefix + 64-bit interface ID).
+- **Shortening:** drop leading zeros; `::` replaces one run of zero groups, once only. `2001:0db8:0000:0000:0000:0000:0000:0001` → `2001:db8::1`.
+- **Types:** starts `2`/`3` = global · `fe80::` = link-local (never routed) · `fd` = unique local · `::1` = loopback.
+
+**Full notes →** [A+ Core 1 2.6 IPv4 and IPv6](/cyber_lab_log/resources/a-plus-core-1/2/)
+
 ### Addressing, DNS and DHCP `A+1 D2`
 
-- **Private ranges:** `10/8` · `172.16/12` · `192.168/16`.
 - **Special addresses:** `169.254.x.x` = APIPA (DHCP failed) · `127.0.0.1` / `::1` = loopback.
 - **DNS records:** A · AAAA · CNAME · MX · TXT (SPF / DKIM / DMARC) · PTR.
 - **DHCP:** DORA (Discover, Offer, Request, Acknowledge) · scope · lease · reservation · exclusion.
@@ -369,6 +378,8 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 - **VLAN hopping:** disable automatic trunking, avoid VLAN 1 as the native VLAN, park unused ports in a dead VLAN. → [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
 - **Unmanaged switches and rogue APs:** an unmanaged switch has no logs, VLANs or port security, and an access point just bridges — either one plugged into a wall socket silently extends the LAN. Use port security or 802.1X. → [A+ Core 1 2.5](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Managed switch hygiene:** management on its own VLAN, SNMPv3 (v1/v2c send community strings in clear text), unused ports disabled; port mirroring feeds IDS. → [A+ Core 1 2.5](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **NAT is not a firewall:** port forwards, UPnP and inside-initiated connections pass straight through. IPv6 usually has no NAT at all, so write and test IPv6 firewall rules too. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **Normalise IPv6 before matching:** `2001:db8::1` = `2001:0db8:0:0:0:0:0:1`, so text-based blocklists and log searches miss variants. Compare the compressed form. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -376,6 +387,7 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | Added A+ Core 1 2.6 (IPv4 and IPv6): new IPv4 and IPv6 addressing topic (private ranges moved in from Addressing, DNS and DHCP), two security quick hits |
 | 2026-09-22 | Added A+ Core 1 2.5 (Network devices): new Network devices, PoE and ISP handoff topic (device line moved out of the renamed Wireless and cabling topic, PoE++ figures corrected), one Rosetta stone row, two security quick hits |
 | 2026-09-22 | Added Networking for Sysadmins ch. 2 (`NfSA 2`): new Ethernet topic, transceiver line and tag on Devices, five Rosetta stone rows, two security quick hits |
 | 2026-09-22 | Added Networking for Sysadmins ch. 1 (`NfSA 1`): new Network layers topic, six Rosetta stone rows, two security quick hits |
