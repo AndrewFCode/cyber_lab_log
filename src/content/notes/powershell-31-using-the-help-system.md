@@ -1,5 +1,5 @@
 ---
-title: "PowerShell: Using the Help System"
+title: "PowerShell 3: Using the Help System"
 description: "PowerShell has thousands of commands, and every module you install adds more. No one memorises them. Skilled PowerShell users are skilled at finding and reading help. The book is emphatic on this point: if you learn…"
 tags: ["powershell", "class-notes"]
 draft: false

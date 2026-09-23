@@ -1,5 +1,5 @@
 ---
-title: "PowerShell: Meet PowerShell"
+title: "PowerShell 2: Meet PowerShell"
 description: "PowerShell is two things working together:"
 tags: ["powershell", "class-notes"]
 draft: false

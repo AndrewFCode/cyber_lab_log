@@ -1,5 +1,5 @@
 ---
-title: "PowerShell: Running Commands"
+title: "PowerShell 4: Running Commands"
 description: "Many people avoid PowerShell because they think it means \"programming\". But most day-to-day PowerShell is simply typing commands and pressing Enter, just as you would in CMD or Bash. A script is only a text file of…"
 tags: ["powershell", "class-notes"]
 draft: false

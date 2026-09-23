@@ -1,5 +1,5 @@
 ---
-title: "Linux: Navigation"
+title: "Linux 2: Navigation"
 description: "Linux, like Windows, organises files into a hierarchy of directories (folders) that can contain files and further directories. The first directory is the root directory, written /. Everything else branches out from it."
 tags: ["linux", "class-notes"]
 draft: false

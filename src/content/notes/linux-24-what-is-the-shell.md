@@ -1,5 +1,5 @@
 ---
-title: "Linux: What Is the Shell"
+title: "Linux 1: What Is the Shell"
 description: "When you type a command, something has to read it, work out what you mean and ask the operating system to do it. That something is the shell: a program whose whole job is to take keyboard commands and pass them to…"
 tags: ["linux", "class-notes"]
 draft: false
