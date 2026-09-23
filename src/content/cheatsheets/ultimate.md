@@ -3,7 +3,7 @@ title: "The Ultimate IT & Cyber Cheat Sheet"
 description: "The short version of everything I study — key commands and facts by topic, each linking to the full chapter notes."
 tags: ["cheat-sheet", "powershell", "linux", "windows", "networking", "hardware"]
 draft: false
-updated: "2026-09-22"
+updated: "2026-09-23"
 kind: "ultimate"
 pinned: true
 ---
@@ -363,6 +363,17 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
 
+### Internet connection types `A+1 2.7`
+
+- **Satellite:** ~100 Mbps down / 5 Mbps up. Latency ~500 ms round trip traditionally; 25–60 ms on low-orbit Starlink. Needs line of sight; storms cause rain fade.
+- **Fibre:** light through glass — very high speed, long distance. Costs more to install and repair than copper; often converted to Ethernet just outside the home.
+- **Cable:** coax + DOCSIS. Broadband = voice, video and data on separate frequencies at once. 50 Mbps – 1 Gbps+.
+- **DSL / ADSL:** data over phone lines, asymmetric (e.g. 200 Mbps down / 20 Mbps up). Degrades past ~10,000 ft from the central office.
+- **Cellular:** tethering = one device; mobile hotspot = many devices. Carriers may charge extra for either.
+- **WISP:** fixed wireless (meshed 802.11, 5G home internet, or proprietary), ~10–1,000 Mbps. For areas with no wired option.
+
+**Full notes →** [Section 2.7 Internet Connection Types](/cyber_lab_log/resources/a-plus-core-1/2/)
+
 ---
 
 ## Virtualization and cloud `A+1 D4`
@@ -414,6 +425,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **UDP source addresses are easy to forge:** no handshake proves the sender, which is what makes open UDP services useful for reflection and amplification DDoS. Don't expose them; rate-limit the ones you must. TCP logs are harder to fake. → [TryHackMe 5.3](/cyber_lab_log/resources/tryhackme/5/)
 - **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
+- **Hotspot and tethering bypass:** a managed device tethered to a personal phone routes traffic around corporate filtering, logging and DNS controls entirely. Worth checking when "no internet" tickets resolve themselves. → [A+ Core 1 2.7](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -421,6 +433,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-23 | Added A+ Core 1 2.7 (Internet Connection Types): new Internet connection types topic; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.5 (Extending Your Network): new Firewalls, port forwarding and VPNs topic; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.4 (Packets and Frames): new TCP connections, headers and frames topic; port ranges line and `THM 5` tag on Ports; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.3 (OSI Model): OSI 5–7 and TCP vs UDP bullets plus `THM 5` tag and link on Network layers and troubleshooting, one security quick hit |
