@@ -1,0 +1,132 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+import { resourceLabel, withBase } from '../lib/collections';
+import {
+  NOTE_SORTS,
+  OTHER_COURSE,
+  courseRank,
+  noteCourse,
+  noteHeadings,
+  noteSearchText,
+} from '../lib/notes-browse';
+
+interface Props {
+  notes: CollectionEntry<'notes'>[];
+}
+
+const { notes } = Astro.props;
+
+const rows = notes.map((note) => {
+  const course = noteCourse(note.id);
+  return {
+    id: note.id,
+    title: note.data.title,
+    description: note.data.description,
+    pubDate: note.data.pubDate,
+    draft: note.data.draft,
+    courseKey: course.key,
+    lesson: course.lesson,
+    search: noteSearchText({
+      title: note.data.title,
+      description: note.data.description,
+      tags: note.data.tags,
+      headings: noteHeadings(note.body),
+    }),
+  };
+});
+
+const courses = [...new Set(rows.map((row) => row.courseKey))]
+  .sort((a, b) => courseRank(a) - courseRank(b))
+  .map((key) => ({
+    key,
+    label: key === OTHER_COURSE ? 'Other' : resourceLabel(key),
+    count: rows.filter((row) => row.courseKey === key).length,
+  }));
+---
+
+<form class="js-notes-browse notes-browse" role="search">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+    <label class="block min-w-0 flex-1">
+      <span class="mb-1 block font-mono text-xs tracking-wide text-faint uppercase">Find</span>
+      <input
+        class="search-input"
+        type="search"
+        name="q"
+        data-notes-query
+        placeholder="Title, topic, or tag"
+        autocomplete="off"
+        enterkeyhint="search"
+      />
+    </label>
+    <label class="block sm:w-52">
+      <span class="mb-1 block font-mono text-xs tracking-wide text-faint uppercase">Sort</span>
+      <select class="search-input" name="sort" data-notes-sort>
+        {NOTE_SORTS.map((item) => <option value={item.id}>{item.label}</option>)}
+      </select>
+    </label>
+  </div>
+
+  <fieldset class="notes-courses">
+    <legend>Course</legend>
+    <label class="notes-chip">
+      <input type="radio" name="notes-course" value="all" checked />
+      <span>All</span>
+      <span class="font-mono text-xs text-faint" data-course-count>{rows.length}</span>
+    </label>
+    {
+      courses.map((course) => (
+        <label class="notes-chip">
+          <input
+            type="radio"
+            name="notes-course"
+            value={course.key}
+            data-course-label={course.label}
+          />
+          <span>{course.label}</span>
+          <span class="font-mono text-xs text-faint" data-course-count>
+            {course.count}
+          </span>
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <p class="search-status" data-notes-status aria-live="polite">
+    {rows.length === 1 ? '1 note, newest first.' : `${rows.length} notes, newest first.`}
+  </p>
+
+  <div data-notes-list>
+    {
+      rows.map((note) => (
+        <div
+          data-note
+          data-title={note.title}
+          data-search={note.search}
+          data-date={note.pubDate.getTime()}
+          data-course={note.courseKey}
+          data-lesson={Number.isFinite(note.lesson) ? String(note.lesson) : undefined}
+        >
+          <PostCard
+            href={withBase(`/notes/${note.id}`)}
+            title={note.title}
+            description={note.description}
+            dateLabel=""
+            date={note.pubDate}
+            draft={note.draft}
+          />
+        </div>
+      ))
+    }
+  </div>
+</form>
+
+<script>
+  import { bindNotesBrowser } from '../scripts/notes-browse';
+
+  document.querySelectorAll<HTMLElement>('.js-notes-browse').forEach((root) => {
+    if (root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+    bindNotesBrowser(root);
+  });
+</script>
