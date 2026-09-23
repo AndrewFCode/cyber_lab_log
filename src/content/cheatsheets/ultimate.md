@@ -353,6 +353,16 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 2.5 Network devices](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/)
 
+### Internet connection types `A+1 D2`
+
+- **Satellite:** reaches anywhere, costs more. GEO (~35,786 km) ≈ 600 ms round trip · LEO/Starlink (~550 km) 25–60 ms. Needs line of sight; storms cause **rain fade**.
+- **Fibre:** most bandwidth, longest reach, dearest to install and repair. SONET rings and multi-wavelength (DWDM) for WANs; FTTP ends at an ONT (FTTC = fibre to the cabinet, VDSL2 after).
+- **Cable:** coax **broadband** (many frequencies on one wire: TV, voice, data) · **DOCSIS** · ~50 Mbps–1 Gbps+ · shared per neighbourhood.
+- **DSL:** phone line · **asymmetric** (down ≫ up) · slower with distance from the central office/exchange (exam: within ~10,000 ft).
+- **Cellular:** tethering = one device · hotspot = many. **WISP:** outdoor antenna; 802.11 mesh, 5G home or proprietary; ~10–1,000 Mbps.
+
+**Full notes →** [A+ Core 1 2.7 Internet connection types](/cyber_lab_log/resources/a-plus-core-1/2/)
+
 ### Wireless and cabling `A+1 D2` `A+1 D3` `NfSA 2`
 
 - **Wi-Fi:** 4 = n · 5 = ac · 6/6E = ax · 7 = be. On 2.4 GHz use channels 1, 6 and 11.
@@ -362,17 +372,6 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
-
-### Internet connection types `A+1 2.7`
-
-- **Satellite:** ~100 Mbps down / 5 Mbps up. Latency ~500 ms round trip traditionally; 25–60 ms on low-orbit Starlink. Needs line of sight; storms cause rain fade.
-- **Fibre:** light through glass — very high speed, long distance. Costs more to install and repair than copper; often converted to Ethernet just outside the home.
-- **Cable:** coax + DOCSIS. Broadband = voice, video and data on separate frequencies at once. 50 Mbps – 1 Gbps+.
-- **DSL / ADSL:** data over phone lines, asymmetric (e.g. 200 Mbps down / 20 Mbps up). Degrades past ~10,000 ft from the central office.
-- **Cellular:** tethering = one device; mobile hotspot = many devices. Carriers may charge extra for either.
-- **WISP:** fixed wireless (meshed 802.11, 5G home internet, or proprietary), ~10–1,000 Mbps. For areas with no wired option.
-
-**Full notes →** [Section 2.7 Internet Connection Types](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -420,12 +419,12 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **NAT is not a firewall:** port forwards, UPnP and inside-initiated connections pass straight through. IPv6 usually has no NAT at all, so write and test IPv6 firewall rules too. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Normalise IPv6 before matching:** `2001:db8::1` = `2001:0db8:0:0:0:0:0:1`, so text-based blocklists and log searches miss variants. Compare the compressed form. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Rogue DHCP and starvation:** clients take the first offer, so a rogue server can hand out its own gateway and DNS; draining the pool pushes clients onto APIPA. Use DHCP snooping, and treat a spike in 169.254 addresses as a possible attack. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **Tethering and hotspots bypass the corporate edge:** a work laptop on a phone's hotspot skips the firewall, web filter, DLP and logging, and one on the LAN and a hotspot at once can bridge the two. Control with policy and MDM. → [A+ Core 1 2.7](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **MAC addresses aren't identity:** one command spoofs them, so MAC allow-lists (guest Wi-Fi paywalls, "admin MAC" firewall rules) are easy to bypass, and randomised MACs break MAC-based inventories. Use 802.1X or WPA2/WPA3-Enterprise. → [TryHackMe 5.1](/cyber_lab_log/resources/tryhackme/5/)
 - **A subnet is only a boundary if something filters it:** put guest Wi-Fi, cameras and printers on their own subnet or VLAN, and make the router or firewall between them deny by default. → [TryHackMe 5.2](/cyber_lab_log/resources/tryhackme/5/)
 - **UDP source addresses are easy to forge:** no handshake proves the sender, which is what makes open UDP services useful for reflection and amplification DDoS. Don't expose them; rate-limit the ones you must. TCP logs are harder to fake. → [TryHackMe 5.3](/cyber_lab_log/resources/tryhackme/5/)
 - **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
-- **Hotspot and tethering bypass:** a managed device tethered to a personal phone routes traffic around corporate filtering, logging and DNS controls entirely. Worth checking when "no internet" tickets resolve themselves. → [A+ Core 1 2.7](/cyber_lab_log/resources/a-plus-core-1/2/)
 
 ---
 
@@ -433,7 +432,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
-| 2026-09-23 | Added A+ Core 1 2.7 (Internet Connection Types): new Internet connection types topic; one security quick hit |
+| 2026-09-23 | Expanded A+ Core 1 2.7 (Internet connection types): GEO vs LEO satellite, fibre/cable/DSL detail, and the tethering security hit |
 | 2026-09-22 | Added TryHackMe 5.5 (Extending Your Network): new Firewalls, port forwarding and VPNs topic; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.4 (Packets and Frames): new TCP connections, headers and frames topic; port ranges line and `THM 5` tag on Ports; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.3 (OSI Model): OSI 5–7 and TCP vs UDP bullets plus `THM 5` tag and link on Network layers and troubleshooting, one security quick hit |
