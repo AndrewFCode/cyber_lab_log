@@ -47,6 +47,7 @@ pinned: true
 | Interface error counters | `Get-NetAdapterStatistics` | `ip -s link` | `netstat -e` |
 | MAC address of each NIC | `Get-NetAdapter` | `ip link` | `getmac /v` |
 | Set a static IPv4 address | `New-NetIPAddress -InterfaceAlias Ethernet -IPAddress <ip> -PrefixLength 24 -DefaultGateway <gw>` | `sudo ip addr add <ip>/24 dev eth0` (until reboot) | `netsh interface ip set address name="Ethernet" static <ip> <mask> <gw>` |
+| Ping a host | `Test-Connection host` | `ping -c 4 host` | `ping host` |
 
 ---
 
@@ -258,16 +259,27 @@ The build-up across *Code*, each stage linking to its chapter:
 
 ## Networking
 
-### Network layers and troubleshooting `NfSA 1`
+### Network layers and troubleshooting `NfSA 1` `THM 5`
 
 - **Layers:** 1 physical (signals) · 2 datalink (frames, MAC, switches) · 3 network (packets, IP, routers) · 4 transport (TCP/UDP ports) · then the application.
 - **Per hop:** MAC addresses are rewritten at every router; IP addresses stay the same end to end (unless NAT). A frame for a remote host goes to the gateway's MAC.
 - **Troubleshoot bottom-up:** link → neighbour (ARP) → ping → port → application. Ping proves layers 1–3 only.
 - **Failure clues:** refused = nothing listening · timeout = something dropping · works by IP but not by name = DNS.
+- **OSI 5–7:** 5 session (opens, maintains and closes sessions; checkpoints) · 6 presentation (formats, encodes, encrypts) · 7 application (HTTP, DNS, SMTP). Mnemonic 1→7: Please Do Not Throw Sausage Pizza Away.
+- **TCP vs UDP:** TCP = connection, numbered, missing parts re-sent (web, email, files) · UDP = no connection or guarantee, faster (DNS, DHCP, NTP, VoIP, live video). Units: segment (4) · packet (3) · frame (2) · bits (1).
 
-**Full notes →** [Ch. 1 Network layers](/cyber_lab_log/resources/networking-sysadmins/1/)
+**Full notes →** [Ch. 1 Network layers](/cyber_lab_log/resources/networking-sysadmins/1/) · [TryHackMe 5.3 OSI Model](/cyber_lab_log/resources/tryhackme/5/)
 
-### Ethernet, MTU, ARP and VLANs `NfSA 2`
+### TCP connections, headers and frames `THM 5`
+
+- **Handshake:** SYN (my ISN) → SYN/ACK (server ISN + acks yours) → ACK. Close: FIN, ACK, FIN, ACK. RST = abort (nothing listening, or something broke).
+- **Flags:** SYN · ACK · FIN · RST · PSH · URG. There is no "DATA" flag: data rides in ordinary ACK segments.
+- **Which header holds what:** IP = source/destination IP, TTL (a hop count, not a timer) · TCP/UDP = source/destination port, checksum · TCP only = sequence and acknowledgement numbers, flags.
+- **Frame vs packet:** frame (layer 2, MACs) is the envelope and is rewritten each hop; packet (layer 3, IPs) is the letter and travels end to end.
+
+**Full notes →** [TryHackMe 5.4 Packets and Frames](/cyber_lab_log/resources/tryhackme/5/)
+
+### Ethernet, MTU, ARP and VLANs `NfSA 2` `THM 5`
 
 - **MTU:** 1,500 (jumbo 9,000). Don't-fragment ping data = MTU − 28: `ping -M do -s 1472` · `ping -f -l 1472` · FreeBSD `ping -D -s 1472`. Pings work but big transfers stall = PMTU black hole.
 - **Autonegotiation:** leave it on at both ends. Hard-setting one side causes a duplex mismatch (slow, late collisions, CRC errors).
@@ -275,9 +287,18 @@ The build-up across *Code*, each stage linking to its chapter:
 - **VLANs:** 802.1Q tag, IDs 1–4094. Access port = one untagged VLAN; trunk = many tagged. Crossing VLANs needs a router.
 - **Errors:** counters are cumulative since boot — compare two readings before blaming hardware.
 
-**Full notes →** [Ch. 2 Ethernet](/cyber_lab_log/resources/networking-sysadmins/2/)
+**Full notes →** [Ch. 2 Ethernet](/cyber_lab_log/resources/networking-sysadmins/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/)
 
-### Ports `A+1 D2`
+### Firewalls, port forwarding and VPNs `THM 5`
+
+- **Stateful vs stateless:** stateful tracks whole connections, so return traffic is allowed automatically and stray packets are dropped (more resources) · stateless matches each packet against static rules (cheap, copes with floods, only as good as the rules).
+- **Port forwarding:** set on the router, maps public IP + port to an internal host + port (a NAT rule). It opens a path; the firewall still decides what may travel it. Needs a fixed internal address; test from outside.
+- **VPN:** encrypted tunnel joining networks or users across the internet. Privacy on untrusted Wi-Fi; anonymity only as far as the provider's logging.
+- **VPN tech:** PPP = link framing and authentication, no encryption · PPTP = obsolete, broken · IPsec = strong, fiddly · modern: IPsec/IKEv2, OpenVPN, WireGuard.
+
+**Full notes →** [TryHackMe 5.5 Extending Your Network](/cyber_lab_log/resources/tryhackme/5/)
+
+### Ports `A+1 D2` `THM 5`
 
 | Port | Protocol | Port | Protocol |
 |---|---|---|---|
@@ -292,21 +313,25 @@ The build-up across *Code*, each stage linking to its chapter:
 
 Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and SNMP 161/162 aren't on it, but still turn up on real networks.
 
-**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
+Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/ephemeral (a client's source port). Standards are conventions: a service on a non-standard port needs `host:port`.
 
-### IPv4 and IPv6 addressing `A+1 D2`
+**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.4 Packets and Frames](/cyber_lab_log/resources/tryhackme/5/)
+
+### IPv4, IPv6 and MAC addressing `A+1 D2` `THM 5`
 
 - **IPv4:** 32 bits = four octets of 0–255 · 2³² ≈ 4.29 billion addresses.
 - **Private (RFC 1918) + NAT:** `10/8` · `172.16/12` (172.16–172.31 only) · `192.168/16`. NAT lets many private hosts share one public address.
 - **IPv6:** 128 bits = eight groups of four hex digits · ≈ 340 undecillion addresses · LANs are `/64` (64-bit prefix + 64-bit interface ID).
 - **Shortening:** drop leading zeros; `::` replaces one run of zero groups, once only. `2001:0db8:0000:0000:0000:0000:0000:0001` → `2001:db8::1`.
 - **Types:** starts `2`/`3` = global · `fe80::` = link-local (never routed) · `fd` = unique local · `::1` = loopback.
+- **MAC:** 48 bits = 12 hex digits (`a4:c3:f0:85:ac:2d`); first 6 = manufacturer (OUI), last 6 = the interface. Set at the factory but spoofable; second digit 2/6/a/e = locally set (often a randomised privacy MAC).
 
-**Full notes →** [A+ Core 1 2.6 IPv4 and IPv6](/cyber_lab_log/resources/a-plus-core-1/2/)
+**Full notes →** [A+ Core 1 2.6 IPv4 and IPv6](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.1 What is Networking?](/cyber_lab_log/resources/tryhackme/5/)
 
-### Addressing, DNS and DHCP `A+1 D2`
+### Addressing, DNS and DHCP `A+1 D2` `THM 5`
 
 - **Assigning:** IP + subnet mask + default gateway (+ DNS) · static = typed on the device (routers, DHCP and DNS servers) · reservation = DHCP always gives one MAC the same IP · dynamic = from the pool. Clients pick up changes at lease renewal.
+- **Subnet anatomy (/24):** `.0` = network address (never a device) · `.1`–`.254` = hosts · `.255` = broadcast · gateway usually `.1` or `.254`. Subnetting splits one network into smaller ones (staff vs guest).
 - **Special addresses:** `169.254.1.0`–`169.254.254.255` = APIPA (DHCP failed; local segment only; chosen after an ARP probe) · `127.0.0.1` / `::1` = loopback.
 - **DNS records:** A · AAAA · CNAME · MX · TXT (SPF / DKIM / DMARC) · PTR.
 - **DHCP:** DORA (Discover, Offer, Request, Acknowledge) · scope · lease · reservation · exclusion.
@@ -315,17 +340,18 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
   - DNS lookups: `nslookup -type=mx example.com` · `Resolve-DnsName` · `dig +short`
   - Reachability: `Test-NetConnection host -Port 443`
 
-**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
+**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/)
 
-### Network devices, PoE and ISP handoff `A+1 D2`
+### Network devices, PoE and ISP handoff `A+1 D2` `THM 5`
 
 - **Forwarding:** hub (layer 1) → switch (layer 2, MAC) → router (layer 3, IP). An access point bridges Wi-Fi to wired by MAC; it doesn't route. Layer 3 switch = switch + routing.
 - **Switches:** unmanaged = plug-and-play, one big VLAN, no SNMP or logs · managed = VLANs, QoS, redundancy, port mirroring, SNMP.
 - **Firewalls:** traditional = IP, protocol and port rules · next-gen = application-aware. Often also router, VPN concentrator and proxy.
 - **PoE at the switch / device:** af 15.4 / 12.95 W · at (PoE+) 30 / 25.5 W · bt (PoE++) 60 / 51 W and 90 / 71.3 W. Switch = endspan, injector = midspan.
 - **ISP handoff:** cable modem (coax, DOCSIS) · DSL (phone line, asymmetric, slower with distance) · ONT (fibre in, Ethernet out; marks the demarc).
+- **Topologies:** star = central switch (today's default; the switch is the weak point) · bus = one backbone cable (cheap, bottlenecks, one break kills it) · ring = loop, often token passing (one break kills it).
 
-**Full notes →** [A+ Core 1 2.5 Network devices](/cyber_lab_log/resources/a-plus-core-1/2/)
+**Full notes →** [A+ Core 1 2.5 Network devices](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/)
 
 ### Wireless and cabling `A+1 D2` `A+1 D3` `NfSA 2`
 
@@ -383,6 +409,11 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 - **NAT is not a firewall:** port forwards, UPnP and inside-initiated connections pass straight through. IPv6 usually has no NAT at all, so write and test IPv6 firewall rules too. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Normalise IPv6 before matching:** `2001:db8::1` = `2001:0db8:0:0:0:0:0:1`, so text-based blocklists and log searches miss variants. Compare the compressed form. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Rogue DHCP and starvation:** clients take the first offer, so a rogue server can hand out its own gateway and DNS; draining the pool pushes clients onto APIPA. Use DHCP snooping, and treat a spike in 169.254 addresses as a possible attack. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **MAC addresses aren't identity:** one command spoofs them, so MAC allow-lists (guest Wi-Fi paywalls, "admin MAC" firewall rules) are easy to bypass, and randomised MACs break MAC-based inventories. Use 802.1X or WPA2/WPA3-Enterprise. → [TryHackMe 5.1](/cyber_lab_log/resources/tryhackme/5/)
+- **A subnet is only a boundary if something filters it:** put guest Wi-Fi, cameras and printers on their own subnet or VLAN, and make the router or firewall between them deny by default. → [TryHackMe 5.2](/cyber_lab_log/resources/tryhackme/5/)
+- **UDP source addresses are easy to forge:** no handshake proves the sender, which is what makes open UDP services useful for reflection and amplification DDoS. Don't expose them; rate-limit the ones you must. TCP logs are harder to fake. → [TryHackMe 5.3](/cyber_lab_log/resources/tryhackme/5/)
+- **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
+- **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
 
 ---
 
@@ -390,6 +421,11 @@ Everything except 587 / 993 / 995 is on the 220-1201 list. NetBIOS 137–139 and
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | Added TryHackMe 5.5 (Extending Your Network): new Firewalls, port forwarding and VPNs topic; one security quick hit |
+| 2026-09-22 | Added TryHackMe 5.4 (Packets and Frames): new TCP connections, headers and frames topic; port ranges line and `THM 5` tag on Ports; one security quick hit |
+| 2026-09-22 | Added TryHackMe 5.3 (OSI Model): OSI 5–7 and TCP vs UDP bullets plus `THM 5` tag and link on Network layers and troubleshooting, one security quick hit |
+| 2026-09-22 | Added TryHackMe 5.2 (Intro to LAN): topologies bullet on Network devices, subnet anatomy bullet on Addressing, `THM 5` tags and links there and on Ethernet/ARP, one security quick hit |
+| 2026-09-22 | Added TryHackMe 5.1 (What is Networking?): MAC line and `THM 5` tag on the renamed IPv4, IPv6 and MAC addressing topic; ping Rosetta stone row; MAC spoofing security quick hit |
 | 2026-09-22 | Added A+ Core 1 2.6 (Assigning IP addresses): Assigning bullet and precise APIPA range in Addressing, DNS and DHCP; one Rosetta stone row; one security quick hit |
 | 2026-09-22 | Added A+ Core 1 2.6 (IPv4 and IPv6): new IPv4 and IPv6 addressing topic (private ranges moved in from Addressing, DNS and DHCP), two security quick hits |
 | 2026-09-22 | Added A+ Core 1 2.5 (Network devices): new Network devices, PoE and ISP handoff topic (device line moved out of the renamed Wireless and cabling topic, PoE++ figures corrected), one Rosetta stone row, two security quick hits |
