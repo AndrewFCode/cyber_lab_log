@@ -1,197 +1,396 @@
 ---
 title: "A+ Core 1 2.7: Internet Connection Types — Class Notes"
-description: "Full class notes for A+ Core 1: satellite, fibre, cable/DOCSIS, DSL, cellular tethering/hotspots and WISPs."
+description: "Full class notes for Professor Messer A+ 220-1201 objective 2.7: satellite (GEO vs LEO), fibre, cable and DOCSIS, DSL, cellular tethering and hotspots, and WISPs."
 pubDate: 2026-09-23
-tags: ["class-notes", "a-plus", "comptia", "messer", "internet-connections", "satellite", "fibre", "dsl", "cable", "wisp"]
+tags: ["class-notes", "a-plus", "comptia", "messer", "networking", "internet-connection-types", "satellite", "fibre", "dsl", "cellular"]
 draft: false
 ---
 
-**Class notes · Professor Messer A+ Core 1 (220-1201) · Section 2, lesson 2.7**
+**Class notes · Professor Messer, CompTIA A+ 220-1201 Core 1 · Section 2, lesson 2.7 (Internet Connection Types)**
 
-> This lesson maps to CompTIA A+ Core 1 objective 2.7, "Compare and contrast Internet connection types, network types, and their features." Full reference: [Section 2](/cyber_lab_log/resources/a-plus-core-1/2/).
+> **Quick reference:** the short version of this lesson is the Internet Connection Types cheat sheet in [A+ Core 1 section 2](/cyber_lab_log/resources/a-plus-core-1/2/). These notes sit alongside the earlier Section 2 lessons (ports, wireless, network services, DNS, DHCP, VLANs and VPNs, network devices, and IP addressing). Objective 2.7 also covers network types (LAN, WAN, PAN and so on), which are taught in a separate lesson.
 
 ## Learning objectives
 
 By the end of these notes you should be able to:
 
-1. Describe how satellite internet works and explain why latency and "rain fade" occur.
-2. Explain why fibre optic connections outperform copper for both speed and distance.
-3. Describe broadband cable internet and the role of DOCSIS.
-4. Explain DSL, why it is "asymmetric," and how distance from the central office affects speed.
-5. Distinguish cellular tethering from a mobile hotspot.
-6. Explain what a WISP is and when it is the right choice.
-7. Compare all these connection types by typical speed, cost and use case.
+1. Name the six connection types in this objective — satellite, fibre, cable, DSL, cellular and WISP — and the medium each one uses.
+2. Explain and roughly calculate satellite latency, and why LEO services such as Starlink are faster to respond than GEO.
+3. Describe line of sight and rain fade.
+4. Explain broadband on a cable network, DOCSIS, and why DSL is asymmetric and distance-limited.
+5. Tell tethering apart from a mobile hotspot, and describe a WISP.
+6. Choose a connection type for a scenario and identify its security implications.
 
-## 1. Satellite internet
+## 1. The big picture
 
-Satellite internet works by sending a signal from a ground station or dish up to a satellite orbiting the Earth, which then relays the signal back down to another point on the ground. This lets people get online almost anywhere, including remote areas with no other wired infrastructure.
+### 1.1 What a "connection type" actually describes
 
-Because launching and operating satellites is expensive, satellite internet costs more than most terrestrial options. In exchange, a typical satellite connection offers speeds around 100 Mbps down and 5 Mbps up — perfectly usable for general browsing, though the upload side is comparatively weak.
-
-### 1.1 Latency and rain fade
-
-The biggest drawback of traditional (older, higher-orbit) satellite internet is latency. Because the signal has to travel such a long physical distance into space and back, older systems see roughly a quarter of a second of delay in each direction — around half a second round trip. This makes latency-sensitive activities like real-time gaming or video calls noticeably laggy.
-
-Newer low-Earth-orbit systems, such as Starlink, fly much closer to the planet, cutting that latency dramatically — down to roughly 25–60 milliseconds, with ongoing work to reduce it further.
-
-Satellite links also require line of sight between the dish and the satellite, so obstructions (trees, buildings) can break the connection. Heavy weather, particularly large storms, can degrade or interrupt the signal — a phenomenon known as **rain fade**.
+This lesson is about the link between a home or office network and the internet service provider (ISP), often called the **last mile**. Every type follows the same pattern: customer equipment at the premises converts the LAN's Ethernet into whatever signal the medium needs, and the ISP does the reverse at its end.
 
 ```text
-                 satellite
-                    ___
-                   /   \
-                  | SAT |
-                   \___/
-                  /     \
-                 /       \
-          uplink/         \downlink
-               /           \
-              /             \
-        dish (you)      ground station
++------------------------------------------------------------------------------+
+|                                                                              |
+|  [Laptop, phone, TV] --- LAN (Ethernet / Wi-Fi) --- [Router]                 |
+|                                                        |                     |
+|                                               [Customer equipment]           |
+|                                     cable modem / ONT / DSL modem / antenna  |
+|                                                        |                     |
+|                        last mile: satellite, fibre, coax, phone line, radio  |
+|                                                        |                     |
+|                                                  [ISP network] --- Internet  |
+|                                                                              |
++------------------------------------------------------------------------------+
 ```
 
-> **Exam tip:** If a question mentions "rain fade" or long-distance latency for internet access in a remote area, the answer is satellite.
+The router and modem are often one ISP-supplied box, but they are separate jobs: the router joins networks, and the modem (or ONT, or antenna) handles the physical link.
 
-## 2. Fibre optic connections
+### 1.2 How to compare them
 
-Fibre optic internet transmits data as pulses of light through thin glass or plastic fibres, rather than as electrical signals over copper. This gives it two big advantages: very high bandwidth and the ability to travel much longer distances without the signal degrading, compared to copper cabling.
+Four measures separate the types, and exam scenarios nearly always turn on one of them: **bandwidth** (download and upload, quoted separately), **latency** (round-trip time in milliseconds, which matters for calls, gaming and remote desktop), **availability** (does it reach the site at all) and **cost and reliability**. Section 8 compares all six side by side.
 
-The trade-off is cost. Fibre and the equipment needed to connect to it (transceivers, specialised installation, splicing tools) are more expensive than copper equivalents, and repairs cost more too.
+## 2. Satellite
 
-Because a single fibre pair can carry enormous amounts of data over long distances, fibre is the backbone technology for wide area networks — connecting cities to each other or linking sites within a metropolitan area, often using technologies like SONET rings or multi-wavelength (DWDM-style) fibre links.
+### 2.1 How it works
 
-Fibre used to be confined to these large-scale backbone and corporate core uses, but it is now commonly run directly to homes ("fibre to the premises"). Often there is a media converter just outside the home that converts the incoming fibre signal to copper (Ethernet) for use inside the house.
+A satellite connection sends data from a dish at the customer's site up to a satellite, which relays it down to a ground station connected to the ISP's network, and the reply comes back the same way. Because the satellite can "see" a huge area of the Earth, this is the connection that works almost anywhere: ships, remote farms, research stations, disaster areas, and places with no cables at all.
 
-> **In the real world:** the box on the outside wall converting fibre to Ethernet is usually called an ONT (Optical Network Terminal) — this term itself is not from this transcript, but it is the standard name for that device.
+### 2.2 Speed and cost
 
-> **Note (beyond this lesson):** this lesson does not name the ONT explicitly; that label is added here for reference since it is the industry-standard term for the device described.
+Launching and running satellites is expensive, so satellite internet usually costs more than a comparable terrestrial service. In return you get a perfectly usable connection. The lesson gives around 100 Mbps down and 5 Mbps up as a common figure; newer low-orbit services often do better than that on upload. It is the natural choice wherever cable, phone lines and mobile coverage don't reach.
 
-## 3. Broadband cable
+### 2.3 Latency: why traditional satellite is slow to respond
 
-Cable internet reuses the same coaxial cable used for cable television. A cable modem connects to this line and provides a standard Ethernet connection to your router or devices.
+Latency is where satellite has historically struggled. Traditional satellite services use **geostationary (GEO)** satellites, which orbit at about 35,786 km — the height at which a satellite takes exactly one day to orbit, so it appears fixed in the sky and a dish can be pointed at it permanently. That distance is enormous, and even radio waves travelling at the speed of light take a noticeable time to cover it.
 
-The cable carries many different frequencies simultaneously — this is what makes it "broadband": multiple signal types (voice, video, data) can travel down the same physical wire at once, each on its own frequency band, without interfering with each other.
+Newer services such as Starlink use **low Earth orbit (LEO)** satellites, around 550 km up. The satellites move across the sky, so the dish tracks them electronically and hands over from one to the next, and many more satellites are needed to cover the planet. The payoff is far lower latency. Starlink advertises roughly 25 to 60 ms and is working to reduce that further.
 
-The standard governing how data is transmitted over these cable networks is **DOCSIS** (Data Over Cable Service Interface Specification). Different DOCSIS versions provide different maximum speeds and features.
+```text
++------------------------------------------------------------------------------+
+|  GEO (traditional)                      LEO (for example Starlink)           |
+|                                                                              |
+|  [satellite]  ~35,786 km up             [satellite]  ~550 km up              |
+|     /     \   fixed in the sky             /     \   moves across the sky    |
+|    /       \                              /       \                          |
+| [dish]   [ground station]              [dish]   [ground station]             |
+|                                                                              |
+|  Dish to ground: ~239 ms                Dish to ground: ~4 ms                |
+|  Request + reply: ~480 ms minimum       Advertised total: ~25-60 ms          |
++------------------------------------------------------------------------------+
+```
 
-Typical cable internet speeds range from around 50 Mbps up to 1 Gbps or higher, and because it shares the cable company's infrastructure, the same connection can also deliver TV and telephone service.
+### 2.4 Worked example — how much delay does GEO add?
 
-## 4. DSL (Digital Subscriber Line)
+**Question:** roughly how long does a GEO satellite add to a web request?
 
-DSL delivers internet access over the same copper telephone line already used for voice calls, by adding a digital data signal onto that line. The most common variant is **ADSL** — Asymmetric Digital Subscriber Line.
+1. **One leg.** Radio travels at about 300,000 km per second. One leg (dish up to satellite, or satellite down to ground station) is at least 35,786 km: 35,786 / 300,000 = about 0.119 seconds, or **119 ms**.
+2. **One direction.** Your request goes up and then down: 2 × 119 = about **239 ms**. That is the "quarter of a second" figure.
+3. **There and back.** The reply has to make the same trip in reverse: 2 × 239 = about **477 ms**.
+4. **Reality.** Those numbers assume the satellite is directly overhead and ignore processing, queueing and the distance from the ground station to the actual server. Real GEO round trips are commonly around 600 ms.
 
-It is called "asymmetric" because download speed is significantly higher than upload speed. A typical example given is around 200 Mbps download but only 20 Mbps upload.
+The same sum for LEO at 550 km gives about 3.7 ms each way — the rest of Starlink's 25 to 60 ms is routing, processing and the terrestrial part of the path.
 
-DSL performance also depends heavily on distance from the telephone company's central office: the further away the subscriber is, the slower the achievable speed. DSL generally requires the subscriber to be within about 10,000 feet of the central office to get usable service.
+> **Exam tip:** satellite means **high latency** (GEO around half a second or more), **line of sight** needed, and **rain fade**. If a scenario says "remote location, VoIP calls are laggy", satellite latency is the likely cause.
 
-> **Exam tip:** if a question emphasises "different upload vs download speeds," think DSL (or ADSL specifically). If it emphasises "distance from the central office matters," that is also a DSL giveaway.
+> **Note (beyond this lesson):** the lesson describes the delay as "a quarter of a second up and a quarter of a second down". More precisely, a quarter of a second is the whole one-way trip (dish, satellite, ground station); the single hop up to the satellite is only about 120 ms. The half-second total is right for a request and its reply.
 
-## 5. Cellular internet: tethering and hotspots
+### 2.5 Line of sight and rain fade
 
-Cellular data internet uses the same cell-tower infrastructure as mobile phone networks — geography is divided into cells, each served by an antenna, and the cells are linked together to provide continuous coverage.
+A satellite dish needs a clear, unobstructed view of the sky in the satellite's direction. Trees, buildings and hills can block the signal — this requirement is called **line of sight**. For GEO that means one fixed direction; for LEO it means a wide patch of open sky, because the satellites move.
 
-Two ways to share a phone's cellular data connection with other devices:
+Heavy rain and storms can also weaken the signal enough to slow or drop the connection. This is called **rain fade**.
 
-- **Tethering**: a one-to-one connection, where a single other device (e.g. a laptop) is connected to the phone (via cable, Bluetooth or Wi-Fi) and uses the phone's data connection.
-- **Mobile hotspot**: the phone shares its cellular data connection with multiple devices at once, typically over Wi-Fi.
+> **Note (beyond this lesson):** rain fade happens because the high radio frequencies satellite internet uses (the Ku and Ka bands) are absorbed and scattered by water droplets. The heavier the rain, the bigger the loss.
 
-Carriers may restrict or charge extra for either feature, so it is worth checking with the mobile provider about availability and cost before relying on it.
+> **In the real world:** when a satellite customer reports that the internet "drops out when it pours", that is rain fade, not a faulty router. Check the dish's alignment and for new obstructions, such as a tree that has grown, before replacing equipment.
 
-## 6. WISPs (Wireless Internet Service Providers)
+## 3. Fibre
 
-In areas where wired options (cable, DSL, fibre) are not available or practical, a WISP provides internet access wirelessly. This is a common solution for rural or remote locations.
+### 3.1 Light in glass
 
-Setting up a WISP connection is comparatively simple: an outdoor antenna pointed at the WISP's transmission equipment is usually all that is needed to establish a link.
+Fibre optic cable carries data as pulses of light through strands of glass thinner than a hair. It is one of the fastest and most efficient ways to move very large amounts of data, and it does so over much longer distances than copper can manage.
 
-The underlying wireless technology can vary:
+### 3.2 The trade-offs
 
-- A meshed 802.11 (standard Wi-Fi) network.
-- A 5G home internet connection, where a mobile carrier acts as the ISP.
-- Other proprietary wireless technologies specific to that WISP.
+Fibre costs more than copper: the cable, the equipment at each end, and repairs (splicing a broken fibre needs specialist tools and training) are all dearer. In exchange you get more bandwidth and longer runs.
 
-Typical WISP speeds range from around 10 Mbps up to 1,000 Mbps (1 Gbps), depending on the technology and equipment used.
+### 3.3 Fibre in wide area networks
 
-## 7. Comparing connection types
+Because a single pair of fibres can carry so much, fibre is the standard for **wide area networks (WANs)** — links across a city or between cities. The lesson mentions two technologies here:
 
-| Type      | Typical speed              | Latency          | Best for                          |
-|-----------|-----------------------------|-------------------|-------------------------------------|
-| Satellite | ~100 Mbps down / 5 Mbps up  | High (older); low with LEO (Starlink) | Remote areas, no other option available |
-| Fibre     | Very high (multi-Gbps)      | Low               | Homes and backbone/WAN links       |
-| Cable     | 50 Mbps – 1 Gbps+            | Low               | Homes and businesses with cable infrastructure |
-| DSL       | Up to ~200 Mbps down (asymmetric) | Low          | Areas with phone lines, close to central office |
-| Cellular  | Varies by carrier and generation | Low–moderate | Mobile use, tethering/hotspot backup |
-| WISP      | ~10–1000 Mbps                | Low–moderate     | Rural areas without wired options  |
+- **SONET rings** — a standard for carrying data over fibre, usually laid out as a ring so that if the fibre is cut at one point, traffic can go round the other way.
+- **Multi-wavelength fibre** — sending several different colours (wavelengths) of light down the same fibre at once, each carrying its own stream of data. This multiplies the capacity of fibre that is already in the ground.
 
-## 8. Security perspective
+> **Note (beyond this lesson):** SONET is the North American standard; Europe and much of the world use the closely related **SDH**. Multi-wavelength fibre is usually called **wavelength division multiplexing**, and the dense form (**DWDM**) can put dozens of wavelengths on one fibre.
 
-Internet connection type affects the attack surface and risk profile in a few practical ways relevant to a help desk technician or defender:
+### 3.4 Fibre to the home
 
-- **Shared infrastructure (cable, WISP):** because cable broadband and some WISP setups share physical medium or spectrum among many subscribers, misconfigured or older equipment can occasionally expose traffic to neighbours; modern DOCSIS and encrypted wireless links mitigate this, but it is a reason to verify encryption is enabled end to end rather than relying purely on the link layer.
-- **Mobile hotspots and tethering:** when a technician troubleshoots a "no internet" ticket and finds the user has bypassed a locked-down corporate network by tethering to a personal phone, that is a policy and security concern — it routes traffic outside monitored, filtered corporate infrastructure.
-- **WISP and satellite line-of-sight equipment:** physical exposure of outdoor antennas makes them a target for tampering or theft; also worth remembering that these outdoor links are visible and identifiable, which can leak information about a site's location and connectivity to anyone surveying the area.
-- **Central office distance (DSL):** knowing that DSL degrades with distance helps a technician distinguish a genuine outage from an expected slow link, avoiding wasted troubleshooting time and unnecessary escalations.
+Fibre used to belong to ISPs, telecoms backbones and big corporate networks. Now it often runs all the way to the house. At the premises, a device converts the light signal into electrical Ethernet that the router and the rest of the home network use. That device is the **optical network terminal (ONT)**, covered in the network devices lesson, and it usually marks the demarcation point between the ISP's equipment and yours.
+
+The lesson describes the conversion happening outside the home. In practice the ONT may be outside or inside; in many UK installations it is a small box on an inside wall, fed by a fibre that comes through the wall.
+
+```text
++------------------------------------------------------------------------------+
+|  FTTP (fibre to the premises): fibre all the way                             |
+|  [Exchange] ===============fibre=============== [ONT] --Ethernet-- [Router]  |
+|                                                                              |
+|  FTTC (fibre to the cabinet): fibre to the street, copper for the last bit   |
+|  [Exchange] ======fibre====== [Street cabinet] --copper phone line-- [Modem] |
+|                                                                              |
+|  ADSL: copper phone line all the way from the exchange                       |
+|  [Exchange] -----------------copper phone line------------------- [Modem]    |
++------------------------------------------------------------------------------+
+```
+
+> **Note (beyond this lesson):** in the UK, much of what is sold as "fibre broadband" is actually **FTTC**: fibre to a green street cabinet, then VDSL2 (a fast form of DSL) over the copper phone line to the home. Only **FTTP** is fibre to the building. The distinction matters because FTTC still slows down with distance, just like DSL (section 5).
+
+> **Exam tip:** fibre = highest bandwidth, longest distances, immune to electrical interference, but most expensive to install and repair.
+
+## 4. Cable broadband
+
+### 4.1 Data over the TV cable
+
+Cable internet uses the same coaxial ("coax") cable that brings cable television into a home. The coax plugs into a **cable modem**, which turns the signal into Ethernet for the router and the rest of the network.
+
+### 4.2 What "broadband" means here
+
+The cable company's coax carries many different frequencies at the same time, each one a separate channel. This technique of running multiple signals at different frequencies over one wire is called **broadband**. Some frequencies carry TV channels, some carry voice, and some carry internet data, all on the same copper cable at once — which is why one cable can deliver television, phone and internet to a whole household.
+
+```text
++------------------------------------------------------------------------------+
+|  One coax cable, many frequency channels at the same time (simplified)       |
+|                                                                              |
+|  low frequency ---------------------------------------------> high frequency |
+|  [upstream data] [ TV channels ....... ] [ downstream data ] [ more TV ... ] |
+|                                                                              |
+|  The cable modem tunes to the data channels and hands them over as Ethernet  |
++------------------------------------------------------------------------------+
+```
+
+### 4.3 DOCSIS
+
+The standard that defines how data travels over cable networks is **DOCSIS**: the **Data Over Cable Service Interface Specification**. It has been through several versions, each faster than the last, and your cable modem must support the version (or a later one) that your provider uses to get the full speed.
+
+> **Note (beyond this lesson):** the versions you are likely to meet are DOCSIS 3.0 (bonded channels, around 1 Gbps down in practice), DOCSIS 3.1 (up to about 10 Gbps down and 1–2 Gbps up), and DOCSIS 4.0 (up to about 10 Gbps down and 6 Gbps up). Home plans are usually well below these ceilings.
+
+### 4.4 Speeds
+
+Cable plans typically range from around 50 Mbps to 1 Gbps and beyond, with TV and phone services on the same wire.
+
+> **Note (beyond this lesson):** the coax in a street is shared, so homes in one area share capacity and speeds can dip at busy times.
+
+## 5. DSL
+
+### 5.1 Data over the phone line
+
+**DSL (Digital Subscriber Line)** uses the copper telephone line that already runs to most homes. The phone company adds digital data at frequencies above those used for voice, so the same line can carry calls and internet at the same time. You will often see it called **ADSL (Asymmetric Digital Subscriber Line)**.
+
+### 5.2 Why "asymmetric"?
+
+It is asymmetric because the download speed is much higher than the upload speed. That suits typical home use — people download far more than they upload — but it hurts anyone who sends large files, backs up to the cloud or uploads video.
+
+### 5.3 Worked example — the cost of a slow upload
+
+**Question:** on a line that downloads at 200 Mbps and uploads at 20 Mbps, how long does it take to download and to upload a 2 GB video file? (Ignore overheads.)
+
+1. **Convert to bits.** 2 GB = 2,000 MB, and 2,000 MB × 8 = **16,000 megabits**. Line speeds are quoted in bits; file sizes in bytes.
+2. **Download.** 16,000 / 200 = **80 seconds**.
+3. **Upload.** 16,000 / 20 = **800 seconds**, or 13 minutes 20 seconds.
+
+The same file takes ten times longer to upload. That ratio, not the headline download figure, is what a video creator or a small office sending backups offsite should look at.
+
+> **Caution:** the 200 Mbps down / 20 Mbps up example in the lesson is a VDSL2-class figure, not ADSL. Classic ADSL tops out at around 8 Mbps down, and ADSL2+ at around 24 Mbps down with roughly 1 Mbps up (up to about 3 Mbps with an extended-upload variant). The asymmetry principle is identical; the numbers just belong to a newer member of the DSL family.
+
+### 5.4 Distance from the central office
+
+DSL speed falls the further the customer is from the **central office** — the telephone company's local building where the lines terminate (in the UK, the **telephone exchange**). The lesson's rule of thumb is that DSL needs you to be within about 10,000 feet of the central office, which is roughly 3 km.
+
+> **Note (beyond this lesson):** 10,000 feet is the exam's working figure. Basic ADSL can work at greater distances, at low speeds, while the fastest VDSL2 speeds need a copper run of well under a kilometre. That is why FTTC puts the DSL equipment in a street cabinet: it shortens the copper.
+
+## 6. Cellular
+
+### 6.1 Using the mobile network
+
+Cellular internet uses the same infrastructure as mobile phones. The country is divided into small areas called **cells**, each served by an antenna, and the cells are linked together so a device can move between them without losing its connection.
+
+### 6.2 Tethering and mobile hotspots
+
+A phone with mobile data can share that connection with other devices. The lesson draws a clear distinction:
+
+| | Tethering | Mobile hotspot |
+|---|---|---|
+| Devices served | One (one-to-one) | Several at once |
+| Typical link | USB cable, Bluetooth or Wi-Fi | Wi-Fi |
+| What the phone acts as | A modem for one device | A small Wi-Fi access point and router |
+
+```text
++------------------------------------------------------------------------------+
+|  Tethering (one-to-one)                Mobile hotspot (one-to-many)          |
+|                                                                              |
+|  [Laptop] --USB/BT/Wi-Fi-- [Phone]     [Laptop]   [Tablet]   [Console]       |
+|                               |             \         |         /            |
+|                         cellular network     \----- [Phone] ---/             |
+|                               |                       |                      |
+|                           Internet              cellular network             |
+|                                                       |                      |
+|                                                   Internet                   |
++------------------------------------------------------------------------------+
+```
+
+Not every mobile plan allows tethering or hotspot use, and some carriers charge extra or cap it separately. Check with the carrier before relying on it.
+
+> **Exam tip:** "tethering" = one device; "hotspot" = many devices at once. In everyday speech people use "tethering" for both, but the exam draws the line.
+
+> **Note (beyond this lesson):** many mobile networks use **carrier-grade NAT (CGNAT)**, where lots of customers share one public IPv4 address. It is one reason a mobile connection usually can't accept incoming connections (no port forwarding), and it makes an IP address in a log much less useful for identifying a single user.
+
+## 7. Wireless internet service providers (WISPs)
+
+### 7.1 When cables won't reach
+
+In some places it is hard to get a cable from the cable company or even a phone line from the telephone company. A **wireless internet service provider (WISP)** fills that gap by delivering internet over radio instead of cables. It is ideal for remote locations with no other provider, and it is simple to set up: the customer mostly needs an antenna pointed at the WISP's network.
+
+### 7.2 What the WISP network might use
+
+The lesson names three possibilities:
+
+- **Meshed 802.11** — the same Wi-Fi standards used in homes and offices, with access points linked together into a mesh that covers a wide area.
+- **5G home internet** — a mobile network operator acting as the ISP, delivering fixed home broadband over its 5G network.
+- **Proprietary wireless** — the WISP's own radio technology.
+
+### 7.3 Equipment and speed
+
+An antenna is mounted outside the building and pointed at the WISP's tower or access point; a cable runs from it to the router inside. Speeds vary widely, from about 10 Mbps up to 1,000 Mbps, depending on the technology, the distance and what is in the way.
+
+```text
++------------------------------------------------------------------------------+
+|                                                                              |
+|  [Router] --cable-- [Outdoor antenna]  ))) radio link (((  [WISP tower]      |
+|    inside            on roof or wall                            |            |
+|                                                          WISP backbone       |
+|                                                                 |            |
+|                                                             Internet         |
+|                                                                              |
++------------------------------------------------------------------------------+
+```
+
+> **Note (beyond this lesson):** fixed wireless links usually also need line of sight, or something close to it, between the customer's antenna and the tower. Hills, new buildings and even trees coming into leaf can reduce performance.
+
+## 8. Comparing and choosing
+
+### 8.1 Side by side
+
+| Type | Medium | Speeds from the lesson | Latency | Main weakness | Typical use |
+|---|---|---|---|---|---|
+| Satellite (GEO) | Radio to a satellite ~35,786 km up | ~100 / 5 Mbps | ~600 ms | Latency, rain fade, line of sight, cost | Anywhere nothing else reaches |
+| Satellite (LEO) | Radio to satellites ~550 km up | Varies by plan | ~25–60 ms | Needs open sky, cost | Remote homes and sites |
+| Fibre | Light in glass | Highest of all | Very low | Cost to install and repair | WANs, businesses, FTTP homes |
+| Cable | Coax, DOCSIS | ~50 Mbps to 1 Gbps+ | Low | Shared with the neighbourhood | Homes and small offices |
+| DSL | Copper phone line | e.g. 200 / 20 Mbps (VDSL2) | Low | Asymmetric; slows with distance | Homes near an exchange or cabinet |
+| Cellular | Mobile network | Varies with signal | Low to moderate | Coverage, data caps, carrier rules | On the move, backup links |
+| WISP | Radio to a local tower | ~10–1,000 Mbps | Low to moderate | Line of sight, weather, range | Rural areas without cables |
+
+### 8.2 Worked example — choosing for three sites
+
+**Site A:** a hill farm with no cable TV, no usable phone line, no mobile signal, but clear sky and a view of a WISP mast 6 km away on a neighbouring hill.
+- **WISP**: usually cheaper than satellite, lower latency than GEO, and only an outdoor antenna to install. LEO satellite is the fallback if the radio path is blocked.
+
+**Site B:** a video production office in a town centre that uploads large files to clients every day.
+- Upload speed matters most, so asymmetric DSL is a poor fit. **Fibre (FTTP)**, often symmetric, is the answer; a high-tier cable plan is second choice.
+
+**Site C:** a remote research station with no terrestrial links at all, where staff make daily video calls.
+- Only **satellite** reaches. Video calls need low latency, so choose **LEO** (25 to 60 ms) over GEO (around 600 ms).
+
+### 8.3 Worked example — measuring latency yourself
+
+You can see the difference between connection types with a plain ping to a well-known server. The time on each reply is the round-trip latency in milliseconds.
+
+```powershell
+Test-Connection 1.1.1.1 -Count 4      # PowerShell (Latency or ResponseTime column)
+ping -n 4 1.1.1.1                     # Windows Command Prompt
+```
+
+```bash
+ping -c 4 1.1.1.1                     # Linux and macOS
+```
+
+Fibre and cable typically show a few milliseconds to a nearby server; LEO satellite shows tens of milliseconds that jump around as the dish hands over between satellites; GEO satellite shows around 600 ms whatever the server, because the satellite hop dominates. `tracert` (Windows) or `traceroute` (Linux) shows where along the path the delay begins.
+
+## 9. Security perspective
+
+Each connection type changes where your network's edge is, who controls the equipment on it, and what an attacker or outage can do to it.
+
+- **The customer equipment is your perimeter.** Cable modems, ONTs, DSL routers and WISP antennas are all network devices exposed to the ISP side, and many are managed remotely by the ISP. Change default passwords on anything you control, keep firmware updated, and know which box is yours and which belongs to the ISP (the demarcation point).
+- **Don't assume the link is encrypted.** The connection type is only transport. Researchers have repeatedly found traffic crossing some GEO satellite links unencrypted, and cable, DSL and WISP providers can all see unencrypted traffic on their networks. Rely on end-to-end encryption (HTTPS, TLS, a VPN) rather than the carrier.
+- **Tethering and hotspots bypass the corporate edge.** A work laptop on a phone's hotspot skips the office firewall, web filter, data loss prevention and logging. A laptop connected to the wired LAN and a hotspot at the same time can bridge the corporate network to an unmonitored path. Control it with policy and device management, and watch for unexpected Wi-Fi networks near sensitive areas.
+- **A hotspot is an access point.** It needs WPA2 or WPA3, a strong passphrase, and switching off when not in use; an open hotspot lets anyone nearby join the same network as your laptop.
+- **CGNAT muddies attribution.** On mobile and some other networks, one public IP address may represent hundreds of customers, so blocking or investigating by IP address can hit the wrong people or miss the right one.
+- **Availability is security too.** Rain fade, a cut fibre or a failed modem take the business offline. A second connection of a *different* type (for example fibre plus cellular failover) on a different physical path is the defence; two services on the same duct share the same single point of failure.
+- **Latency breaks things quietly.** GEO latency can push VPN, VoIP and remote desktop sessions past their timeouts; measure it before blaming the application.
 
 ## Summary
 
-- Satellite internet reaches almost anywhere but has higher cost, and historically higher latency (roughly half a second round trip); newer low-orbit systems like Starlink cut latency to tens of milliseconds. Rain fade and line-of-sight requirements are its main weaknesses.
-- Fibre optic uses light to carry data, offering very high speed over long distances; it costs more to install and repair than copper but is now common even for home connections, often converted to copper just outside the building.
-- Broadband cable reuses coaxial TV cable and carries multiple frequencies (voice, video, data) simultaneously; DOCSIS is the governing standard, with speeds from 50 Mbps to over 1 Gbps.
-- DSL runs data over standard phone lines; ADSL is asymmetric (much faster download than upload) and its speed drops the further the subscriber is from the central office (roughly 10,000 feet as a practical limit).
-- Cellular data can be shared via tethering (one device) or a mobile hotspot (multiple devices); carriers may charge extra for either.
-- WISPs provide wireless internet access, often to rural or remote locations, using technologies such as meshed 802.11, 5G home internet, or proprietary wireless links, with speeds from roughly 10 to 1,000 Mbps.
+- Internet connection types are the last-mile links between a premises and the ISP; compare them on bandwidth, latency, availability and cost.
+- **Satellite** reaches almost anywhere but costs more. GEO adds roughly half a second or more of round-trip latency; LEO (Starlink) advertises around 25 to 60 ms. It needs line of sight and suffers rain fade.
+- **Fibre** carries data as light: the highest bandwidth over the longest distances, but the most expensive to install and repair. SONET rings and multi-wavelength fibre carry WAN traffic; FTTP ends at an ONT.
+- **Cable** uses coax and broadband (many frequencies on one wire) to deliver TV, voice and data. DOCSIS is the data standard; speeds run from about 50 Mbps to 1 Gbps and beyond.
+- **DSL** puts data on the phone line. ADSL is asymmetric (download much faster than upload), and speed falls with distance from the central office — the exam figure is about 10,000 feet.
+- **Cellular** uses the mobile network. Tethering shares a phone's connection with one device; a mobile hotspot shares it with several.
+- **WISPs** deliver internet by radio to an outdoor antenna using meshed 802.11, 5G home internet or proprietary links, at roughly 10 to 1,000 Mbps.
 
 ## Glossary
 
-| Term | Definition |
+| Term | Meaning |
 |---|---|
-| ADSL | Asymmetric Digital Subscriber Line — DSL variant with faster download than upload |
-| Broadband | Transmitting multiple signal frequencies over one shared medium simultaneously |
-| Central office | The telephone company facility that DSL performance depends on distance from |
-| Cellular network | Internet/phone service delivered via geographically divided cell towers |
-| Coaxial cable | Copper cable used by cable TV/internet providers |
-| DOCSIS | Data Over Cable Service Interface Specification — standard for cable internet |
-| DSL | Digital Subscriber Line — internet delivered over telephone lines |
-| Fibre optic | Data transmission using light through glass or plastic fibre |
-| Latency | The time delay for data to travel from sender to receiver and back |
-| Line of sight | Unobstructed visual/signal path, required for satellite and some WISP links |
-| Mobile hotspot | Sharing a phone's cellular data with multiple devices at once |
-| Rain fade | Satellite signal degradation caused by heavy weather |
-| Satellite internet | Internet access via signals relayed through an orbiting satellite |
-| SONET | A fibre-based standard used for high-speed metropolitan/wide area networking |
-| Starlink | A low-Earth-orbit satellite internet service with lower latency than traditional satellite |
-| Tethering | Sharing a phone's cellular data connection with a single other device |
-| WISP | Wireless Internet Service Provider — delivers internet via wireless links, often to remote areas |
+| Last mile | The link between a customer's premises and the ISP's network |
+| Latency | The time a packet takes to reach its destination and come back, in milliseconds |
+| GEO | Geostationary orbit, about 35,786 km up; the satellite appears fixed in the sky |
+| LEO | Low Earth orbit, a few hundred kilometres up; used by Starlink at about 550 km |
+| Line of sight | An unobstructed path between a transmitter and a receiver |
+| Rain fade | Loss of satellite signal strength caused by rain and storms |
+| Fibre optics | Transmitting data as pulses of light through glass fibre |
+| SONET | A standard for carrying data over fibre, often in self-healing rings (SDH in Europe) |
+| Multi-wavelength fibre | Several colours of light on one fibre, each carrying its own data (WDM / DWDM) |
+| ONT | Optical network terminal; converts fibre to Ethernet at the premises |
+| Broadband | Many signals at different frequencies on one cable at the same time |
+| DOCSIS | Data Over Cable Service Interface Specification; the standard for data over cable TV networks |
+| Cable modem | The device that converts the coax signal to Ethernet |
+| DSL | Digital Subscriber Line; data carried over a copper telephone line |
+| ADSL | Asymmetric DSL; download much faster than upload |
+| Central office | The telephone company's local building where lines terminate (the exchange, in the UK) |
+| Tethering | Sharing a phone's mobile data with one other device |
+| Mobile hotspot | A phone sharing its mobile data with several devices over Wi-Fi |
+| WISP | Wireless internet service provider; internet delivered by radio to an outdoor antenna |
+| CGNAT | Carrier-grade NAT; many customers sharing one public IPv4 address |
 
 ## Review questions
 
-1. Why does satellite internet typically have higher latency than fibre or cable?
-2. What is "rain fade," and which connection type is it associated with?
-3. Roughly how much latency did Starlink advertise, compared to traditional satellite systems?
-4. Why is fibre described as "asymmetric" — or is it? Compare with DSL.
-5. What does DOCSIS stand for, and what technology does it govern?
-6. Why is cable internet called "broadband"?
-7. What does "asymmetric" mean in the context of ADSL, and give an example speed pair.
-8. How does distance from the central office affect DSL performance?
-9. What is the difference between tethering and a mobile hotspot?
-10. Name three underlying wireless technologies a WISP might use.
-11. Why is fibre more expensive than copper, despite offering better performance?
-12. A remote farmhouse has no cable or phone line access but has clear sky visibility. Which two connection types from this lesson might work, and what is the key trade-off between them?
-13. A user complains their DSL is much slower than advertised. What two DSL-specific factors should a technician check first?
-14. What typical speed range would you expect from a satellite connection, and how does it compare to a typical cable connection?
+1. What two problems does a satellite connection have that a fibre connection does not, apart from latency?
+2. Why does a traditional GEO satellite connection add about half a second of latency to a request and its reply?
+3. What latency range does Starlink advertise, and why is it so much lower than GEO?
+4. What does DOCSIS stand for, and which connection type uses it?
+5. In the context of cable internet, what does "broadband" mean?
+6. Why is ADSL described as asymmetric?
+7. What is the difference between tethering and a mobile hotspot?
+8. Name the three technologies the lesson says a WISP network might use.
+9. A line downloads at 200 Mbps and uploads at 20 Mbps. Roughly how long does uploading a 1 GB file take?
+10. **Scenario:** a satellite customer says the connection works fine most of the time but drops during heavy storms. What is the cause, and what should you check before replacing any equipment?
+11. **Scenario:** two neighbours pay for the same DSL package, and one is much slower. The routers and internal wiring are fine. What is the most likely reason?
+12. **Scenario:** a small business in a rural valley has no cable or phone line, but it has a clear view of a hilltop radio mast run by a local provider. Which connection type fits best?
+13. **Scenario:** a user's work laptop is plugged into the office network and also connected to their phone's hotspot. Why is the security team concerned?
+14. **Scenario:** a company wants its internet connection to survive a cut fibre in the street. What should it add?
 
 ## Answer key
 
-1. **Because the signal must travel a very long physical distance up to a satellite and back down.** This adds significant round-trip delay compared to terrestrial links.
-2. **Rain fade — associated with satellite internet.** Heavy storms can disrupt the satellite signal.
-3. **Roughly 25–60 milliseconds, versus about half a second (500 ms) for traditional satellite.** Starlink's lower orbit reduces the distance the signal must travel.
-4. **Fibre is not described as asymmetric in this lesson — DSL is.** Fibre's main trade-off is cost and installation complexity, not upload/download imbalance.
-5. **Data Over Cable Service Interface Specification — it governs how data is sent over cable (coaxial) internet connections.**
-6. **Because multiple frequencies carrying different traffic (voice, video, data) run simultaneously over the same cable.**
-7. **Download speed is much higher than upload speed; the example given was 200 Mbps down versus 20 Mbps up.**
-8. **The further from the central office, the slower the DSL connection; DSL generally needs to be within about 10,000 feet of the central office.**
-9. **Tethering shares a phone's data connection with one other device; a mobile hotspot shares it with multiple devices at once.**
-10. **Meshed 802.11 Wi-Fi, 5G home internet, and proprietary wireless technology.**
-11. **Because fibre and its connecting equipment cost more to buy and repair than copper, even though it offers much higher speed and distance capability.**
-12. **Satellite or WISP.** Satellite works almost anywhere with sky visibility but costs more and (for traditional systems) has higher latency; a WISP is cheaper and lower latency but requires an antenna with line of sight to a WISP transmitter, which may not exist in every remote area.
-13. **Distance from the central office, and confirm nothing is degrading the copper line itself** — both directly affect achievable DSL speed.
-14. **Around 100 Mbps down / 5 Mbps up for satellite, versus 50 Mbps up to 1 Gbps or higher for cable** — cable generally offers substantially higher throughput where available.
+1. **Line of sight and rain fade.** The dish needs a clear view of the sky, and heavy rain weakens the signal.
+2. **Distance.** The signal travels about 35,786 km up and the same back down each way — about 239 ms in each direction, so about 480 ms for a request and reply before any processing.
+3. **About 25 to 60 ms.** Starlink's LEO satellites orbit only about 550 km up, so the radio path is far shorter.
+4. **Data Over Cable Service Interface Specification;** it is used by cable (coax) internet.
+5. **Many frequencies carrying different signals on the same cable at once,** so TV, voice and data can share one coax.
+6. **The download speed is much higher than the upload speed.**
+7. **Tethering shares the phone's connection with one device; a hotspot shares it with several at once,** usually over Wi-Fi.
+8. **Meshed 802.11, 5G home internet, and proprietary wireless.**
+9. **About 400 seconds (6 minutes 40 seconds):** 1 GB = 8,000 megabits, and 8,000 / 20 = 400.
+10. **Rain fade.** Check the dish alignment and for new obstructions to line of sight; the router is not the fault.
+11. **A longer or poorer copper run to the exchange or cabinet.** DSL speed depends on distance, and neighbours can be on different cables.
+12. **A WISP** — an outdoor antenna pointed at the provider's mast, with no cables needed.
+13. **The hotspot bypasses the corporate firewall, filtering and logging,** and a dual-connected laptop can bridge the office network to an unmonitored path.
+14. **A second connection of a different type on a different physical path,** such as cellular failover, so one cut doesn't take both down.
