@@ -363,6 +363,16 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 2.7 Internet connection types](/cyber_lab_log/resources/a-plus-core-1/2/)
 
+### Network tools `A+1 D2`
+
+- **Build copper:** crimper (RJ45 contacts pierce the insulation; stay clamps the jacket) · punch-down tool seats **and** trims onto a numbered block — keep the twists to the block.
+- **Cable tester** = continuity, pin 1–8: finds opens, crossed pairs, shorts. Says nothing about quality (that's a certifier). **Loopback plug** = one interface in isolation, TX back into RX — not a crossover.
+- **Tone generator + inductive probe:** trace one cable among hundreds; the probe hears it without touching the copper.
+- **Wi-Fi analyser** = 802.11 channels, signal, interference, clients · **spectrum analyser** = all radio energy, so non-Wi-Fi interference too.
+- **Capture:** physical tap breaks the link to fit (fibre taps often passive, no power) · **port mirror / SPAN** (Switched Port ANalyzer) copies a switch port with no rewiring, but can drop frames when busy.
+
+**Full notes →** [A+ Core 1 2.8 Network tools](/cyber_lab_log/resources/a-plus-core-1/2/)
+
 ### Wireless and cabling `A+1 D2` `A+1 D3` `NfSA 2`
 
 - **Wi-Fi:** 4 = n · 5 = ac · 6/6E = ax · 7 = be. On 2.4 GHz use channels 1, 6 and 11.
@@ -419,6 +429,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **NAT is not a firewall:** port forwards, UPnP and inside-initiated connections pass straight through. IPv6 usually has no NAT at all, so write and test IPv6 firewall rules too. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Normalise IPv6 before matching:** `2001:db8::1` = `2001:0db8:0:0:0:0:0:1`, so text-based blocklists and log searches miss variants. Compare the compressed form. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Rogue DHCP and starvation:** clients take the first offer, so a rogue server can hand out its own gateway and DNS; draining the pool pushes clients onto APIPA. Use DHCP snooping, and treat a spike in 169.254 addresses as a possible attack. → [A+ Core 1 2.6](/cyber_lab_log/resources/a-plus-core-1/2/)
+- **A tap or SPAN port is a wiretap:** anyone with comms room access, or just a switch login, can copy every unencrypted packet on a link. Keep switch management on its own VLAN, log mirror-config changes, and remember passive fibre taps are undetectable from the network side. → [A+ Core 1 2.8](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **Tethering and hotspots bypass the corporate edge:** a work laptop on a phone's hotspot skips the firewall, web filter, DLP and logging, and one on the LAN and a hotspot at once can bridge the two. Control with policy and MDM. → [A+ Core 1 2.7](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **MAC addresses aren't identity:** one command spoofs them, so MAC allow-lists (guest Wi-Fi paywalls, "admin MAC" firewall rules) are easy to bypass, and randomised MACs break MAC-based inventories. Use 802.1X or WPA2/WPA3-Enterprise. → [TryHackMe 5.1](/cyber_lab_log/resources/tryhackme/5/)
 - **A subnet is only a boundary if something filters it:** put guest Wi-Fi, cameras and printers on their own subnet or VLAN, and make the router or firewall between them deny by default. → [TryHackMe 5.2](/cyber_lab_log/resources/tryhackme/5/)
@@ -432,6 +443,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-23 | Added A+ Core 1 2.8 (Network tools): new Network tools topic; one security quick hit |
 | 2026-09-23 | Expanded A+ Core 1 2.7 (Internet connection types): GEO vs LEO satellite, fibre/cable/DSL detail, and the tethering security hit |
 | 2026-09-22 | Added TryHackMe 5.5 (Extending Your Network): new Firewalls, port forwarding and VPNs topic; one security quick hit |
 | 2026-09-22 | Added TryHackMe 5.4 (Packets and Frames): new TCP connections, headers and frames topic; port ranges line and `THM 5` tag on Ports; one security quick hit |
