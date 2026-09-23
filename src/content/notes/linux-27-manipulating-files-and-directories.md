@@ -1,5 +1,5 @@
 ---
-title: "Linux: Manipulating Files and Directories"
+title: "Linux 4: Manipulating Files and Directories"
 description: "A graphical file manager is fine for moving one file. But consider this task: copy every HTML file from one directory to another, but only files that don't exist in the destination or are newer than the copies there.…"
 tags: ["linux", "class-notes"]
 draft: false

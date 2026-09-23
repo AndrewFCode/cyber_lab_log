@@ -1,5 +1,5 @@
 ---
-title: "Linux: Exploring the System"
+title: "Linux 3: Exploring the System"
 description: "Most commands follow the same general shape:"
 tags: ["linux", "class-notes"]
 draft: false

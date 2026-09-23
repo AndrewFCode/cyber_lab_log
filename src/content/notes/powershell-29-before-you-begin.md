@@ -1,5 +1,5 @@
 ---
-title: "PowerShell: Before You Begin"
+title: "PowerShell 1: Before You Begin"
 description: "Graphical tools are good for doing one thing, once. They struggle with:"
 tags: ["powershell", "class-notes"]
 draft: false

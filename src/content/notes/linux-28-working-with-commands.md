@@ -1,5 +1,5 @@
 ---
-title: "Linux: Working with Commands"
+title: "Linux 5: Working with Commands"
 description: "When you type a name at the prompt, it can be any one of four things:"
 tags: ["linux", "class-notes"]
 draft: false
