@@ -126,9 +126,11 @@ pinned: true
 
 ### Redirection and pipelines `TLCL 6`
 
-- **Streams:** `>` overwrite · `>>` append · `2>` errors · `&>` both · `2>/dev/null` discard · `<` input.
-- **Order matters:** write `> file 2>&1`, not `2>&1 > file`.
-- **Filters:** `|` · `sort | uniq` · `grep -i` / `-v` · `head` / `tail -n` / `tail -f` · `wc -l` · `tee`.
+- **Streams:** stdin 0 · stdout 1 · stderr 2. `>` overwrite (truncates **before** the command runs) · `>>` append · `2>` errors · `&>` both (bash only) · `2>/dev/null` discard · `<` input.
+- **Order matters:** write `> file 2>&1`, not `2>&1 > file`. `/dev/null` hides the message, not the exit status.
+- **Grouping:** `{ cmd; cmd; } > file` keeps side effects · `( cmd; cmd ) > file` runs in a subshell and discards them.
+- **Filters:** `|` (stdout only) · `sort | uniq -c` (needs sorted input) · `grep -i` / `-v` / `-o` · `head` / `tail -n` / `tail -f` · `wc -l` · `tee` writes to a file **and** passes data on · `cat -` = stdin here.
+- **Traps:** `sort f > f` empties it (use `sort -o f f`) · `echo x | sudo tee /etc/f` writes where `sudo echo x > /etc/f` can't.
 
 **Full notes →** [Ch. 6 Redirection](/cyber_lab_log/resources/linux/6/)
 
@@ -418,6 +420,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Hiding places:** dotfiles, `~/.ssh/authorized_keys`, `/tmp`, `/dev/shm`. → [Linux ch. 2](/cyber_lab_log/resources/linux/2/) · [Linux ch. 3](/cyber_lab_log/resources/linux/3/)
 - **Alias hijacks:** check `type -a sudo`. → [Linux ch. 5](/cyber_lab_log/resources/linux/5/)
 - **Failed SSH by IP:** `grep "Failed password" auth.log | grep -o "from [0-9.]*" | sort | uniq -c | sort -rn`. → [Linux ch. 6](/cyber_lab_log/resources/linux/6/)
+- **Silenced jobs fail invisibly:** `> /dev/null 2>&1` in cron hides a failing backup for months, and redirecting stderr away from a capture throws out the "Permission denied" lines that show what an attacker probed. Log with `>> job.log 2>&1`. → [Linux ch. 6](/cyber_lab_log/resources/linux/6/)
 - **Injection:** unquoted variables and glued-together input cause shell and SQL injection. → [Linux ch. 7](/cyber_lab_log/resources/linux/7/) · [TryHackMe module 4](/cyber_lab_log/resources/tryhackme/4/)
 - **Insecure → secure:** Telnet → SSH · FTP → SFTP · HTTP → HTTPS · LDAP → LDAPS · SNMP v1/v2c → v3. Never expose RDP 3389 or SMB 445. → [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **ARP spoofing:** ARP has no authentication — a gateway MAC that changes in `ip neigh` / `Get-NetNeighbor` without a hardware swap is worth investigating. → [Networking ch. 1](/cyber_lab_log/resources/networking-sysadmins/1/)
@@ -443,6 +446,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-23 | Expanded TLCL 6 (Redirection): descriptors, truncation, group commands, `tee` and `cat -`, and the `sort -o` / `sudo tee` traps; one security quick hit |
 | 2026-09-23 | Added A+ Core 1 2.8 (Network tools): new Network tools topic; one security quick hit |
 | 2026-09-23 | Expanded A+ Core 1 2.7 (Internet connection types): GEO vs LEO satellite, fibre/cable/DSL detail, and the tethering security hit |
 | 2026-09-22 | Added TryHackMe 5.5 (Extending Your Network): new Firewalls, port forwarding and VPNs topic; one security quick hit |
