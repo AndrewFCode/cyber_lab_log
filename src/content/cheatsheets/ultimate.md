@@ -243,6 +243,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [TCM section 4](/cyber_lab_log/resources/tcm-help-desk/4/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Memory overview `A+1 3.3`
+
+- **RAM ≠ storage.** Temporary, high-speed, volatile — data must be loaded into RAM before the CPU can use it; lost instantly on power-off.
+- **DIMM** (Dual Inline Memory Module): independent contacts on **each side**, 64-bit data width (72 with ECC). **SO-DIMM** = ~half size, horizontal, laptops.
+- **Random access** = any address instantly, any order — no winding like tape. **SDRAM** = synchronised to a common clock. **DDR** transfers on **both edges** of the clock, doubling throughput over single data rate.
+- **DDR3 → DDR4 → DDR5:** each faster, **none backwards-compatible** with the last. DIMM pins: DDR3 240 · DDR4 288 · DDR5 **also 288** — physical **keying** (notch position + voltage), not pin count, is what actually stops a wrong-generation module seating.
+- **Won't seat, no matter how you orient it?** Wrong generation — check the notch against the slot, never force it.
+
+**Full notes →** [A+ Core 1 3.3 An overview of memory](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -523,6 +533,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **An adapter or hub is an active device on the path, not passive plastic** — a compromised USB hub or USB-Ethernet adapter can inject keystrokes, tap traffic or exfiltrate data like any other USB device, and a USB-Ethernet adapter may be an unmonitored NIC unless NAC/802.1X is confirmed to cover it. Passive video adapters (DVI-D-HDMI, DVI-A-VGA) carry no such risk — nothing to compromise. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -530,6 +541,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.3 (An overview of memory): new Memory overview topic (RAM vs storage, DIMM/SO-DIMM, SDRAM, DDR3-5 and keying); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Fiber connectors): extended the Fibre line with ST/SC/LC mechanisms and sizes; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Copper connectors): new Copper connectors topic (RJ11/RJ14, F connectors, punchdown, Molex, Lightning); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Adapters and converters): new Adapters and converters topic; one security quick hit |
