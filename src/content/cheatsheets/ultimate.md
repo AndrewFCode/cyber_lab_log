@@ -397,7 +397,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Wiring (ANSI/TIA-568; ISO/IEC 11801 internationally):** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br · **T568A** swaps orange and green. Only pins **1, 2, 3, 6** differ; 4, 5, 7, 8 are identical. B is the usual choice — pick one per site and wire **both ends the same** (A-to-B is the old 10/100 crossover, not a gigabit one, and Auto-MDI-X makes crossovers unnecessary). Keystone jacks print both guides and deliberately don't follow pin order — follow the label.
 - **Coax** = inner conductor in an outer shield; on networks, cable modems and digital cable.
 - **Where it runs:** **direct burial STP** is waterproof, gel-filled and carries a **drain wire** for ground · **plenum space** (open ceiling void used for return air) needs **plenum-rated** cable — **FEP** or low-smoke PVC, not ordinary PVC.
-- **Fibre:** single-mode (long) vs multimode (short). Connectors ST, SC, LC.
+- **Fibre:** light through a **high refractive index core**, held in by **low-index cladding**, protected by a buffer coating; the **ceramic ferrule** in the connector aligns it (a dirty end face is a top cause of failure). No interference, hard to tap, kilometres without regeneration — but needs specialised kit. **Multimode** = short (~2 km, less at 10G), **LED**, wide core, several modes (paths spread, which limits distance) · **single-mode** = kilometres, **laser**, narrow core, one path. Connectors ST, SC, LC (MTP/MPO in data centres). Dead link? Swap TX/RX at one end, then clean the end faces.
 - **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
@@ -478,7 +478,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
 - **Screens are an uncontrolled output channel:** IPS and OLED stay readable far off axis, so shoulder surfing is easier — privacy filters in receptions and on trains, short lock timeouts, and watch for OLED burn-in ghosting a dashboard on a powered-off device. → [A+ Core 1 3.1](/cyber_lab_log/resources/a-plus-core-1/3/)
-- **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. Tapping fibre means interrupting the light, which costs optical power — so a monitored link can show a tap as a drop in received level. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -486,6 +486,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Optical fibre): expanded the Fibre line with core/cladding, ferrules, multimode vs single-mode and first-check troubleshooting |
 | 2026-09-24 | Added A+ Core 1 3.2 (568A and 568B colours): expanded the Wiring line with both pinouts, the four differing pins and the don't-mix rule |
 | 2026-09-24 | Added A+ Core 1 3.2 (Network cables): expanded Wireless and cabling with twisted pair, category distances, shielding codes, direct burial and plenum; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display attributes): new Display attributes topic (PPI maths, Hz vs FPS, resolution, colour gamut) |
