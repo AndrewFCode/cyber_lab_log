@@ -263,6 +263,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.3 Memory technologies](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Storage devices `A+1 3.4`
+
+- **HDD:** platter + spindle + actuator + arm + read/write head. RPM (5,400/7,200/10,000/15,000) — **higher = lower latency**. Form factors: 3.5" desktop, 2.5" laptop. All mechanical, all can fail.
+- **SSD:** non-volatile memory, no moving parts, far faster. Outgrew SATA's **6 Gbps** ceiling → PCIe-connected storage → **NVMe** (Non-Volatile Memory Express, low latency, direct to PCIe, even in laptops). M.2 NVMe ≈ **20 Gbps**. (A single PCIe lane is ~8–16 Gbps depending on gen — high aggregate figures come from a 4-lane x4 link, not one lane.)
+- **SAS** (Serial Attached SCSI): serialised SCSI, ~**22.5 Gbps**, connector deliberately different from SATA's near-identical form factor to prevent cross-plugging. Used for large HDD arrays.
+- **mSATA** (mini SATA) was a stopgap smaller SATA form factor; **M.2** is now dominant — no cables, full PCIe speed, keyed with **B key / M key / both** notches that determine what fits and what speed is available. Check the slot's key before buying a drive.
+- **Flash (EEPROM):** non-volatile but **limited write cycles** — not a sole backup/archive on its own. Formats: USB, CF, SD, miniSD/microSD, xD. **Optical** (CD/DVD/Blu-ray): laser-written bumps, slow but compact, good for archiving.
+
+**Full notes →** [A+ Core 1 3.4 Storage devices](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -545,6 +555,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -552,6 +563,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.4 (Storage devices): new Storage devices topic (HDD/SSD, PCIe/NVMe, SAS, mSATA/M.2 keying, flash, optical); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (Memory technologies): new Memory technologies topic (parity, ECC, bandwidth, multi-channel); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (An overview of memory): new Memory overview topic (RAM vs storage, DIMM/SO-DIMM, SDRAM, DDR3-5 and keying); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Fiber connectors): extended the Fibre line with ST/SC/LC mechanisms and sizes; one security quick hit |
