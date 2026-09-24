@@ -1,179 +1,176 @@
 ---
-title: "Linux: Seeing the World as the Shell Sees It"
-description: "The Linux Command Line ch. 7 — pathname, tilde, arithmetic, brace, parameter and command expansion, then double quotes, single quotes and escapes."
-tags: ["linux", "bash", "the-linux-command-line"]
+title: "The Linux Command Line 7: Seeing the World as the Shell Sees It"
+description: "TLCL chapter 7 — pathname, tilde, arithmetic, parameter and command expansion, plus double quotes, single quotes and backslash escaping."
+tags: ["linux", "bash", "shell", "expansion", "quoting", "globbing", "command-line"]
 draft: false
-updated: "2026-09-18"
+updated: "2026-09-24"
 kind: "resource"
 resource: "linux"
 module: "Ch. 7"
 moduleOrder: 58
 unit: 7
 ---
-> **In one line:** bash rewrites your command before running it — expansion adds things, quoting stops it, and `echo` lets you watch.
 
-*Companion to: William Shotts, The Linux Command Line, chapter 7.*
+> **In one line:** the shell expands your line before the program runs — globs, `~`, `$var`, `$(( ))` and `$( )` are all gone by the time the command starts — and quoting is how you decide which of those expansions happen.
+
+*Companion to: Shotts, The Linux Command Line (2nd ed.), chapter 7.* The full version is the Seeing the World as the Shell Sees It class notes; the section overview is the Linux chapter 7 sheet.
 
 ---
 
-## Watch expansion happen
+## Preview everything
 
 ```bash
-echo *          # not a literal star — bash replaces it with filenames first
+echo rm *.log        # read the expanded list, THEN run it for real
+ls -l *.log          # even better for destructive work: sizes and dates too
 ```
 
-The command never sees your `*`; it sees the list bash built. `echo` is the easiest way to preview any expansion.
+The program never sees `*` — it receives a finished list of filenames and cannot warn you.
 
----
+## The five expansions
 
-## The expansions
-
-| Expansion | Example | Result |
+| Expansion | Form | Produces |
 |---|---|---|
-| Pathname | `echo D*` | Files starting with `D` |
-| Pathname (hidden) | `echo .[!.]*` | Dotfiles, without `.` and `..` (or use `ls -A`) |
-| Tilde | `echo ~` / `echo ~alice` | `/home/andrew` / `/home/alice` |
-| Arithmetic | `echo $((2 + 2))` | `4` |
-| Brace | `echo Front-{A,B,C}-Back` | `Front-A-Back Front-B-Back Front-C-Back` |
-| Brace range | `echo {1..5}` / `{Z..A}` / `{01..15}` | Numbers, letters in reverse, zero-padded (bash 4+) |
-| Brace, nested | `echo a{A{1,2},B{3,4}}b` | `aA1b aA2b aB3b aB4b` |
-| Parameter | `echo $USER` | Your username |
-| Command substitution | `echo $(ls)` or `` echo `ls` `` | The command's output, inserted in place |
+| Pathname (globbing) | `*` `?` `[abc]` `[!abc]` `[[:digit:]]` | Names of **existing** files, sorted as text |
+| Tilde | `~` · `~user` | A home directory path |
+| Arithmetic | `$((2 + 2))` | An **integer** result |
+| Parameter | `$var` · `${var}` | A variable's value (empty if unset) |
+| Command | `$(cmd)` · `` `cmd` `` | The command's **output** |
 
-### Arithmetic operators
+## Pathname expansion
 
-| Operator | Meaning | Example → result |
-|---|---|---|
-| `+` `-` | Add, subtract | `$((7 - 2))` → `5` |
-| `*` | Multiply | `$((6 * 7))` → `42` |
-| `/` | Integer division | `$((5 / 2))` → `2` |
-| `%` | Remainder | `$((5 % 2))` → `1` |
-| `**` | Power | `$((2 ** 10))` → `1024` |
+| Pattern | Matches (dir: `Makefile a.txt b.txt c.log data1 data2 data10 .hidden`) |
+|---|---|
+| `*` | `Makefile a.txt b.txt c.log data1 data10 data2` |
+| `*.txt` | `a.txt b.txt` |
+| `[ab].txt` | `a.txt b.txt` |
+| `data?` | `data1 data2` — `data10` has two chars after `data` |
 
-Integers only; nest freely: `$(($((5**2)) * 3))` → `75`.
+- **Hidden files are excluded** — `.hidden` isn't in `*`. Need a pattern starting with a dot.
+- **Sorted as text, not numbers** — `data10` comes between `data1` and `data2`.
+- **No match = pattern passed through literally.** That's how you get a file called `*.xyz`.
+- **Brace expansion** generates text rather than matching files: `{A,B}-{1,2}` → `A-1 A-2 B-1 B-2` · `{01..05}` → `01 02 03 04 05` · `mkdir -p proj/{src,docs,tests}`.
 
-### Real uses
+## Tilde, arithmetic, parameter, command
 
-```bash
-mkdir {2025..2026}-{01..12}          # 24 month folders, sorted correctly
-cp config.yml{,.bak}                 # = cp config.yml config.yml.bak
-ls -l $(which cp)                    # long listing of wherever cp lives
-file $(ls -d /usr/bin/* | grep zip)  # identify every zip-related program
-printenv | less                      # every environment variable
-```
+| Written | Result |
+|---|---|
+| `~` / `~root` | `/root` (that user's home) |
+| `~nosuchuser` | **Unchanged literal text** — no error |
+| `$((5/2))` `$((5%2))` `$((2**10))` | `2` `1` `1024` |
+| `$((7/2))` `$((-7/2))` | `3` `-3` — truncates toward zero, **integers only** |
+| `$((1/0))` | Error, not infinity |
+| `${foo}s` with `foo=bar` | `bars` — braces mark where the name ends |
+| `$nosuch` | **Empty string, silently** |
+| `$(uname -r)` | The command's output |
 
-A misspelt variable expands to **nothing**, silently: `echo $SUER` prints a blank line.
-
-### Order bash applies them
-
-1. Brace expansion
-2. Tilde, parameter, arithmetic and command substitution (left to right)
-3. Word splitting
-4. Pathname expansion
-5. Quote removal
-
----
+Expansions nest: `$(( $(echo 3) + 4 ))` → `7`. For decimals use `bc -l`, not `$(( ))`.
 
 ## Quoting
 
-| Form | Suppresses | Still works |
-|---|---|---|
-| `"double quotes"` | Word splitting, pathname (`*`), tilde (`~`), brace (`{}`) | `$VAR`, `$((...))`, `$(...)`, and `\` escapes |
-| `'single quotes'` | **Everything** | Nothing — completely literal |
-| `\` | The one character after it | — |
-
-### Word splitting
-
-Unquoted, spaces, tabs and newlines just separate words.
+| Form | Globbing | Word splitting | `$var` `$(( ))` `$( )` |
+|---|---|---|---|
+| Unquoted | Yes | Yes | Yes |
+| `"double"` | No | No | **Yes** |
+| `'single'` | No | No | No |
+| `\c` | Next char literal | — | — |
 
 ```bash
-echo this is a    test        # this is a test   — extra spaces vanish
-echo "this is a    test"      # spacing kept
-echo $(cal)                   # calendar flattened onto one line
-echo "$(cal)"                 # calendar keeps its layout
+echo this is a    test        # this is a test        (spaces collapse)
+echo "this is a    test"      # this is a    test     (preserved)
+echo "$HOME $((2+2)) $(echo hi)"   # /root 4 hi
+echo '$HOME $((2+2)) $(echo hi) *' # all literal
 ```
 
-### Side by side
+- **Always quote variables.** With `f="two words.txt"`, `ls -l $f` gives two "No such file" errors; `ls -l "$f"` works.
+- **Quote command substitution to keep newlines:** `echo "$(cat f.txt)"` keeps the line break; unquoted collapses it to one line.
+- **`$` still bites inside double quotes:** `echo "The total is $100.00"` prints `The total is 00.00` (`$1` is empty).
+- **Single quotes can't contain a single quote** — no escaping inside them. Use `'it'\''s'` or double quotes.
+- Use single quotes for `grep` / `sed` / `awk` patterns and anything with `$` or `*` meant literally.
+
+## Escaping and escape sequences
 
 ```bash
-echo text ~/*.txt {a,b} $(echo foo) $((2+2)) $USER
-# text /home/andrew/notes.txt a b foo 4 andrew
-
-echo "text ~/*.txt {a,b} $(echo foo) $((2+2)) $USER"
-# text ~/*.txt {a,b} foo 4 andrew
-
-echo 'text ~/*.txt {a,b} $(echo foo) $((2+2)) $USER'
-# text ~/*.txt {a,b} $(echo foo) $((2+2)) $USER
+echo \*                       # a literal asterisk
+echo "Its cost \$100"         # Its cost $100
+mv two\ words.txt renamed.txt
+grep "Failed password" auth.log | \
+  sort | uniq -c              # backslash-newline wraps a long command
 ```
 
-### Escaping
+Inside double quotes, `\` escapes only `$`, `` ` ``, `"` and `\`; elsewhere it stays literal (`"hello\\there"` → `hello\there`).
 
-```bash
-echo "The balance is \$5.00"      # literal $
-mv bad\&filename good_filename    # escape a special character in a name
-mv "my file.txt" my_file.txt      # or just quote it
-```
-
-### Backslash escape sequences
-
-| Sequence | Means |
+| Sequence | Meaning |
 |---|---|
-| `\a` | Bell (beep) |
-| `\b` | Backspace |
-| `\n` | Newline |
-| `\r` | Carriage return |
-| `\t` | Tab |
+| `\n` `\t` | Newline · tab |
+| `\\` | Literal backslash |
+| `\a` `\b` `\r` | Bell · backspace · carriage return |
+| `\0nnn` | Character with octal value `nnn` |
 
-These need `echo -e "a\tb"` or bash's `$'a\tb'` form. Example: `sleep 10; echo -e "Time's up\a"`.
-
----
+Plain `echo` doesn't interpret these — use `printf "a\tb\n"` (portable) or `echo -e`.
 
 ## 🔐 Security notes
 
-- **Always quote variables: `"$var"`.** Unquoted, a variable goes through word splitting and pathname expansion.
-  - If `file="old logs *"`, then `rm $file` deletes `old`, `logs` **and every file in the folder**.
-  - `rm "$file"` deletes exactly one thing.
-- **Command substitution is how shell injection works.** If untrusted input ends up inside a command line, `$(...)` or backticks in that input will run. Never build commands by gluing user input into strings.
-- **Preview dangerous wildcards with `echo`.** `echo rm *.bak` shows exactly what would be deleted, without deleting it.
-
----
+- **Unquoted variables are shell injection.** Values from filenames, logs or forms get word-split and globbed. Always `"$var"`.
+- **`$(...)` executes.** Never build a command string from untrusted input — pass it as a quoted argument.
+- **Unset = empty, silently.** `rm -rf $BACKUP_DIR/*` with the variable unset becomes `rm -rf /*`. Use `set -euo pipefail`.
+- **Filenames are attacker input:** a file named `-rf`, or with spaces or newlines, changes what a loop does. Use `--` and `find -print0 | xargs -0`.
+- **Globs match what exists now** — a cleanup script's `*` picks up whatever was dropped there since.
+- **Secrets on the command line show in `ps` and history.** Pass via a protected file or stdin.
 
 ## Practice drills
 
 <details>
-<summary>1. Create folders <code>day01</code> to <code>day31</code> in one command.</summary>
+<summary>1. Why doesn't `echo *` show hidden files?</summary>
 
-`mkdir day{01..31}`
+Globs don't match names starting with a dot unless the pattern starts with one.
 </details>
 
 <details>
-<summary>2. What does <code>echo $((17 / 5)) $((17 % 5))</code> print?</summary>
+<summary>2. `data1`, `data2`, `data10` — what does `data?` match?</summary>
 
-`3 2` — integer division, then remainder.
+**`data1` and `data2` only.** `?` matches exactly one character.
 </details>
 
 <details>
-<summary>3. Print the literal text <code>$HOME</code>, then the value of <code>$HOME</code>.</summary>
+<summary>3. What does `echo $((7 / 2))` print?</summary>
 
-`echo '$HOME'` then `echo "$HOME"` (or `echo \$HOME`, then `echo $HOME`).
+**3.** Integer arithmetic only — division truncates toward zero.
 </details>
 
 <details>
-<summary>4. Make a backup copy of <code>sshd_config</code> with <code>.bak</code> on the end, typing the name once.</summary>
+<summary>4. `foo=bar`; why does `echo $foos` print nothing?</summary>
 
-`cp sshd_config{,.bak}`
+The shell looks for a variable named `foos`, which is unset (and unset means **empty, no error**). Use `${foo}s`.
 </details>
 
 <details>
-<summary>5. See exactly which files <code>rm *.log</code> would remove, without removing them.</summary>
+<summary>5. Which expansions survive double quotes?</summary>
 
-`echo rm *.log`
+**Parameter (`$var`), arithmetic (`$(( ))`) and command substitution (`$( )`).** Globbing and word splitting don't.
 </details>
 
----
+<details>
+<summary>6. `ls -l $file` gives two "No such file" errors but the file exists. Why?</summary>
+
+The filename has a space and the variable is unquoted — word splitting made it two arguments. Use `"$file"`.
+</details>
+
+<details>
+<summary>7. Why does `echo "The total is $100.00"` print `The total is 00.00`?</summary>
+
+`$1` is a parameter expansion and is empty. Use `\$` or single quotes.
+</details>
+
+<details>
+<summary>8. How do you grep for the literal `$100.00`?</summary>
+
+`grep -F '$100.00' file` — single quotes stop the shell, `-F` stops `grep` treating `$` and `.` as regex.
+</details>
 
 ## Key takeaways
 
-- Bash expands pathnames, `~`, `$(( ))`, `{ }`, `$VAR` and `$( )` before the command runs — `echo` shows you the result.
-- Double quotes stop splitting, wildcards, tilde and braces, but keep `$` expansions; single quotes stop everything; `\` escapes one character.
-- Quote your variables, and never paste untrusted input into a command line.
+- The shell expands first; the program never sees `*`, `~`, `$var` or `$(cmd)`.
+- Globs match **existing** files only, skip dotfiles, sort as text, and pass through unchanged on no match.
+- `$(( ))` is integers only; `$var` unset is silently empty; `$(cmd)` substitutes output.
+- Double quotes block globbing and splitting but let `$` through; single quotes block everything.
+- `echo rm *` before `rm *`, and quote every variable.

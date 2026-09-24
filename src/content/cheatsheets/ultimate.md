@@ -148,9 +148,11 @@ pinned: true
 
 ### Expansion and quoting `TLCL 7`
 
-- **Expansions:** `*` · `~` · `$((2+2))` · `{a,b}` / `{01..12}` · `$VAR` · `$(cmd)`. Preview with `echo`.
-- **Quoting:** `"..."` keeps `$` expansions; `'...'` is literal; `\` escapes one character.
-- **Always quote variables:** `"$var"`.
+- **Expansions:** pathname `*` `?` `[abc]` · `~` / `~user` · `$((2+2))` · `{a,b}` / `{01..12}` · `$VAR` / `${VAR}` · `$(cmd)`. The program never sees them — **preview with `echo`**.
+- **Globs:** existing files only · skip dotfiles · sorted as text (`data10` before `data2`) · no match = pattern passed through literally.
+- **Gotchas:** `$(( ))` is integers only (`7/2` = 3) · unset `$VAR` is **silently empty** (`rm -rf $DIR/*` → `/*`; use `set -u`) · `~nosuchuser` stays literal.
+- **Quoting:** `"..."` blocks globbing and word splitting but still runs `$VAR`, `$(( ))`, `$(cmd)` · `'...'` is fully literal and **can't contain a single quote** · `\` escapes one character.
+- **Always quote variables:** `"$var"` — `ls $f` on `two words.txt` becomes two arguments. `printf` beats `echo -e` for `\n` / `\t`.
 
 **Full notes →** [Ch. 7 Seeing the world as the shell sees it](/cyber_lab_log/resources/linux/7/)
 
@@ -434,7 +436,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Alias hijacks:** check `type -a sudo`. → [Linux ch. 5](/cyber_lab_log/resources/linux/5/)
 - **Failed SSH by IP:** `grep "Failed password" auth.log | grep -o "from [0-9.]*" | sort | uniq -c | sort -rn`. → [Linux ch. 6](/cyber_lab_log/resources/linux/6/)
 - **Silenced jobs fail invisibly:** `> /dev/null 2>&1` in cron hides a failing backup for months, and redirecting stderr away from a capture throws out the "Permission denied" lines that show what an attacker probed. Log with `>> job.log 2>&1`. → [Linux ch. 6](/cyber_lab_log/resources/linux/6/)
-- **Injection:** unquoted variables and glued-together input cause shell and SQL injection. → [Linux ch. 7](/cyber_lab_log/resources/linux/7/) · [TryHackMe module 4](/cyber_lab_log/resources/tryhackme/4/)
+- **Injection:** unquoted variables and glued-together input cause shell and SQL injection. `$(...)` *executes*, filenames like `-rf` or with spaces are attacker input (use `--`, `find -print0 | xargs -0`), and secrets on a command line show up in `ps` and history. → [Linux ch. 7](/cyber_lab_log/resources/linux/7/) · [TryHackMe module 4](/cyber_lab_log/resources/tryhackme/4/)
 - **Insecure → secure:** Telnet → SSH · FTP → SFTP · HTTP → HTTPS · LDAP → LDAPS · SNMP v1/v2c → v3. Never expose RDP 3389 or SMB 445. → [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/)
 - **ARP spoofing:** ARP has no authentication — a gateway MAC that changes in `ip neigh` / `Get-NetNeighbor` without a hardware swap is worth investigating. → [Networking ch. 1](/cyber_lab_log/resources/networking-sysadmins/1/)
 - **Listening address:** `0.0.0.0` / `::` = reachable from the network; `127.0.0.1` = local only. Audit with `ss -tlnp` / `Get-NetTCPConnection -State Listen`. → [Networking ch. 1](/cyber_lab_log/resources/networking-sysadmins/1/)
@@ -459,6 +461,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Expanded TLCL 7 (Expansion and quoting): glob rules, integer and unset-variable gotchas, quoting detail; extended the injection security quick hit |
 | 2026-09-24 | Added MoL 6 (The pipeline): objects vs text, export formats, `Format-*` placement, and system-modifying cmdlets; one security quick hit |
 | 2026-09-24 | Expanded MoL 5 (Working with providers): provider vs PSDrive, Windows-only providers, `-LiteralPath`, and session-scoped `New-PSDrive` |
 | 2026-09-23 | Expanded TLCL 6 (Redirection): descriptors, truncation, group commands, `tee` and `cat -`, and the `sort -o` / `sudo tee` traps; one security quick hit |
