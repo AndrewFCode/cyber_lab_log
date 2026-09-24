@@ -388,11 +388,14 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 2.8 Network tools](/cyber_lab_log/resources/a-plus-core-1/2/)
 
-### Wireless and cabling `A+1 D2` `A+1 D3` `NfSA 2`
+### Wireless and cabling `A+1 D2` `A+1 3.2` `A+1 D3` `NfSA 2`
 
 - **Wi-Fi:** 4 = n · 5 = ac · 6/6E = ax · 7 = be. On 2.4 GHz use channels 1, 6 and 11.
-- **Copper:** Cat 5e 1 Gbps · Cat 6a 10 Gbps at 100 m.
-- **Wiring:** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br.
+- **Twisted pair:** four pairs carrying equal and opposite signals (TX+/TX−), twisted so both wires meet the same interference and the receiver cancels it; **each pair twisted at a different rate**. A cable has no speed — the signalling does, and **IEEE 802.3** sets the minimum category.
+- **Copper distances:** 1000BASE-T = Cat 5 minimum (Cat 5 deprecated, buy **5e** = Enhanced), 100 m · 10GBASE-T = Cat 6 **55 m unshielded / 100 m shielded**, or **Cat 6A** (Augmented) 100 m.
+- **Shielding code** = overall / per-pair + TP, where **U** unshielded, **S** braid, **F** foil — so S/FTP = braid overall plus foil on each pair, F/UTP = foil overall, pairs bare.
+- **Wiring:** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br. **Coax** = inner conductor in an outer shield; on networks, cable modems and digital cable.
+- **Where it runs:** **direct burial STP** is waterproof, gel-filled and carries a **drain wire** for ground · **plenum space** (open ceiling void used for return air) needs **plenum-rated** cable — **FEP** or low-smoke PVC, not ordinary PVC.
 - **Fibre:** single-mode (long) vs multimode (short). Connectors ST, SC, LC.
 - **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
 
@@ -474,6 +477,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
 - **Screens are an uncontrolled output channel:** IPS and OLED stay readable far off axis, so shoulder surfing is easier — privacy filters in receptions and on trains, short lock timeouts, and watch for OLED burn-in ghosting a dashboard on a powered-off device. → [A+ Core 1 3.1](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -481,6 +485,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Network cables): expanded Wireless and cabling with twisted pair, category distances, shielding codes, direct burial and plenum; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display attributes): new Display attributes topic (PPI maths, Hz vs FPS, resolution, colour gamut) |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display types): new Display technologies topic (displays line moved out of Laptops, mobile and printers); one security quick hit |
 | 2026-09-24 | Expanded TLCL 7 (Expansion and quoting): glob rules, integer and unset-variable gotchas, quoting detail; extended the injection security quick hit |
