@@ -288,7 +288,7 @@ The build-up across *Code*, each stage linking to its chapter:
 
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
 - **Firmware:** UEFI + GPT + Secure Boot + TPM 2.0 is the modern stack.
-- **PSU:** rails are +3.3 V (orange), +5 V (red) and +12 V (yellow). 24-pin to the board, 8-pin to the CPU.
+- **PSU:** converts wall **AC to DC** — mainly +3.3 V (orange), +5 V (red), +12 V (yellow), plus **+5 VSB** standby (wake-on-LAN/power button), −12 V (onboard LAN) and obsolete −5 V. **24-pin** to the board (originally 20-pin; leave the last 4 unconnected on older boards), keyed to fit one way; 8-pin to the CPU. **Watts = volts × amps.** US/Canada 110–120 VAC 60 Hz · Europe 220–240 VAC 50 Hz — old PSUs need a manual switch set *before* connecting (120V-into-230V = overload/failure); modern ones auto-sense. **Size to ~50% load** (target = load ÷ 0.5) for headroom; physical size doesn't change with wattage. Redundant PSUs run ~50/50, hot-swappable, either covers 100% alone. Fixed vs modular cabling. Efficiency 80–96%, **80 PLUS → Bronze → Silver → Gold → Platinum → Titanium**, lowest to highest.
 - **Speeds:** USB 1.1 low 1.5 / full 12 Mbps · 2.0 480 Mbps · 3.0 (SuperSpeed) 5 Gbps · 3.1 10 Gbps · 3.2 20 Gbps · USB4 / Thunderbolt 40 Gbps. Cable lengths are **approximate** (~3–5 m; no exact spec maximum) — extend with a powered hub.
 
 **Full notes →** [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -568,6 +568,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Always disconnect power and account for capacitor charge before opening a case** — the single most severe physical hazard in this course. Never connect yourself to a building's electrical system, including the ground wire, which can become energised. → [A+ Core 1 3.6](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -575,6 +576,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.6 (Computer power): expanded the PSU line (AC/DC, watts formula, regional voltage, sizing, 80 PLUS); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (RAID): new RAID topic (levels 0/1/5/6/10, RAID-is-not-backup); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (Storage devices): new Storage devices topic (HDD/SSD, PCIe/NVMe, SAS, mSATA/M.2 keying, flash, optical); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (Memory technologies): new Memory technologies topic (parity, ECC, bandwidth, multi-channel); one security quick hit |
