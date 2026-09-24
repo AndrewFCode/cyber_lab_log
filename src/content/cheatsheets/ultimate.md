@@ -255,7 +255,6 @@ The build-up across *Code*, each stage linking to its chapter:
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
 - **Laptop repair:** battery out first, map the screws, plastic tools. A swollen battery means replace now.
-- **Displays:** IPS (colour) · TN (speed) · VA (contrast) · OLED (no backlight). Dim-but-visible = backlight.
 - **Laser printing:** Processing, Charging, Exposing, Developing, Transferring, Fusing, Cleaning.
 
 **Full notes →** [TCM section 5](/cyber_lab_log/resources/tcm-help-desk/5/) · [A+ Core 1 domain 1](/cyber_lab_log/resources/a-plus-core-1/1/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -399,6 +398,16 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
 
+### Display technologies `A+1 3.1` `A+1 D3`
+
+- **LCD:** backlight → polariser → crystals → colour filter. Light, cheap, low power; **can't show true black** and is unreadable without its backlight (fluorescent on older panels, LED on modern).
+- **Panels:** TN = fastest response, colours shift off angle · IPS = best colour, costs more · VA = good colour, slower than TN.
+- **OLED:** pixels emit their own light, **no backlight** — thinner, lighter, absolute black; burn-in risk. **Mini LED** = an LCD backlight of many tiny, individually dimmed LEDs (per zone, not per pixel); micro LED is self-emissive and a different thing.
+- **Digitizer** converts touch (finger or stylus) into coordinates — display fine but no touch = digitizer. **Inverter** converts DC to AC for **fluorescent** backlights only; usually in the bezel.
+- **Torch test:** faint image visible = backlight/inverter · nothing at all = panel, cable or GPU.
+
+**Full notes →** [A+ Core 1 3.1 Display types](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ---
 
 ## Virtualization and cloud `A+1 D4`
@@ -454,6 +463,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **UDP source addresses are easy to forge:** no handshake proves the sender, which is what makes open UDP services useful for reflection and amplification DDoS. Don't expose them; rate-limit the ones you must. TCP logs are harder to fake. → [TryHackMe 5.3](/cyber_lab_log/resources/tryhackme/5/)
 - **SYN floods and SYN scans use the handshake:** half-open connections eat server state (SYN cookies help), and a scan that never sends the final ACK leaves little in application logs. SYN/ACK = open · RST = closed · silence = filtered, which is why dropping beats rejecting at the perimeter. → [TryHackMe 5.4](/cyber_lab_log/resources/tryhackme/5/)
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
+- **Screens are an uncontrolled output channel:** IPS and OLED stay readable far off axis, so shoulder surfing is easier — privacy filters in receptions and on trains, short lock timeouts, and watch for OLED burn-in ghosting a dashboard on a powered-off device. → [A+ Core 1 3.1](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -461,6 +471,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.1 (Display types): new Display technologies topic (displays line moved out of Laptops, mobile and printers); one security quick hit |
 | 2026-09-24 | Expanded TLCL 7 (Expansion and quoting): glob rules, integer and unset-variable gotchas, quoting detail; extended the injection security quick hit |
 | 2026-09-24 | Added MoL 6 (The pipeline): objects vs text, export formats, `Format-*` placement, and system-modifying cmdlets; one security quick hit |
 | 2026-09-24 | Expanded MoL 5 (Working with providers): provider vs PSDrive, Windows-only providers, `-LiteralPath`, and session-scoped `New-PSDrive` |
