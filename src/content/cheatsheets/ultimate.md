@@ -302,6 +302,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.2 Peripheral cables](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Video cables `A+1 3.2`
+
+- **HDMI:** audio + video, 19-pin **Type A** (bottom corners indented), passive range roughly 15–25 m (~20 m rule of thumb) — active/optical beyond that.
+- **DisplayPort:** audio + video, sent **packetised**; passive adapter to HDMI/DVI needs **DP++**, else active. **Locks in place — press the release button** before pulling. Full-size or **Mini**.
+- **DVI: video only.** Letter = signal — **A**nalogue (VGA-compatible), **D**igital, **I**ntegrated (both). **Single link** ~3.96 Gbps / 1920×1200 · **dual link** roughly double. Connectors are pin-specific — match signal type and link type at both ends.
+- **VGA: video only, analogue.** **DB-15 (DE-15)**, conventionally blue. Degrades from **~5 m** onward — treat as a caution point, not a hard cutoff.
+- **USB-C is a connector, not a signal:** can carry Thunderbolt, DisplayPort (Alt Mode), HDMI or MHL — charging works fine on a cable with zero video support, so check port and cable both.
+
+**Full notes →** [A+ Core 1 3.2 Video cables](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Storage cables `A+1 3.2`
 
 - **SATA speeds:** 1.0 1.5 Gbps · 2.0 3 Gbps · 3.0 **6 Gbps** (the number that matters for real drives) · 3.2 16 Gbps via **SATA Express** over PCIe lanes — a different mechanism, not faster native SATA.
@@ -569,6 +579,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Always disconnect power and account for capacitor charge before opening a case** — the single most severe physical hazard in this course. Never connect yourself to a building's electrical system, including the ground wire, which can become energised. → [A+ Core 1 3.6](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **A tapped video link discloses exactly what's on screen** — passwords, OTPs, documents — with no need to touch the endpoint's OS, and USB-C's multi-signal nature means a malicious "charging" cable or dock can carry video and data at once. Treat unfamiliar docks, cables and adapters as untrusted. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -576,6 +587,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Video cables): new Video cables topic (HDMI, DisplayPort, DVI, VGA, video over USB-C); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.6 (Computer power): expanded the PSU line (AC/DC, watts formula, regional voltage, sizing, 80 PLUS); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (RAID): new RAID topic (levels 0/1/5/6/10, RAID-is-not-backup); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (Storage devices): new Storage devices topic (HDD/SSD, PCIe/NVMe, SAS, mSATA/M.2 keying, flash, optical); one security quick hit |
