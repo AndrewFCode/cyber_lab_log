@@ -89,6 +89,16 @@ pinned: true
 
 **Full notes →** [Ch. 5 Working with providers](/cyber_lab_log/resources/powershell/5/)
 
+### The pipeline `MoL 6`
+
+- **Pipeline passes objects, not text** — properties stay intact stage to stage, unlike a traditional shell's text pipeline. This is why `Where-Object`/`Sort-Object`/`Select-Object` need no parsing.
+- **Export:** `Export-Csv` (flat, external tools, loses nested structure) vs `Export-Clixml`/`Import-Clixml` (preserves structure, PowerShell-to-PowerShell reuse).
+- **Output:** `Out-File` captures **display text**; `Out-Printer` (Windows-only, reintroduced PS7) prints; `ConvertTo-Html` only makes HTML text — still needs `Out-File` to save.
+- **`Stop-Process`/`Stop-Service`:** immediate, no undo. Always `-WhatIf` first on an unfiltered or wildcard pipeline before running for real.
+- **The #1 pipeline mistake:** `Format-*` cmdlets **must go last** — they produce display-only objects, so filtering/sorting/exporting after one silently breaks.
+
+**Full notes →** [Ch. 6 The pipeline](/cyber_lab_log/resources/powershell/6/)
+
 ---
 
 ## Linux and Bash
@@ -417,6 +427,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **PowerShell logging:** 4104 = script block, 4103 = module. PowerShell 7 logs to `PowerShellCore/Operational` — watch both logs. → [PowerShell ch. 1](/cyber_lab_log/resources/powershell/1/)
 - **Suspicious flags:** `-ep bypass` · `-enc` · `-nop` · `-w hidden` · `iex` + `iwr`. Command lines are in 4688 / Sysmon 1. → [PowerShell ch. 4](/cyber_lab_log/resources/powershell/4/)
 - **Persistence and interception:** Run keys, rogue root certificates and PATH hijacks. → [PowerShell ch. 5](/cyber_lab_log/resources/powershell/5/)
+- **`Stop-Process`/`Stop-Service` from an unfiltered pipeline is self-inflicted denial of service** — filter first, `-WhatIf` before running for real. `Export-Clixml` preserves deep structure (can leak more than intended) and its `SecureString` output only decrypts for the same user/machine that created it. → [Ch. 6 The pipeline](/cyber_lab_log/resources/powershell/6/)
 - **Logons:** 4624 success · 4625 failure.
 - **Plain-text history:** PSReadLine and `~/.bash_history` both keep it — never type secrets. → [PowerShell ch. 2](/cyber_lab_log/resources/powershell/2/) · [Linux ch. 1](/cyber_lab_log/resources/linux/1/)
 - **Hiding places:** dotfiles, `~/.ssh/authorized_keys`, `/tmp`, `/dev/shm`. → [Linux ch. 2](/cyber_lab_log/resources/linux/2/) · [Linux ch. 3](/cyber_lab_log/resources/linux/3/)
@@ -448,6 +459,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added MoL 6 (The pipeline): objects vs text, export formats, `Format-*` placement, and system-modifying cmdlets; one security quick hit |
 | 2026-09-24 | Expanded MoL 5 (Working with providers): provider vs PSDrive, Windows-only providers, `-LiteralPath`, and session-scoped `New-PSDrive` |
 | 2026-09-23 | Expanded TLCL 6 (Redirection): descriptors, truncation, group commands, `tee` and `cat -`, and the `sort -o` / `sudo tee` traps; one security quick hit |
 | 2026-09-23 | Added A+ Core 1 2.8 (Network tools): new Network tools topic; one security quick hit |
