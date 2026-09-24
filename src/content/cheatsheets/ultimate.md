@@ -248,9 +248,18 @@ The build-up across *Code*, each stage linking to its chapter:
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
 - **Firmware:** UEFI + GPT + Secure Boot + TPM 2.0 is the modern stack.
 - **PSU:** rails are +3.3 V (orange), +5 V (red) and +12 V (yellow). 24-pin to the board, 8-pin to the CPU.
-- **Speeds:** USB 2.0 480 Mbps · 3.2 Gen 1 5 Gbps · Gen 2 10 Gbps · USB4 / Thunderbolt 40 Gbps.
+- **Speeds:** USB 1.1 low 1.5 / full 12 Mbps · 2.0 480 Mbps · 3.0 (SuperSpeed) 5 Gbps · 3.1 10 Gbps · 3.2 20 Gbps · USB4 / Thunderbolt 40 Gbps. Cable lengths are **approximate** (~3–5 m; no exact spec maximum) — extend with a powered hub.
 
 **Full notes →** [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
+
+### Peripheral cables and console access `A+1 3.2`
+
+- **USB connectors:** Standard-A (unchanged in 3.0) · Standard-B (taller in 3.0) · Mini-B · Micro-B (**completely different shape** in 3.0 — a 2.0 cable fits and runs at 2.0 speed).
+- **USB-C** is one reversible connector replacing them all, and describes **only the physical interface, not the signal** — USB data, DisplayPort, Thunderbolt or power. Two identical-looking cables can differ wildly, so suspect the cable first.
+- **Serial:** DB-25 · DB-9 (properly **DE-9** — the letter is the shell size) carrying **RS-232**. Console ports are **RJ45 (serial, not Ethernet)**, DB-9 or USB, and work **when the network doesn't**. Chain: USB → USB-to-serial (a COM port) → DB-9 → RJ45; terminal usually 9600 8N1.
+- **Thunderbolt** carries data **and power** and **daisy chains**. TB1 Mini DisplayPort 2 × 10 = 20 Gbps · TB2 Mini DisplayPort 20 Gbps · TB3 **USB-C** 40 Gbps (3 m copper, 60 m optical) · TB4 USB-C 40 Gbps, dual 4K, more PCIe.
+
+**Full notes →** [A+ Core 1 3.2 Peripheral cables](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
@@ -479,6 +488,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Every port forward is a permanent doorway:** scanners find it within hours, and forwarded RDP 3389 or SMB 445 are prime ransomware routes. Forward only what must be public and reach internal services over a VPN — never PPTP, whose protections are broken. → [TryHackMe 5.5](/cyber_lab_log/resources/tryhackme/5/)
 - **Screens are an uncontrolled output channel:** IPS and OLED stay readable far off axis, so shoulder surfing is easier — privacy filters in receptions and on trains, short lock timeouts, and watch for OLED burn-in ghosting a dashboard on a powered-off device. → [A+ Core 1 3.1](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. Tapping fibre means interrupting the light, which costs optical power — so a monitored link can show a tap as a drop in received level. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Peripheral ports bypass the OS:** USB devices can present as a keyboard and type on insertion, and **Thunderbolt exposes PCI Express**, so a malicious dock may reach memory over DMA (IOMMU plus device-approval prompts mitigate it — never "always allow"). Console ports are unauthenticated physical access by design: the cabinet lock is the control. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -486,6 +496,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Peripheral cables): new Peripheral cables and console access topic; USB speeds line extended; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Optical fibre): expanded the Fibre line with core/cladding, ferrules, multimode vs single-mode and first-check troubleshooting |
 | 2026-09-24 | Added A+ Core 1 3.2 (568A and 568B colours): expanded the Wiring line with both pinouts, the four differing pins and the don't-mix rule |
 | 2026-09-24 | Added A+ Core 1 3.2 (Network cables): expanded Wireless and cabling with twisted pair, category distances, shielding codes, direct burial and plenum; one security quick hit |
