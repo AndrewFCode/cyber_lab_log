@@ -69,6 +69,8 @@ pubDate: 2026-09-22
 ---
 ```
 
+Lesson Notes has a **Download for OneNote** button. It saves one zip: a folder for each course tab (Help Desk, TryHackMe, A+ Core 1, and the rest), and one HTML file per note inside that folder. OneNote does not open the zip on its own. Unpack it, then import each folder as its own notebook. On Windows, OneNote Batch Cloud can do that in one step: Import Tree, choose the unpacked folder, and turn on “The first-tier subdirectory is recognized as a notebook.”
+
 An explainer also needs `pubDate`. Optional fields: `updated`, `difficulty` (`beginner`, `intermediate`, or `advanced`).
 
 An example project needs `pubDate`, `why`, and `origin` (`handwritten` or `ai`). An AI project must include the original command in `prompt`. Optional: `status` (`active`, `paused`, `shipped`, `archived`) and `repo`.

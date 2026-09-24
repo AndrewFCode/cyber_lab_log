@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NotesBrowser from '../../components/NotesBrowser.astro';
-import { getNotes } from '../../lib/collections';
+import { getNotes, withBase } from '../../lib/collections';
 
 const notes = await getNotes();
 ---
@@ -12,6 +12,18 @@ const notes = await getNotes();
     <p class="mt-3 text-lg text-muted">
       Class notes from courses and books, plus shorter thoughts.
     </p>
+    {
+      notes.length > 0 && (
+        <p class="mt-4">
+          <a
+            class="inline-flex rounded-md border border-line bg-chip px-3 py-2 text-sm font-medium text-ink"
+            href={withBase('/notes/lesson-notes-onenote.zip')}
+          >
+            Download for OneNote
+          </a>
+        </p>
+      )
+    }
   </header>
 
   {
