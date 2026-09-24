@@ -394,7 +394,8 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Twisted pair:** four pairs carrying equal and opposite signals (TX+/TX−), twisted so both wires meet the same interference and the receiver cancels it; **each pair twisted at a different rate**. A cable has no speed — the signalling does, and **IEEE 802.3** sets the minimum category.
 - **Copper distances:** 1000BASE-T = Cat 5 minimum (Cat 5 deprecated, buy **5e** = Enhanced), 100 m · 10GBASE-T = Cat 6 **55 m unshielded / 100 m shielded**, or **Cat 6A** (Augmented) 100 m.
 - **Shielding code** = overall / per-pair + TP, where **U** unshielded, **S** braid, **F** foil — so S/FTP = braid overall plus foil on each pair, F/UTP = foil overall, pairs bare.
-- **Wiring:** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br. **Coax** = inner conductor in an outer shield; on networks, cable modems and digital cable.
+- **Wiring (ANSI/TIA-568; ISO/IEC 11801 internationally):** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br · **T568A** swaps orange and green. Only pins **1, 2, 3, 6** differ; 4, 5, 7, 8 are identical. B is the usual choice — pick one per site and wire **both ends the same** (A-to-B is the old 10/100 crossover, not a gigabit one, and Auto-MDI-X makes crossovers unnecessary). Keystone jacks print both guides and deliberately don't follow pin order — follow the label.
+- **Coax** = inner conductor in an outer shield; on networks, cable modems and digital cable.
 - **Where it runs:** **direct burial STP** is waterproof, gel-filled and carries a **drain wire** for ground · **plenum space** (open ceiling void used for return air) needs **plenum-rated** cable — **FEP** or low-smoke PVC, not ordinary PVC.
 - **Fibre:** single-mode (long) vs multimode (short). Connectors ST, SC, LC.
 - **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
@@ -485,6 +486,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (568A and 568B colours): expanded the Wiring line with both pinouts, the four differing pins and the don't-mix rule |
 | 2026-09-24 | Added A+ Core 1 3.2 (Network cables): expanded Wireless and cabling with twisted pair, category distances, shielding codes, direct burial and plenum; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display attributes): new Display attributes topic (PPI maths, Hz vs FPS, resolution, colour gamut) |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display types): new Display technologies topic (displays line moved out of Laptops, mobile and printers); one security quick hit |
