@@ -436,7 +436,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Wiring (ANSI/TIA-568; ISO/IEC 11801 internationally):** T568B = W-Or, Or, W-Gn, Bl, W-Bl, Gn, W-Br, Br · **T568A** swaps orange and green. Only pins **1, 2, 3, 6** differ; 4, 5, 7, 8 are identical. B is the usual choice — pick one per site and wire **both ends the same** (A-to-B is the old 10/100 crossover, not a gigabit one, and Auto-MDI-X makes crossovers unnecessary). Keystone jacks print both guides and deliberately don't follow pin order — follow the label.
 - **Coax** = inner conductor in an outer shield; on networks, cable modems and digital cable.
 - **Where it runs:** **direct burial STP** is waterproof, gel-filled and carries a **drain wire** for ground · **plenum space** (open ceiling void used for return air) needs **plenum-rated** cable — **FEP** or low-smoke PVC, not ordinary PVC.
-- **Fibre:** light through a **high refractive index core**, held in by **low-index cladding**, protected by a buffer coating; the **ceramic ferrule** in the connector aligns it (a dirty end face is a top cause of failure). No interference, hard to tap, kilometres without regeneration — but needs specialised kit. **Multimode** = short (~2 km, less at 10G), **LED**, wide core, several modes (paths spread, which limits distance) · **single-mode** = kilometres, **laser**, narrow core, one path. Connectors ST, SC, LC (MTP/MPO in data centres). Dead link? Swap TX/RX at one end, then clean the end faces.
+- **Fibre:** light through a **high refractive index core**, held in by **low-index cladding**, protected by a buffer coating; the **ceramic ferrule** in the connector aligns it (a dirty end face is a top cause of failure). No interference, hard to tap, kilometres without regeneration — but needs specialised kit. **Multimode** = short (~2 km, less at 10G), **LED**, wide core, several modes (paths spread, which limits distance) · **single-mode** = kilometres, **laser**, narrow core, one path. **Connectors:** ST (bayonet twist-lock, largest) · SC (push-pull, middle, simplex or duplex) · LC (spring clip, smallest, dense installs, simplex or duplex) — MTP/MPO also used in data centres. Shape matching ≠ fibre-type matching, check both. Dead link? Swap TX/RX at one end, then clean the end faces.
 - **Transceivers:** SFP 1G · SFP+ 10G · SFP28 25G · QSFP28 100G. 10GBASE-SR multimode ~300 m (OM3) · 10GBASE-LR single-mode 10 km.
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/) · [Networking ch. 2](/cyber_lab_log/resources/networking-sysadmins/2/)
@@ -522,6 +522,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Physical SATA access is raw disk access,** bypassing every OS control — full-disk encryption is what survives an opened case. eSATA is a fast exfiltration path often missed by USB-only device-control policy, and decommissioned drives stay readable over SATA via a cheap adapter unless wiped or destroyed. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An adapter or hub is an active device on the path, not passive plastic** — a compromised USB hub or USB-Ethernet adapter can inject keystrokes, tap traffic or exfiltrate data like any other USB device, and a USB-Ethernet adapter may be an unmonitored NIC unless NAC/802.1X is confirmed to cover it. Passive video adapters (DVI-D-HDMI, DVI-A-VGA) carry no such risk — nothing to compromise. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -529,6 +530,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Fiber connectors): extended the Fibre line with ST/SC/LC mechanisms and sizes; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Copper connectors): new Copper connectors topic (RJ11/RJ14, F connectors, punchdown, Molex, Lightning); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Adapters and converters): new Adapters and converters topic; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Storage cables): new Storage cables topic (SATA speeds, one-to-one wiring, eSATA); one security quick hit |
