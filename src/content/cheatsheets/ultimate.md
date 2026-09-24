@@ -281,6 +281,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.2 Adapters and converters](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Copper connectors `A+1 3.2`
+
+- **RJ11** (6P2C, or 6P4C as **RJ14** for two lines): analogue phone, DSL. **RJ45** (8P8C): Ethernet, serial, more. RJ11 is small enough to be mistakenly plugged into RJ45 — not the reverse.
+- **F connector:** threaded coax for cable TV/modem; the coax's own centre conductor **is** the pin. Modem side is female. **DOCSIS** carries the data over that infrastructure.
+- **Punchdown block:** insulation displacement — push the wire in, seat with the tool, no crimped connector needed. Fast and cheap for bulk terminations.
+- **Molex** (also **AMP Mate-n-Lok**): 4 pins, **12 V and 5 V**, friction-fit, powers fans/drives on older systems.
+- **Lightning:** Apple-proprietary, reversible; introduced because Micro-USB (then the standard) lacked the power delivery and reversibility Apple wanted.
+
+**Full notes →** [A+ Core 1 3.2 Copper connectors](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
 - **Laptop repair:** battery out first, map the screws, plastic tools. A swollen battery means replace now.
@@ -511,6 +521,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Peripheral ports bypass the OS:** USB devices can present as a keyboard and type on insertion, and **Thunderbolt exposes PCI Express**, so a malicious dock may reach memory over DMA (IOMMU plus device-approval prompts mitigate it — never "always allow"). Console ports are unauthenticated physical access by design: the cabinet lock is the control. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical SATA access is raw disk access,** bypassing every OS control — full-disk encryption is what survives an opened case. eSATA is a fast exfiltration path often missed by USB-only device-control policy, and decommissioned drives stay readable over SATA via a cheap adapter unless wiped or destroyed. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An adapter or hub is an active device on the path, not passive plastic** — a compromised USB hub or USB-Ethernet adapter can inject keystrokes, tap traffic or exfiltrate data like any other USB device, and a USB-Ethernet adapter may be an unmonitored NIC unless NAC/802.1X is confirmed to cover it. Passive video adapters (DVI-D-HDMI, DVI-A-VGA) carry no such risk — nothing to compromise. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -518,6 +529,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Copper connectors): new Copper connectors topic (RJ11/RJ14, F connectors, punchdown, Molex, Lightning); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Adapters and converters): new Adapters and converters topic; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Storage cables): new Storage cables topic (SATA speeds, one-to-one wiring, eSATA); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Peripheral cables): new Peripheral cables and console access topic; USB speeds line extended; one security quick hit |
