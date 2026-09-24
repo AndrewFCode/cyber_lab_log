@@ -271,6 +271,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.2 Storage cables](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Adapters and converters `A+1 3.2`
+
+- **The one rule:** same signal type, different shape → **passive** adapter is enough. Different signal types → needs **active** conversion (processing, sometimes power).
+- **DVI-D ↔ HDMI:** both digital, passive, **video only** (no audio). **DVI-A ↔ VGA:** both analogue, passive, officially capped at **640 × 480** (many real adapters do more — check the product). **VGA → DVI-D/DVI-I:** analogue → digital, needs **active** conversion.
+- **USB-to-Ethernet:** for thin laptops with no RJ45 — especially useful for network troubleshooting, since wired avoids Wi-Fi as a variable.
+- **USB-C-to-USB-A:** for thin laptops with no USB-A, as a longer cable or a compact plug-in adapter.
+- **USB hub:** one USB connection, many outputs (USB, SD, HDMI, Ethernet in the lesson's example) — broad coverage, but one point of failure for several capabilities at once.
+
+**Full notes →** [A+ Core 1 3.2 Adapters and converters](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
 - **Laptop repair:** battery out first, map the screws, plastic tools. A swollen battery means replace now.
@@ -500,6 +510,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. Tapping fibre means interrupting the light, which costs optical power — so a monitored link can show a tap as a drop in received level. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Peripheral ports bypass the OS:** USB devices can present as a keyboard and type on insertion, and **Thunderbolt exposes PCI Express**, so a malicious dock may reach memory over DMA (IOMMU plus device-approval prompts mitigate it — never "always allow"). Console ports are unauthenticated physical access by design: the cabinet lock is the control. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical SATA access is raw disk access,** bypassing every OS control — full-disk encryption is what survives an opened case. eSATA is a fast exfiltration path often missed by USB-only device-control policy, and decommissioned drives stay readable over SATA via a cheap adapter unless wiped or destroyed. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **An adapter or hub is an active device on the path, not passive plastic** — a compromised USB hub or USB-Ethernet adapter can inject keystrokes, tap traffic or exfiltrate data like any other USB device, and a USB-Ethernet adapter may be an unmonitored NIC unless NAC/802.1X is confirmed to cover it. Passive video adapters (DVI-D-HDMI, DVI-A-VGA) carry no such risk — nothing to compromise. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -507,6 +518,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Adapters and converters): new Adapters and converters topic; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Storage cables): new Storage cables topic (SATA speeds, one-to-one wiring, eSATA); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Peripheral cables): new Peripheral cables and console access topic; USB speeds line extended; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Optical fibre): expanded the Fibre line with core/cladding, ferrules, multimode vs single-mode and first-check troubleshooting |
