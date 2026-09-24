@@ -3,7 +3,7 @@ title: "The Ultimate IT & Cyber Cheat Sheet"
 description: "The short version of everything I study — key commands and facts by topic, each linking to the full chapter notes."
 tags: ["cheat-sheet", "powershell", "linux", "windows", "networking", "hardware"]
 draft: false
-updated: "2026-09-23"
+updated: "2026-09-24"
 kind: "ultimate"
 pinned: true
 ---
@@ -80,10 +80,12 @@ pinned: true
 
 ### Providers, items and the registry `MoL 5`
 
-- **Drives:** `C:` · `HKCU:` / `HKLM:` · `Env:` · `Cert:` · `Variable:` · `Function:` · `Alias:`. List them with `Get-PSDrive`.
-- **Cmdlet families:** `*-Item` · `*-ChildItem` · `*-ItemProperty` · `*-Location` · `Test-Path`.
-- **Registry:** keys are items, values are properties — `Get-ItemProperty 'HKCU:\Control Panel\Desktop'`.
-- **Brackets in names:** `-LiteralPath` for names containing `[ ]`.
+- **Provider vs PSDrive:** a provider is the mechanism exposing a data store as a filesystem; a PSDrive is one mounted instance of it (`C:`/`D:` are both FileSystem). `Get-PSProvider` lists providers, `Get-PSDrive` lists drives.
+- **Drives:** `C:` · `HKCU:` / `HKLM:` · `Env:` · `Cert:` · `Variable:` · `Function:` · `Alias:` · `WSMan:`. **Registry, Certificate and WSMan providers are Windows-only** — only the other five exist on Linux/macOS PowerShell 7.
+- **Cmdlet families:** `*-Item` · `*-ChildItem` · `*-ItemProperty` · `*-Location` · `Test-Path` (works against any provider).
+- **Registry:** keys are containers/items (`*-Item`/`*-ChildItem`), values are item properties (`*-ItemProperty`) — `Get-ItemProperty 'HKCU:\Control Panel\Desktop'`.
+- **Brackets in names:** `-LiteralPath` for names containing `[ ]` — mutually exclusive with `-Path`.
+- **`New-PSDrive`** makes a custom shortcut drive against any provider; **session-scoped by default**, gone when the session ends.
 
 **Full notes →** [Ch. 5 Working with providers](/cyber_lab_log/resources/powershell/5/)
 
@@ -446,6 +448,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Expanded MoL 5 (Working with providers): provider vs PSDrive, Windows-only providers, `-LiteralPath`, and session-scoped `New-PSDrive` |
 | 2026-09-23 | Expanded TLCL 6 (Redirection): descriptors, truncation, group commands, `tee` and `cat -`, and the `sort -o` / `sudo tee` traps; one security quick hit |
 | 2026-09-23 | Added A+ Core 1 2.8 (Network tools): new Network tools topic; one security quick hit |
 | 2026-09-23 | Expanded A+ Core 1 2.7 (Internet connection types): GEO vs LEO satellite, fibre/cable/DSL detail, and the tethering security hit |
