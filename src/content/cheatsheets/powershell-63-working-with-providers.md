@@ -1,248 +1,163 @@
 ---
 title: "PowerShell: Working with Providers"
-description: "Month of Lunches ch. 5 — providers and PSDrives, the item cmdlets, wildcards vs -LiteralPath, and working with the registry, environment and certificates."
-tags: ["powershell", "month-of-lunches", "windows", "registry"]
+description: "PowerShell providers and PSDrives — what they are, the built-in list, filesystem-style navigation, registry keys vs properties, and wildcards vs -LiteralPath."
+tags: ["powershell", "month-of-lunches", "windows", "registry", "providers"]
 draft: false
-updated: "2026-09-18"
+updated: "2026-09-24"
 kind: "resource"
 resource: "powershell"
 module: "Ch. 5"
 moduleOrder: 63
 unit: 5
 ---
-> **In one line:** PowerShell presents the file system, registry, environment variables and more as drives — learn the item cmdlets once and they work on all of them.
+> **In one line:** a provider makes a data store — files, registry, certificates, environment variables — look like a filesystem drive, so the same handful of cmdlets (`Get-ChildItem`, `Get-Item`, `Set-Location`, `Test-Path`) work everywhere, and `-LiteralPath` is how you stop PowerShell misreading `[` and `]` as wildcards.
 
-*Companion to: Learn PowerShell in a Month of Lunches, chapter 5.*
+*Companion to: Learn PowerShell in a Month of Lunches (3rd ed.), Jones & Hicks, chapter 5.* The full version is the Working with Providers class notes; written from verified general PowerShell knowledge, not the book's own text (no transcript was available).
 
 ---
 
-## Providers and PSDrives
+## Provider vs PSDrive
 
-A **provider** is an adapter that makes a data store look like a file system. A **PSDrive** is a named connection to one location in a provider.
-
-```powershell
-Get-PSProvider                        # loaded providers and what they support
-Get-PSDrive                           # every drive, with its provider and root
-Get-PSDrive -PSProvider Registry      # just the registry drives
-```
-
-| Drive | Provider | Contains |
+| | Provider | PSDrive |
 |---|---|---|
-| `C:`, `D:` | FileSystem | Files and folders |
-| `HKCU:` | Registry | `HKEY_CURRENT_USER` |
-| `HKLM:` | Registry | `HKEY_LOCAL_MACHINE` |
-| `Env:` | Environment | Environment variables |
-| `Alias:` | Alias | Aliases |
-| `Function:` | Function | Functions |
-| `Variable:` | Variable | Variables |
-| `Cert:` | Certificate | Certificate stores (Windows) |
-| `WSMan:` | WSMan | Remoting configuration (Windows) |
+| What | The underlying mechanism exposing a data store | A specific, named, mounted instance of a provider |
+| Example | FileSystem provider | `C:` and `D:` — two drives, one provider |
+| List with | `Get-PSProvider` | `Get-PSDrive` |
 
-### Capabilities
+## Built-in providers
 
-The `Capabilities` column of `Get-PSProvider` says what each provider supports:
-
-| Capability | Means |
-|---|---|
-| `ShouldProcess` | Supports `-WhatIf` and `-Confirm` |
-| `Filter` | Supports `-Filter` |
-| `Credentials` | Accepts `-Credential` |
-| `Transactions` | Supports `-UseTransaction` — Windows PowerShell 5.1 registry only |
-
-### Your own drives
-
-```powershell
-New-PSDrive -Name Tools -PSProvider FileSystem -Root C:\Tools     # session-only
-Get-ChildItem Tools:
-Remove-PSDrive Tools
-
-New-PSDrive -Name Z -PSProvider FileSystem -Root \\nas\share -Persist   # real mapped drive, shows in Explorer
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT     # hives not mapped by default
-```
-
----
-
-## Items, child items and properties
-
-| Concept | File system | Registry |
+| Provider | Default drive | All platforms? |
 |---|---|---|
-| Item | A file or folder | A key |
-| Child items | What's inside a folder | A key's subkeys |
-| Item properties | Attributes such as `LastWriteTime` | A key's **values** |
+| Alias | `Alias:` | Yes |
+| Environment | `Env:` | Yes |
+| FileSystem | `C:`, `D:`, ... | Yes |
+| Function | `Function:` | Yes |
+| Variable | `Variable:` | Yes |
+| **Registry** | `HKLM:`, `HKCU:` | **Windows only** |
+| **Certificate** | `Cert:` | **Windows only** |
+| **WSMan** | `WSMan:` | **Windows only** |
 
-The same cmdlet families work across every provider: `Get-Command -Noun *Item*`.
+## Filesystem organisation
 
-| Cmdlet | Aliases | Does |
+- Hierarchical providers = **containers** (folders, registry keys) holding **items** (files, registry values' parent keys).
+- Same navigation cmdlets everywhere: `Get-Location` · `Set-Location` (`cd`/`sl`) · `Get-ChildItem` (`dir`/`gci`/`ls`) · `Get-Item` (`gi`) · `Push-Location`/`Pop-Location`.
+- **`Test-Path`** checks existence (`$true`/`$false`) against **any** provider's paths.
+
+## Other data stores, same cmdlets
+
+```powershell
+# Registry: keys are containers
+Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft
+
+# Environment variables
+Get-ChildItem -Path Env:
+Get-Item -Path Env:TEMP
+Set-Item -Path Env:MY_VAR -Value "hello"
+
+# Certificates (Windows)
+Get-ChildItem -Path Cert:\CurrentUser\My
+
+# WSMan / remoting config (Windows, usually needs elevation)
+Get-ChildItem -Path WSMan:\localhost
+```
+
+**Registry keys = containers → use `*-Item`/`*-ChildItem`. Registry values = item properties → use `*-ItemProperty`.**
+
+```powershell
+Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion
+Set-ItemProperty -Path HKCU:\Software\MyApp -Name "Setting1" -Value "On"
+Remove-ItemProperty -Path HKCU:\Software\MyApp -Name "Setting1"
+```
+
+## Wildcards vs literal paths
+
+| | `-Path` | `-LiteralPath` |
 |---|---|---|
-| `Get-Location` | `pwd`, `gl` | Current location |
-| `Set-Location` | `cd`, `sl` | Move to a location, on any drive |
-| `Push-Location` / `Pop-Location` | `pushd` / `popd` | Bookmark where you are, go elsewhere, come back |
-| `Get-ChildItem` | `dir`, `ls`, `gci` | List children (`-Recurse`, `-Force` for hidden) |
-| `Get-Item` | `gi` | The item itself |
-| `New-Item` | `ni` | Create a file, folder or registry key |
-| `Copy-Item` | `copy`, `cp`, `cpi` | Copy (`-Recurse` for folders) |
-| `Move-Item` | `move`, `mv`, `mi` | Move |
-| `Rename-Item` | `ren`, `rni` | Rename |
-| `Remove-Item` | `del`, `rm`, `rd`, `ri` | Delete (`-Recurse`, `-WhatIf`) |
-| `Test-Path` | — | Does it exist? `True` or `False` |
-| `Invoke-Item` | `ii` | Open with the default app — `ii .` opens Explorer here |
-| `Get-ItemProperty` | `gp` | Read properties |
-| `Set-ItemProperty` | `sp` | Change a property |
-| `New-ItemProperty` | — | Create a property |
-| `Remove-ItemProperty` | `rp` | Delete a property |
-
-On Linux and macOS, PowerShell 7 drops the `ls`, `cp`, `mv` and `rm` aliases so the native tools run instead.
+| Wildcards (`*`, `?`, `[ ]`) | **Expanded** | **Ignored — taken exactly as written** |
+| Use when | Normal matching | The real name contains `[` or `]` |
 
 ```powershell
-New-Item -Path .\Lab -ItemType Directory                  # mkdir .\Lab does the same
-New-Item -Path .\Lab\notes.txt -ItemType File -Value "hello"
-Copy-Item .\Lab -Destination .\Lab-backup -Recurse
-Test-Path .\Lab-backup                                     # True
-Remove-Item .\Lab-backup -Recurse -WhatIf                  # preview first
+# Misreads [2026] as a wildcard character class — likely finds nothing
+Get-ChildItem -Path 'Log[2026].txt'
+
+# Fixed — treated as literal text
+Get-ChildItem -LiteralPath 'Log[2026].txt'
 ```
 
----
+**`-Path` and `-LiteralPath` are mutually exclusive** on one cmdlet call.
 
-## Wildcards vs `-LiteralPath`
-
-| Wildcard | Matches |
-|---|---|
-| `*` | Any characters |
-| `?` | One character |
-| `[abc]` | One of these characters |
-| `[a-f]` | One character in the range |
-
-- `-Path` **interprets** wildcards; `-LiteralPath` takes the name exactly as typed.
-- Square brackets in real filenames are the trap:
+## Creating a custom drive
 
 ```powershell
-Get-Item -Path 'report[1].txt'          # looks for report1.txt — [1] is a wildcard set
-Get-Item -LiteralPath 'report[1].txt'   # finds the file actually named report[1].txt
+New-PSDrive -Name Reports -PSProvider FileSystem -Root 'D:\Shared\Reports\2026'
+Set-Location Reports:
+Remove-PSDrive -Name Reports   # optional cleanup
 ```
 
-| Parameter | Handled by | Notes |
-|---|---|---|
-| `-Filter` | The provider | Fastest; uses the provider's own syntax (for the file system, simple `*` and `?`) |
-| `-Include` / `-Exclude` | PowerShell | Only take effect with `-Recurse` or a wildcard in the path (e.g. `C:\Logs\*`) |
-
----
-
-## The registry
-
-- **Keys are items; values are item properties.**
-- Each key also has a `(default)` value.
-
-```powershell
-Set-Location HKCU:\Software                  # the registry is just another drive
-Get-ChildItem                                # subkeys
-Get-ItemProperty 'HKCU:\Control Panel\Desktop'   # the values in a key
-```
-
-### Safe practice key
-
-```powershell
-New-Item HKCU:\Software\LabTest
-New-ItemProperty HKCU:\Software\LabTest -Name Colour -Value Blue -PropertyType String
-Set-ItemProperty HKCU:\Software\LabTest -Name Colour -Value Green
-Get-ItemProperty HKCU:\Software\LabTest
-Remove-Item HKCU:\Software\LabTest
-```
-
-`-PropertyType` values include `String`, `ExpandString`, `DWord`, `QWord`, `Binary` and `MultiString`.
-
-### Help-desk lookups
-
-```powershell
-# Windows version and build (Select-Object is a later chapter)
-Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' |
-    Select-Object ProductName, DisplayVersion, CurrentBuild
-
-# Installed programs — 64-bit, 32-bit, and per-user
-Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion
-Get-ItemProperty HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion
-Get-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion
-```
-
-Gotcha: on Windows 11, `ProductName` still says "Windows 10". A `CurrentBuild` of 22000 or higher means Windows 11.
-
----
-
-## Environment, variables and certificates
-
-```powershell
-Get-ChildItem Env:                  # all environment variables
-$env:USERNAME                       # read one
-$env:LAB = 'on'                     # set one for this session only
-$env:Path -split ';'                # PATH, one folder per line
-
-Get-ChildItem Variable:             # every variable in the session
-Get-ChildItem Function:             # every function (help, mkdir, ...)
-Get-ChildItem Cert:\CurrentUser\My  # your personal certificates
-```
-
----
+**Session-scoped by default** — gone when the session ends, unless made persistent separately.
 
 ## 🔐 Security notes
 
-- **Run keys are classic persistence.** Anything listed here starts at logon:
-  - `HKCU:\Software\Microsoft\Windows\CurrentVersion\Run` and `RunOnce`
-  - `HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` and `RunOnce`
-
-  Check them with `Get-ItemProperty`. Registry changes show up as Sysmon event **13**.
-- **Rogue root certificates enable TLS interception.** Review `Get-ChildItem Cert:\LocalMachine\Root` for anything unexpected.
-- **PATH hijacking.** A user-writable folder early in `$env:Path` lets someone plant a fake `ping.exe` that runs instead of the real one. Read the order with `$env:Path -split ';'`.
-- **Mark of the Web lives in an alternate data stream:**
-  - `Get-Item .\setup.exe -Stream *` lists a file's streams.
-  - `Get-Content .\setup.exe -Stream Zone.Identifier` shows where it was downloaded from.
-  - That stream is what `RemoteSigned` and `Unblock-File` act on ([chapter 4](/resources/powershell/4/)).
-- **Back up before editing the registry.** `reg export HKCU\Software\LabTest C:\backup\labtest.reg` saves the key, and `-WhatIf` previews removals.
-
----
+- **`Remove-Item -Path HKLM:\... -Recurse` is exactly as dangerous as the filesystem equivalent** — same cmdlet, same recklessness, no recycle bin safety net in the registry.
+- **`-WhatIf` / `-Confirm` work across every provider,** not just files — use them when testing registry or certificate changes too.
+- **Wildcard expansion against the registry can over-match badly** — prefer `-LiteralPath` or exact paths for anything destructive outside the filesystem.
+- **`Cert:` and `WSMan:` browsing often needs elevation** — a script touching them is operating with more authority than a plain file script and deserves extra review.
+- **Custom PSDrives are session-scoped by default** — a troubleshooting-session drive mapping doesn't silently persist as a forgotten access path.
 
 ## Practice drills
 
 <details>
-<summary>1. List only the registry drives.</summary>
+<summary>1. Provider vs PSDrive — what's the difference?</summary>
 
-`Get-PSDrive -PSProvider Registry`
+A **provider** is the mechanism exposing a data store; a **PSDrive** is one specific mounted instance of it (e.g. `C:` and `D:` both use the FileSystem provider).
 </details>
 
 <details>
-<summary>2. Create a folder and an empty file inside it, then confirm both exist.</summary>
+<summary>2. Which three built-in providers are Windows-only?</summary>
 
-`New-Item .\Drill -ItemType Directory`, then `New-Item .\Drill\a.txt -ItemType File`, then `Test-Path .\Drill\a.txt`.
+**Registry, Certificate, WSMan.**
 </details>
 
 <details>
-<summary>3. A file called <code>log[old].txt</code> won't delete. Why, and how do you fix it?</summary>
+<summary>3. How do registry keys and values map onto containers/items?</summary>
 
-`[old]` is read as a wildcard set. Use `Remove-Item -LiteralPath 'log[old].txt'`.
+**Keys are containers** (use `*-Item`/`*-ChildItem`); **values are item properties** on a key (use `*-ItemProperty`).
 </details>
 
 <details>
-<summary>4. What starts automatically when you log on?</summary>
+<summary>4. List every environment variable using provider-style cmdlets.</summary>
 
-`Get-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Run` — then the `HKLM:` equivalent.
+`Get-ChildItem -Path Env:`
 </details>
 
 <details>
-<summary>5. Which provider operations support <code>-WhatIf</code>?</summary>
+<summary>5. Why does `Get-ChildItem -Path 'Data[Final].csv'` sometimes find nothing?</summary>
 
-Those whose provider lists `ShouldProcess` in `Get-PSProvider`.
+`[Final]` is read as a **wildcard character class**, not literal text. Use `-LiteralPath` instead.
 </details>
 
 <details>
-<summary>6. Where was <code>tool.zip</code> downloaded from?</summary>
+<summary>6. Can you pass both `-Path` and `-LiteralPath` to one cmdlet call?</summary>
 
-`Get-Content .\tool.zip -Stream Zone.Identifier` (look at `HostUrl` / `ReferrerUrl`).
+**No** — they're mutually exclusive.
 </details>
 
----
+<details>
+<summary>7. What does `Test-Path` do, and across how many providers?</summary>
+
+**Checks whether a path exists**, returning `$true`/`$false` — works against **any** provider.
+</details>
+
+<details>
+<summary>8. Does a drive made with `New-PSDrive` persist to tomorrow's session?</summary>
+
+**No**, not by default — it's session-scoped and disappears when the session ends.
+</details>
 
 ## Key takeaways
 
-- Providers make the registry, environment, certificates and more browsable like disks, each through a PSDrive.
-- One cmdlet family works everywhere: `*-Location`, `*-Item`, `*-ChildItem`, `*-ItemProperty`.
-- In the registry, keys are items and values are item properties.
+- Providers turn data stores into filesystem-style drives; `Get-PSProvider` lists providers, `Get-PSDrive` lists drives.
+- Registry, Certificate and WSMan providers are Windows-only; the other five work everywhere.
+- Registry keys are containers, values are item properties — different cmdlet families.
 - `-Path` expands wildcards; `-LiteralPath` doesn't — use it for names containing `[` or `]`.
-- The same drives are where persistence (Run keys), interception (root certs) and hijacks (PATH) hide.
+- `New-PSDrive` creates a custom, session-scoped shortcut drive against any provider.
