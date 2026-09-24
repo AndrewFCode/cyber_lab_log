@@ -408,6 +408,16 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 3.1 Display types](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Display attributes `A+1 3.1`
+
+- **Pixel density (PPI):** horizontal pixels ÷ **width in inches** (advertised size is the diagonal). 27-inch 4K ≈ 160 PPI · 65-inch 4K ≈ 67 PPI — same resolution, very different sharpness.
+- **Refresh rate:** Hz = display redraws per second · FPS = frames in the content · **V-sync** locks them. Film 24 · TV/online 30 · sport and gaming 60+.
+- **The card and cable must keep up too:** HDMI 2.1 = 4K up to 144 Hz (120 Hz uncompressed, 144 via DSC) · DisplayPort 2.1 = dual 4K at up to 144 Hz. 144 Hz stuck at 60? Check the cable first.
+- **Resolution:** HD 1,920 × 1,080 · 4K 3,840 × 2,160 (**four times** the pixels); most standards are **16:9**.
+- **Colour gamut:** the range a display can show, plotted on **CIE 1931** and quoted as % of **sRGB** / Adobe RGB / Rec. 709 / DCI-P3. 95% sRGB fine for email, 100% for colour work; OLED generally widest.
+
+**Full notes →** [A+ Core 1 3.1 Display attributes](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ---
 
 ## Virtualization and cloud `A+1 D4`
@@ -471,6 +481,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.1 (Display attributes): new Display attributes topic (PPI maths, Hz vs FPS, resolution, colour gamut) |
 | 2026-09-24 | Added A+ Core 1 3.1 (Display types): new Display technologies topic (displays line moved out of Laptops, mobile and printers); one security quick hit |
 | 2026-09-24 | Expanded TLCL 7 (Expansion and quoting): glob rules, integer and unset-variable gotchas, quoting detail; extended the injection security quick hit |
 | 2026-09-24 | Added MoL 6 (The pipeline): objects vs text, export formats, `Format-*` placement, and system-modifying cmdlets; one security quick hit |
