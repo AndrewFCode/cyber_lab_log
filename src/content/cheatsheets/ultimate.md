@@ -261,6 +261,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.2 Peripheral cables](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Storage cables `A+1 3.2`
+
+- **SATA speeds:** 1.0 1.5 Gbps · 2.0 3 Gbps · 3.0 **6 Gbps** (the number that matters for real drives) · 3.2 16 Gbps via **SATA Express** over PCIe lanes — a different mechanism, not faster native SATA.
+- **Two connectors per drive:** 15-pin **power** (longer) · 7-pin **data** (shorter), both keyed. Molex sometimes supported as a fallback.
+- **Strictly one-to-one, no daisy chaining** — one cable, one port, one drive. Port count = maximum drive count.
+- **eSATA:** external SATA, effectively the same signal, but a **different connector** — not interchangeable. ~2 m cable. Internal SATA data connector has a distinctive **L shape**.
+- **Drive missing one boot, present the next?** Reseat/swap the **data cable** before suspecting the drive.
+
+**Full notes →** [A+ Core 1 3.2 Storage cables](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
 - **Laptop repair:** battery out first, map the screws, plastic tools. A swollen battery means replace now.
@@ -489,6 +499,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Screens are an uncontrolled output channel:** IPS and OLED stay readable far off axis, so shoulder surfing is easier — privacy filters in receptions and on trains, short lock timeouts, and watch for OLED burn-in ghosting a dashboard on a powered-off device. → [A+ Core 1 3.1](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Copper radiates, fibre doesn't:** twisted pair emits a weak field an inductive probe can read, and cable routes through ceiling voids, risers and between buildings can be reached, tapped or cut. Shielding reduces emission; fibre removes it and the surge path with it. Non-plenum cable in a plenum is a life-safety violation. Tapping fibre means interrupting the light, which costs optical power — so a monitored link can show a tap as a drop in received level. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Peripheral ports bypass the OS:** USB devices can present as a keyboard and type on insertion, and **Thunderbolt exposes PCI Express**, so a malicious dock may reach memory over DMA (IOMMU plus device-approval prompts mitigate it — never "always allow"). Console ports are unauthenticated physical access by design: the cabinet lock is the control. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Physical SATA access is raw disk access,** bypassing every OS control — full-disk encryption is what survives an opened case. eSATA is a fast exfiltration path often missed by USB-only device-control policy, and decommissioned drives stay readable over SATA via a cheap adapter unless wiped or destroyed. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -496,6 +507,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.2 (Storage cables): new Storage cables topic (SATA speeds, one-to-one wiring, eSATA); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Peripheral cables): new Peripheral cables and console access topic; USB speeds line extended; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Optical fibre): expanded the Fibre line with core/cladding, ferrules, multimode vs single-mode and first-check troubleshooting |
 | 2026-09-24 | Added A+ Core 1 3.2 (568A and 568B colours): expanded the Wiring line with both pinouts, the four differing pins and the don't-mix rule |
