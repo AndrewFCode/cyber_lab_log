@@ -253,6 +253,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.3 An overview of memory](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Memory technologies `A+1 3.3`
+
+- **Parity vs ECC vs standard:** all look identical — only the spec differs. **Parity** adds 1 bit/byte, **detects but can't correct** an error, typically **halts** the system. **ECC** (~8 extra bits per 64) **detects and corrects**, system keeps running.
+- **Even parity rule:** count the 1-bits — even count → parity bit 0, odd count → parity bit 1. On read, recalculate and compare; mismatch = error found (not fixable).
+- **Memory bandwidth** in **MT/s** (million transfers/sec, already reflects DDR's double-edge transfer). A single channel has a throughput ceiling — beyond it the CPU sits idle waiting.
+- **Multi-channel** (dual/triple/quad) roughly multiplies throughput by running **matched modules** across parallel channels — same type, ideally same make/model, in the correctly **colour-coded** slot pairing (one module per colour, not two of the same).
+- **Why two 16 GB beats one 32 GB module:** same capacity, but two channels' worth of throughput instead of one.
+
+**Full notes →** [A+ Core 1 3.3 Memory technologies](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -534,6 +544,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -541,6 +552,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.3 (Memory technologies): new Memory technologies topic (parity, ECC, bandwidth, multi-channel); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (An overview of memory): new Memory overview topic (RAM vs storage, DIMM/SO-DIMM, SDRAM, DDR3-5 and keying); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Fiber connectors): extended the Fibre line with ST/SC/LC mechanisms and sizes; one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Copper connectors): new Copper connectors topic (RJ11/RJ14, F connectors, punchdown, Molex, Lightning); one security quick hit |
