@@ -273,6 +273,17 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.4 Storage devices](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### RAID `A+1 3.4`
+
+- **RAID is not backup** — it protects against drive hardware failure only. Deletion, corruption and ransomware replicate across the array just like real data; always run a separate backup.
+- **RAID 0 (striping):** data split across ≥2 drives, fastest, 100% usable capacity, **zero redundancy** — lose any one drive, lose everything.
+- **RAID 1 (mirroring):** ≥2 drives, full duplicate, **50% usable capacity**, survives losing either drive with no data loss.
+- **RAID 5 (striping + parity):** ≥3 drives, one drive's worth of *rotating* parity per stripe, survives **1** lost drive (reconstructed from data + parity, CPU overhead), (n−1) usable capacity.
+- **RAID 6:** ≥4 drives, a second independent parity block, survives **2** simultaneous lost drives — the extra drive adds fault tolerance, **not capacity**, (n−2) usable.
+- **RAID 1+0 / RAID 10:** ≥4 drives, a stripe of mirrored pairs, survives **one drive per mirrored pair** simultaneously — not both drives of the same pair.
+
+**Full notes →** [A+ Core 1 3.4 RAID](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -556,6 +567,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 
 ---
 
@@ -563,6 +575,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-24 | Added A+ Core 1 3.4 (RAID): new RAID topic (levels 0/1/5/6/10, RAID-is-not-backup); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (Storage devices): new Storage devices topic (HDD/SSD, PCIe/NVMe, SAS, mSATA/M.2 keying, flash, optical); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (Memory technologies): new Memory technologies topic (parity, ECC, bandwidth, multi-channel); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.3 (An overview of memory): new Memory overview topic (RAM vs storage, DIMM/SO-DIMM, SDRAM, DDR3-5 and keying); one security quick hit |
