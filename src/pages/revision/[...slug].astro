@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import { getRevision, neighbors, readingTime, withBase } from '../../lib/collections';
+
+export const getStaticPaths = (async () => {
+  const entries = await getRevision();
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      ...neighbors(entries, entry.id, (item) => `/revision/${item.id}`),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<ContentLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  label="Revision Material"
+  collection="revision"
+  backHref={withBase('/revision')}
+  backLabel="Revision Material"
+  pubDate={entry.data.pubDate}
+  draft={entry.data.draft}
+  tags={entry.data.tags}
+  readingTime={readingTime(entry.body)}
+  headings={headings}
+  prev={prev}
+  next={next}
+  slug={entry.id}
+>
+  <Content />
+</ContentLayout>

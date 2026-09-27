@@ -77,6 +77,14 @@ const projects = defineCollection({
   schema: projectSchema,
 });
 
+const revision = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/revision' }),
+  schema: z.object({
+    ...base,
+    pubDate: z.coerce.date(),
+  }),
+});
+
 const labs = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/labs' }),
   schema: z.object({
@@ -88,4 +96,4 @@ const labs = defineCollection({
   }),
 });
 
-export const collections = { cheatsheets, explainers, notes, projects, labs };
+export const collections = { cheatsheets, explainers, notes, projects, revision, labs };

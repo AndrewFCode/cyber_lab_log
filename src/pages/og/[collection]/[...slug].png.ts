@@ -1,9 +1,14 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
-import { entryLabel, getLabs, getProjects, getWriting } from '../../../lib/collections';
+import { entryLabel, getLabs, getProjects, getRevision, getWriting } from '../../../lib/collections';
 import { renderOgImage } from '../../../lib/og';
 
 export const getStaticPaths = (async () => {
-  const entries = [...(await getWriting()), ...(await getProjects()), ...(await getLabs())];
+  const entries = [
+    ...(await getWriting()),
+    ...(await getProjects()),
+    ...(await getRevision()),
+    ...(await getLabs()),
+  ];
   return entries.map((entry) => ({
     params: { collection: entry.collection, slug: entry.id },
     props: {
