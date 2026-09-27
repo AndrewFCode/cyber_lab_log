@@ -2,12 +2,13 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 
 export type WritingCollection = 'cheatsheets' | 'explainers' | 'notes';
-export type SiteCollection = WritingCollection | 'projects' | 'labs';
+export type SiteCollection = WritingCollection | 'projects' | 'revision' | 'labs';
 export type WritingEntry = CollectionEntry<WritingCollection>;
 export type ProjectEntry = CollectionEntry<'projects'>;
+export type RevisionEntry = CollectionEntry<'revision'>;
 export type LabEntry = CollectionEntry<'labs'>;
 export type CheatsheetEntry = CollectionEntry<'cheatsheets'>;
-export type SiteEntry = WritingEntry | ProjectEntry | LabEntry;
+export type SiteEntry = WritingEntry | ProjectEntry | RevisionEntry | LabEntry;
 
 export const LAB_SERIES_LABELS = {
   powershell: 'Learn Windows PowerShell',
@@ -66,6 +67,7 @@ const COLLECTION_PATH: Record<SiteCollection, string> = {
   explainers: '/explainers',
   notes: '/notes',
   projects: '/example-projects',
+  revision: '/revision',
   labs: '/full-picture',
 };
 
@@ -74,6 +76,7 @@ export const COLLECTION_LABELS: Record<SiteCollection, string> = {
   explainers: 'Explainer',
   notes: 'Lesson Note',
   projects: 'Example Project',
+  revision: 'Revision Material',
   labs: 'Full Picture',
 };
 
@@ -206,6 +209,12 @@ export async function getProjects() {
   return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
 }
 
+/** Newest first by `pubDate`. */
+export async function getRevision() {
+  const entries = await getCollection('revision', isPublished);
+  return entries.sort((a, b) => byDateDesc(a.data.pubDate, b.data.pubDate));
+}
+
 /** Newest first by `pubDate`. Screenshot walkthroughs that link to example projects. */
 export async function getLabs() {
   const entries = await getCollection('labs', isPublished);
@@ -247,12 +256,13 @@ export function tagSlug(tag: string) {
 }
 
 export async function getAllTags() {
-  const [writing, projects, labs] = await Promise.all([
+  const [writing, projects, revision, labs] = await Promise.all([
     getWriting(),
     getProjects(),
+    getRevision(),
     getLabs(),
   ]);
-  const entries: SiteEntry[] = [...writing, ...projects, ...labs];
+  const entries: SiteEntry[] = [...writing, ...projects, ...revision, ...labs];
   const bySlug = new Map<string, { slug: string; label: string; entries: SiteEntry[] }>();
 
   for (const entry of entries) {

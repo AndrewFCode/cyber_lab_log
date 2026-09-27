@@ -28,7 +28,7 @@ Drafts (`draft: true`) show up in `pnpm dev` and are left out of the production 
 | Explainers | `src/content/explainers/` | Longer “how this actually works” pieces. |
 | Lesson Notes | `src/content/notes/` | Class notes and shorter thoughts. The URL stays `/notes`. |
 | Example Projects | `src/content/projects/` | Book exercises: the code only. |
-| Full Picture | `src/content/labs/` | The same exercises with screenshots of what happened. |
+| Revision Material | `src/content/revision/` | Material gathered to revise from. The URL is `/revision`. |
 
 Resource tabs, in order: Code (2nd ed.), Help Desk, TryHackMe, A+ Core 1, The Linux Command Line, Learn Windows PowerShell, Networking for Sysadmins. A new `resource` key still appears; add a label for it in `src/lib/collections.ts` (`RESOURCE_ORDER` and `RESOURCE_LABELS`).
 
@@ -75,7 +75,7 @@ An explainer also needs `pubDate`. Optional fields: `updated`, `difficulty` (`be
 
 An example project needs `pubDate`, `why`, and `origin` (`handwritten` or `ai`). An AI project must include the original command in `prompt`. Optional: `status` (`active`, `paused`, `shipped`, `archived`) and `repo`.
 
-A Full Picture page needs `pubDate` and `series` (`powershell` or `linux`). Screenshots go in `public/media/labs/` and are referenced as `/media/labs/your-file.png`.
+A revision page needs `pubDate`. Screenshot walkthroughs of the example projects stay in `src/content/labs/` at `/full-picture`. Those pages need `pubDate` and `series` (`powershell` or `linux`). Screenshots go in `public/media/labs/` and are referenced as `/media/labs/your-file.png`.
 
 Links inside Markdown that should survive GitHub Pages need the site prefix, for example `/cyber_lab_log/resources/networking-sysadmins/1/`.
 

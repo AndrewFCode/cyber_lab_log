@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getRevision, withBase } from '../../lib/collections';
+
+const entries = await getRevision();
+---
+
+<BaseLayout title="Revision Material" description="Material gathered to revise from.">
+  <header class="mb-8 max-w-[var(--content-width)]">
+    <h1 class="text-3xl font-semibold tracking-tight text-ink">Revision Material</h1>
+    <p class="mt-3 text-lg text-muted">Material gathered to revise from.</p>
+  </header>
+
+  {
+    entries.length === 0 ? (
+      <p class="text-muted">Nothing here yet.</p>
+    ) : (
+      <div>
+        {entries.map((entry) => (
+          <PostCard
+            href={withBase(`/revision/${entry.id}`)}
+            title={entry.data.title}
+            description={entry.data.description}
+            dateLabel=""
+            date={entry.data.pubDate}
+            draft={entry.data.draft}
+          />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>
