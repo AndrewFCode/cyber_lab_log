@@ -370,6 +370,15 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 HSM and TPM](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Cooling: fans, heat sinks, paste, liquid `A+1 3.5`
+
+- **Air:** fans pull cool air in one side, hot out the other — keep cables clear. **Case fans 80/120/200 mm**, often variable speed (faster = louder). **Card fans** on larger cards (high-end GPUs).
+- **Passive (fanless):** silent — set-top boxes, media servers, appliances; uses a **heat sink** (fins add surface area; they get very hot — burn risk).
+- **Thermal interface:** **thermal paste** (grease) makes the heat-sink contact — **pea-sized**, **single-use**, and **not an adhesive** (clips/brackets hold the sink; separate "thermal adhesive" bonds). **Thermal pad** = cleaner/no-leak, slightly less effective, also single-use. Most paste is electrically non-conductive; **liquid-metal** paste is conductive and can short parts.
+- **Stack:** CPU -> paste/pad -> heat sink -> fan. **Liquid cooling** (block on CPU -> pipes -> radiator + fans -> coolant loop) for high-end, gaming and **overclocked** systems.
+
+**Full notes →** [Section 3.5 Cooling](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -670,6 +679,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **A TPM seals the disk key to the machine — but use TPM + PIN.** Sealing the BitLocker key in the TPM defeats "pull the drive and read it elsewhere", yet a TPM-only config auto-unlocks at boot, so a whole-laptop thief still gets in — a **PIN** (or password) binds decryption to something they lack. A **discrete** TPM's bus can be **sniffed** for the key with physical access (mitigate with TPM+PIN, a firmware TPM, or bus encryption), and **clearing the TPM destroys sealed keys** — back up the **recovery key** first. HSMs concentrate CA/server keys in one tamper-responsive device: a crown-jewel asset to lock down. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **64-bit is better defended, not just bigger** — 64-bit Windows enforces **driver signing** and **kernel patch protection (PatchGuard)** and makes **DEP/NX** and **ASLR** far more effective, none of which a 32-bit OS gives you; a fleet still on 32-bit is older, near end-of-support and a larger attack surface. Architecture also decides what code runs (x86/x64/ARM malware only runs on its target; emulation layers like Windows-on-ARM and Rosetta are an extra layer), and shared core caches enable Spectre/Meltdown-class side channels — patch CPU microcode and the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Drivers run in the kernel, so the driver is the threat** — a malicious or merely vulnerable device driver is a full-system compromise (the basis of **BYOVD**, bring-your-own-vulnerable-driver). Install **only signed drivers from the manufacturer's official site**, avoid third-party "driver updater" tools (a malware/PUP vector), and patch drivers like any software. A **NIC** is also a network path: a second NIC can bridge networks and break segmentation, promiscuous mode sniffs traffic — review any added/unexpected NIC and audit devices in Device Manager. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Cooling is an availability control** — a failed fan/pump, dust-blocked fins or dried-out paste causes **thermal throttling** or shutdown (a self-inflicted DoS) and can **mask or mimic** compromise, since an overheating machine looks slow and unstable. Monitor temperatures (BIOS sensors / OS tools) to tell a cooling fault from an attack, and remember cooling hardware itself can leak data on air-gapped systems via fan noise (Fansmitter) or temperature (BitWhisper); at scale, the data-centre HVAC is part of the attack surface. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -682,6 +692,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Cooling): new Cooling topic (airflow/fans, passive, heat sinks, thermal paste vs pads, liquid cooling); one security quick hit (cooling as availability, fan/thermal covert channels) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Expansion cards): new Expansion cards and drivers topic (sound/GPU/capture/NIC, integrated vs discrete, driver install order and Device Manager); one security quick hit (kernel drivers/BYOVD, NIC paths) |
 | 2026-09-27 | Added A+ Core 1 3.5 (CPU features): new CPU features topic (32/64-bit and x86/x64, ARM, cores); one Rosetta stone row (CPU arch/bitness); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (HSM and TPM): new TPM and HSM topic (key protection, TPM internals/root of trust/BitLocker, TCG in BIOS, HSM key storage and crypto offload); one security quick hit (TPM+PIN, sniffing, clearing) |
