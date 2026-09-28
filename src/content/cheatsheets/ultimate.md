@@ -330,6 +330,17 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 The BIOS](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### BIOS settings: boot order, Secure Boot, passwords `A+1 3.5`
+
+- **Enter setup:** a key at power-on (**Del / F1 / F2**, or **Ctrl+S / Ctrl+Alt+S**). Windows **Fast Startup** skips it (partial shutdown) — force a full one with **Shift+Restart**, Advanced startup, `msconfig`, or interrupt boot **3×**. Always **document/photo/back up before changing**.
+- **Boot order** (Startup): order the devices tried (SATA, M.2, network, USB); move the wanted drive to the top. Disabling a device in the BIOS hides it from the OS entirely.
+- **USB control** (Devices > USB Setup): enable/disable ports — a real DLP/malware control (the 2008 DoD USB ban followed the **Agent.btz** worm, a SillyFDC variant).
+- **Secure Boot** (Security, **UEFI only**): verifies signatures on the **bootloader, OS and BIOS updates** against trusted keys / the manufacturer public key; blocks unsigned or older OSes — disable to run them, re-enable after.
+- **Passwords** (Security): **boot/user** = needed to boot; **supervisor/BIOS** = needed to enter setup (e.g. to stop someone re-enabling USB). Lost = reset the BIOS.
+- **Reset & extras:** firmware and settings live in **flash** now (not battery-backed **CMOS**), so a battery pull won't clear them — short the **CLRTC** (clear-CMOS) jumper with physical board access. Also here: **fan/cooling** profiles + **temperature** monitoring (Power) and **virtualisation** VT-x / AMD-V/SVM (Advanced > CPU Setup).
+
+**Full notes →** [Section 3.5 BIOS settings](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -626,6 +637,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Inside-the-case connectors are an overlooked attack surface** — an internal **USB header** is a real USB bus behind the case panel, so an implant or rogue front-panel cable on it bypasses external-port device control; and a **discrete TPM** on a header is physically removable with a comparatively exposed bus (TPM-sniff/swap attacks on Secure Boot and disk encryption). Both need physical case access, so the chassis lock is part of the threat model. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Server boards carry out-of-band management (BMC / IPMI)** — a controller that can power-cycle the machine, mount virtual media and see the console independent of the OS, often on its own port. Exposed or default-credentialled BMCs are a direct route to full control: isolate the management network, change defaults, and patch it like any host. Platform firmware matters too — CPU microcode and management engines (Intel ME, AMD PSP) are fixed through the board's BIOS/UEFI, so patch firmware, not just the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Firmware runs below the OS, so it outlives a reinstall** — a bootkit or UEFI implant survives a disk wipe because it isn't on the disk. Keep **Secure Boot** on and flash only vendor-signed images (dual BIOS aids recovery); lock the boot path against evil-maid access with a **supervisor/UEFI password** and a boot order that won't boot removable media by default; pair with full-disk encryption. Treat firmware version and settings as part of the build baseline, and patch firmware (microcode fixes ship this way). → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **BIOS passwords deter, they don't protect data** — the configuration can be cleared by anyone with physical board access (the **CLRTC / clear-CMOS jumper**, sometimes a battery pull, plus vendor backdoor resets), so a supervisor or boot password is not data protection; full-disk encryption plus physical security is. Do use firmware to **disable USB** (blocks removable-media worms and exfiltration the OS user can't undo) and **lock the boot order** to internal-only with USB boot off (stops live-USB bypass). → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -638,6 +650,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (BIOS settings): new BIOS settings topic (setup entry/Fast Startup, boot order, USB control, Secure Boot, boot vs supervisor passwords, CLRTC reset, virtualisation); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (The BIOS): new BIOS and UEFI firmware topic (POST/boot, dual BIOS, legacy vs UEFI); one security quick hit (firmware persistence, Secure Boot, boot-path lockdown) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard compatibility): new CPU platforms and server boards topic (Intel/AMD socket rule, zero-force install, multisocket servers); one security quick hit (BMC/IPMI, platform firmware) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard connections): new Motherboard connectors topic (main power, PCIe 6/8-pin 75/150 W, SATA/eSATA/M.2, header pins); one security quick hit |
