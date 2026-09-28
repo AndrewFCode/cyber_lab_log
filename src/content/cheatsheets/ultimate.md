@@ -302,6 +302,15 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 Motherboard form factors](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Motherboard connectors `A+1 3.5`
+
+- **Main power:** one large **keyed, latched** connector — **+3.3 V, +5 V, +12 V DC**. **20-pin** (old) or **24-pin** (new); a 24-pin cable fits a 20-pin board with the extra 4 left off (often a detachable block).
+- **PCIe card power** (extra power for cards, usually GPUs): **6-pin = 75 W, 8-pin = 150 W**, both +12 V; commonly a **6+2** cable. Don't confuse the **8-pin PCIe** (GPU) with the separately keyed **8-pin CPU/EPS** connector — not interchangeable.
+- **Data:** **SATA** = L-shaped, **data only** (power is separate); **eSATA** = external, sometimes on an expansion card; **M.2** = small slot carrying data **and** power — push in, screw down, no cables.
+- **Headers (pins):** wire the case to the board — power/reset buttons, power/HDD LEDs, **USB 2.0/3.0**, **TPM**, speaker. Follow the **printed labels**; LEDs are polarised (reverse if unlit), switches aren't.
+
+**Full notes →** [Section 3.5 Motherboard connections](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -595,6 +604,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An open expansion slot is direct bus access** — a card in a PCI/PCIe slot sits on the system bus, and PCIe devices can use **DMA** to read and write live RAM (PCILeech-class attacks), lifting keys and decrypted data even on a full-disk-encrypted machine because the disk is unlocked while running. Physical case/slot access is the control: account for every slot and treat an unexpected add-in card as an incident. This is the same DMA exposure that makes Thunderbolt (tunnelled PCIe) risky. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **A standard board footprint helps an attacker too** — shared ATX mounting points and layout mean a tampered same-form-factor board drops into the same chassis and looks right (the physical side of a supply-chain or evil-maid swap), and small single-purpose Mini-ITX appliances (media boxes, kiosks) sit physically exposed and often unpatched. Baseline the expected board, slot count and populated headers; inventory, patch and segment the small boxes. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Inside-the-case connectors are an overlooked attack surface** — an internal **USB header** is a real USB bus behind the case panel, so an implant or rogue front-panel cable on it bypasses external-port device control; and a **discrete TPM** on a header is physically removable with a comparatively exposed bus (TPM-sniff/swap attacks on Secure Boot and disk encryption). Both need physical case access, so the chassis lock is part of the threat model. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -607,6 +617,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Motherboard connections): new Motherboard connectors topic (main power, PCIe 6/8-pin 75/150 W, SATA/eSATA/M.2, header pins); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard expansion slots): new Expansion slots (PCI and PCIe) topic; one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard form factors): new Motherboard form factors topic (ATX/micro-ATX/Mini-ITX, 20→24-pin, shared ATX mounting); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Video cables): new Video cables topic (HDMI, DisplayPort, DVI, VGA, video over USB-C); one security quick hit |
