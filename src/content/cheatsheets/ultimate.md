@@ -294,6 +294,16 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 Motherboard expansion slots](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Expansion cards and drivers `A+1 3.5`
+
+- **What:** cards that add function a motherboard lacks; user-installable, usually auto-detected with the driver installed by the OS.
+- **Types:** **sound card** (multi-channel audio in/out, digital/S/PDIF); **discrete GPU** (own GPU + memory + outputs, PCIe **x16**, may need 6/8-pin power) vs **integrated** graphics (in the CPU, ports on the board); **capture card** (video **input**, camera/other PCs, high throughput, **HDMI/SDI** — SDI = Serial Digital Interface); **NIC** (wired Ethernet; **multi-port** = several ports per slot).
+- **Tell integrated from discrete:** ports on the board = integrated; ports on the card = discrete.
+- **Choosing:** motherboard docs (free slot/interfaces) -> maker's min requirements -> knowledge base -> other users.
+- **Drivers:** follow the documented **before/after** order, install the **latest** from the maker (uninstall the old first if replacing), verify in **Device Manager** (yellow "!" = problem; **Roll Back Driver** reverts a bad update).
+
+**Full notes →** [Section 3.5 Expansion cards](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard form factors `A+1 3.5`
 
 - **Three to know (largest → smallest):** ATX > micro-ATX > Mini-ITX. Objective 3.5 is scenario-based — pick the smallest board that meets the job's expansion and cooling needs.
@@ -659,6 +669,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **BIOS passwords deter, they don't protect data** — the configuration can be cleared by anyone with physical board access (the **CLRTC / clear-CMOS jumper**, sometimes a battery pull, plus vendor backdoor resets), so a supervisor or boot password is not data protection; full-disk encryption plus physical security is. Do use firmware to **disable USB** (blocks removable-media worms and exfiltration the OS user can't undo) and **lock the boot order** to internal-only with USB boot off (stops live-USB bypass). → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **A TPM seals the disk key to the machine — but use TPM + PIN.** Sealing the BitLocker key in the TPM defeats "pull the drive and read it elsewhere", yet a TPM-only config auto-unlocks at boot, so a whole-laptop thief still gets in — a **PIN** (or password) binds decryption to something they lack. A **discrete** TPM's bus can be **sniffed** for the key with physical access (mitigate with TPM+PIN, a firmware TPM, or bus encryption), and **clearing the TPM destroys sealed keys** — back up the **recovery key** first. HSMs concentrate CA/server keys in one tamper-responsive device: a crown-jewel asset to lock down. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **64-bit is better defended, not just bigger** — 64-bit Windows enforces **driver signing** and **kernel patch protection (PatchGuard)** and makes **DEP/NX** and **ASLR** far more effective, none of which a 32-bit OS gives you; a fleet still on 32-bit is older, near end-of-support and a larger attack surface. Architecture also decides what code runs (x86/x64/ARM malware only runs on its target; emulation layers like Windows-on-ARM and Rosetta are an extra layer), and shared core caches enable Spectre/Meltdown-class side channels — patch CPU microcode and the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Drivers run in the kernel, so the driver is the threat** — a malicious or merely vulnerable device driver is a full-system compromise (the basis of **BYOVD**, bring-your-own-vulnerable-driver). Install **only signed drivers from the manufacturer's official site**, avoid third-party "driver updater" tools (a malware/PUP vector), and patch drivers like any software. A **NIC** is also a network path: a second NIC can bridge networks and break segmentation, promiscuous mode sniffs traffic — review any added/unexpected NIC and audit devices in Device Manager. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -671,6 +682,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Expansion cards): new Expansion cards and drivers topic (sound/GPU/capture/NIC, integrated vs discrete, driver install order and Device Manager); one security quick hit (kernel drivers/BYOVD, NIC paths) |
 | 2026-09-27 | Added A+ Core 1 3.5 (CPU features): new CPU features topic (32/64-bit and x86/x64, ARM, cores); one Rosetta stone row (CPU arch/bitness); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (HSM and TPM): new TPM and HSM topic (key protection, TPM internals/root of trust/BitLocker, TCG in BIOS, HSM key storage and crypto offload); one security quick hit (TPM+PIN, sniffing, clearing) |
 | 2026-09-27 | Added A+ Core 1 3.5 (BIOS settings): new BIOS settings topic (setup entry/Fast Startup, boot order, USB control, Secure Boot, boot vs supervisor passwords, CLRTC reset, virtualisation); one security quick hit |
