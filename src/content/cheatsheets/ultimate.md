@@ -3,7 +3,7 @@ title: "The Ultimate IT & Cyber Cheat Sheet"
 description: "The short version of everything I study — key commands and facts by topic, each linking to the full chapter notes."
 tags: ["cheat-sheet", "powershell", "linux", "windows", "networking", "hardware"]
 draft: false
-updated: "2026-09-24"
+updated: "2026-09-27"
 kind: "ultimate"
 pinned: true
 ---
@@ -284,9 +284,18 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.4 RAID](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Motherboard form factors `A+1 3.5`
+
+- **Three to know (largest → smallest):** ATX > micro-ATX > Mini-ITX. Objective 3.5 is scenario-based — pick the smallest board that meets the job's expansion and cooling needs.
+- **ATX** = Advanced Technology Extended (1995): largest, most expansion and memory slots. Main power **20-pin (early) → 24-pin (modern)**.
+- **micro-ATX:** smaller, but **same mounting points and same power connectors** as ATX; fewer expansion/memory slots (size forces trade-offs).
+- **Mini-ITX** (smallest common ITX): keeps **ATX-compatible mounting points**, so it drops into an ATX case; often a single expansion slot — media boxes, appliances, single-task builds.
+
+**Full notes →** [Section 3.5 Motherboard form factors](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
-- **Boards:** ATX > microATX > Mini-ITX. PCIe x16 for GPUs. CMOS battery = CR2032.
+- **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
 - **Firmware:** UEFI + GPT + Secure Boot + TPM 2.0 is the modern stack.
 - **PSU:** converts wall **AC to DC** — mainly +3.3 V (orange), +5 V (red), +12 V (yellow), plus **+5 VSB** standby (wake-on-LAN/power button), −12 V (onboard LAN) and obsolete −5 V. **24-pin** to the board (originally 20-pin; leave the last 4 unconnected on older boards), keyed to fit one way; 8-pin to the CPU. **Watts = volts × amps.** US/Canada 110–120 VAC 60 Hz · Europe 220–240 VAC 50 Hz — old PSUs need a manual switch set *before* connecting (120V-into-230V = overload/failure); modern ones auto-sense. **Size to ~50% load** (target = load ÷ 0.5) for headroom; physical size doesn't change with wattage. Redundant PSUs run ~50/50, hot-swappable, either covers 100% alone. Fixed vs modular cabling. Efficiency 80–96%, **80 PLUS → Bronze → Silver → Gold → Platinum → Titanium**, lowest to highest.
 - **Speeds:** USB 1.1 low 1.5 / full 12 Mbps · 2.0 480 Mbps · 3.0 (SuperSpeed) 5 Gbps · 3.1 10 Gbps · 3.2 20 Gbps · USB4 / Thunderbolt 40 Gbps. Cable lengths are **approximate** (~3–5 m; no exact spec maximum) — extend with a powered hub.
@@ -575,6 +584,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **A standard board footprint helps an attacker too** — shared ATX mounting points and layout mean a tampered same-form-factor board drops into the same chassis and looks right (the physical side of a supply-chain or evil-maid swap), and small single-purpose Mini-ITX appliances (media boxes, kiosks) sit physically exposed and often unpatched. Baseline the expected board, slot count and populated headers; inventory, patch and segment the small boxes. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -587,6 +597,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Motherboard form factors): new Motherboard form factors topic (ATX/micro-ATX/Mini-ITX, 20→24-pin, shared ATX mounting); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Video cables): new Video cables topic (HDMI, DisplayPort, DVI, VGA, video over USB-C); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.6 (Computer power): expanded the PSU line (AC/DC, watts formula, regional voltage, sizing, 80 PLUS); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.4 (RAID): new RAID topic (levels 0/1/5/6/10, RAID-is-not-backup); one security quick hit |
