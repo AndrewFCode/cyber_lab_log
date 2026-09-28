@@ -284,6 +284,15 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.4 RAID](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Expansion slots: PCI and PCIe `A+1 3.5`
+
+- **A bus is a shared pathway** on the board linking components; the *expansion* bus is how you add cards to extend a system.
+- **PCI (older):** parallel, **32-bit or 64-bit** (all the bits of a transfer sent at once across many wires); notch/keyway sits **further back** from the edge; a 64-bit card is longer with an extra keyed section.
+- **PCIe (modern):** serial, **one bit at a time per lane**; label = lane count (x1/x2/x4/x8/x16), and more lanes ≈ more throughput (x4 ≈ 4× x1); each lane is one path each way (full duplex); notch sits **closer to the edge**; x16 slots add a **retention latch** — release it before pulling the card.
+- **Fitting a card:** match the key, press straight down until **no copper shows**, screw the bracket to the case. Won't seat? Wrong card/slot — never force it.
+
+**Full notes →** [Section 3.5 Motherboard expansion slots](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard form factors `A+1 3.5`
 
 - **Three to know (largest → smallest):** ATX > micro-ATX > Mini-ITX. Objective 3.5 is scenario-based — pick the smallest board that meets the job's expansion and cooling needs.
@@ -584,6 +593,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Unlabelled punchdown blocks are invisible trust** — hundreds of terminated pairs with no documentation make an unauthorised cross-connect nearly undetectable, and counterfeit Lightning or USB-C cables can carry malicious electronics that a proprietary shape makes harder to spot by eye. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **An out-of-place fibre connector type is a visible anomaly** — a stray ST cable in an all-LC room is worth a second look during a physical walkthrough, and a dense LC patch panel concentrates far more connectivity per square inch than ST ever did, so secure it accordingly. → [A+ Core 1 3.2](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **RAM holds data in the clear while in use** — keys, decrypted files, credentials — even on an encrypted disk, which is the basis of cold boot attacks and RAM-scraping malware. Random crashes from a forced or mis-keyed memory module can also mimic compromise — rule out hardware before assuming malware. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **An open expansion slot is direct bus access** — a card in a PCI/PCIe slot sits on the system bus, and PCIe devices can use **DMA** to read and write live RAM (PCILeech-class attacks), lifting keys and decrypted data even on a full-disk-encrypted machine because the disk is unlocked while running. Physical case/slot access is the control: account for every slot and treat an unexpected add-in card as an incident. This is the same DMA exposure that makes Thunderbolt (tunnelled PCIe) risky. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **A standard board footprint helps an attacker too** — shared ATX mounting points and layout mean a tampered same-form-factor board drops into the same chassis and looks right (the physical side of a supply-chain or evil-maid swap), and small single-purpose Mini-ITX appliances (media boxes, kiosks) sit physically exposed and often unpatched. Baseline the expected board, slot count and populated headers; inventory, patch and segment the small boxes. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -597,6 +607,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Motherboard expansion slots): new Expansion slots (PCI and PCIe) topic; one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard form factors): new Motherboard form factors topic (ATX/micro-ATX/Mini-ITX, 20→24-pin, shared ATX mounting); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.2 (Video cables): new Video cables topic (HDMI, DisplayPort, DVI, VGA, video over USB-C); one security quick hit |
 | 2026-09-24 | Added A+ Core 1 3.6 (Computer power): expanded the PSU line (AC/DC, watts formula, regional voltage, sizing, 80 PLUS); one security quick hit |
