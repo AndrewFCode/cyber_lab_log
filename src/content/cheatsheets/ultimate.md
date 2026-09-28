@@ -341,6 +341,15 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 BIOS settings](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### TPM and HSM `A+1 3.5`
+
+- **Why:** encryption algorithms are public, so the secret is the **key** — the job is protecting the key. Keys in hardware never leave in the clear.
+- **TPM (Trusted Platform Module):** standardised on-board crypto hardware — a **module or built into the board**. Holds a **crypto processor** (RNG, key generation), **persistent** memory (burned-in unique key = Endorsement Key), **versatile** key storage, password-protected. Its **hardware-bound unique key** enables **BitLocker/FDE** (drive won't decrypt in another PC), a **root of trust**, and **remote attestation**. In BIOS: Security > **TCG** (Trusted Computing Group), **TPM 2.0**, enable/disable/clear. (fTPM = firmware TPM; **Win 11 needs TPM 2.0**; phones use a secure element/TEE.)
+- **HSM (Hardware Security Module):** scales this to **many systems** — centralised **key storage/backup** and **crypto acceleration/offload** (e.g. web-server TLS, CA keys). Data-centre high-end device, usually **FIPS 140-2/3** and tamper-responsive; also **personal/lightweight** HSMs (crypto wallets).
+- **Rule:** **TPM = one device's keys; HSM = many systems' keys.**
+
+**Full notes →** [Section 3.5 HSM and TPM](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -638,6 +647,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **Server boards carry out-of-band management (BMC / IPMI)** — a controller that can power-cycle the machine, mount virtual media and see the console independent of the OS, often on its own port. Exposed or default-credentialled BMCs are a direct route to full control: isolate the management network, change defaults, and patch it like any host. Platform firmware matters too — CPU microcode and management engines (Intel ME, AMD PSP) are fixed through the board's BIOS/UEFI, so patch firmware, not just the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Firmware runs below the OS, so it outlives a reinstall** — a bootkit or UEFI implant survives a disk wipe because it isn't on the disk. Keep **Secure Boot** on and flash only vendor-signed images (dual BIOS aids recovery); lock the boot path against evil-maid access with a **supervisor/UEFI password** and a boot order that won't boot removable media by default; pair with full-disk encryption. Treat firmware version and settings as part of the build baseline, and patch firmware (microcode fixes ship this way). → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **BIOS passwords deter, they don't protect data** — the configuration can be cleared by anyone with physical board access (the **CLRTC / clear-CMOS jumper**, sometimes a battery pull, plus vendor backdoor resets), so a supervisor or boot password is not data protection; full-disk encryption plus physical security is. Do use firmware to **disable USB** (blocks removable-media worms and exfiltration the OS user can't undo) and **lock the boot order** to internal-only with USB boot off (stops live-USB bypass). → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **A TPM seals the disk key to the machine — but use TPM + PIN.** Sealing the BitLocker key in the TPM defeats "pull the drive and read it elsewhere", yet a TPM-only config auto-unlocks at boot, so a whole-laptop thief still gets in — a **PIN** (or password) binds decryption to something they lack. A **discrete** TPM's bus can be **sniffed** for the key with physical access (mitigate with TPM+PIN, a firmware TPM, or bus encryption), and **clearing the TPM destroys sealed keys** — back up the **recovery key** first. HSMs concentrate CA/server keys in one tamper-responsive device: a crown-jewel asset to lock down. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -650,6 +660,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (HSM and TPM): new TPM and HSM topic (key protection, TPM internals/root of trust/BitLocker, TCG in BIOS, HSM key storage and crypto offload); one security quick hit (TPM+PIN, sniffing, clearing) |
 | 2026-09-27 | Added A+ Core 1 3.5 (BIOS settings): new BIOS settings topic (setup entry/Fast Startup, boot order, USB control, Secure Boot, boot vs supervisor passwords, CLRTC reset, virtualisation); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (The BIOS): new BIOS and UEFI firmware topic (POST/boot, dual BIOS, legacy vs UEFI); one security quick hit (firmware persistence, Secure Boot, boot-path lockdown) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard compatibility): new CPU platforms and server boards topic (Intel/AMD socket rule, zero-force install, multisocket servers); one security quick hit (BMC/IPMI, platform firmware) |
