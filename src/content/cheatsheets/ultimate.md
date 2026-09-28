@@ -311,6 +311,15 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [Section 3.5 Motherboard connections](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### CPU platforms and server boards `A+1 3.5`
+
+- **Two makers:** Intel and AMD. The old "AMD cheaper, Intel faster" line is a generalisation — the lead switches each generation, so compare the actual parts.
+- **Socket rule:** the CPU brand picks the board — **AMD CPU needs an AMD socket, Intel CPU needs an Intel socket**, never interchangeable. (Style, beyond scope: Intel/AM5 = **LGA** pins-in-socket; older AMD AM4 = **PGA** pins-on-chip.)
+- **Install with zero force:** rest the CPU in the socket aligned, close the cover, lock the lever. Force = misalignment; bent pins are usually fatal.
+- **Server boards:** **multisocket** (2+ physical CPUs), many RAM slots (4/6+, usually **ECC**), plenty of expansion, large full-size boards built for a **19-inch rack**.
+
+**Full notes →** [Section 3.5 Motherboard compatibility](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Motherboard, firmware, power and cables `A+1 D3`
 
 - **Boards:** form factors are a topic of their own (see above). PCIe x16 for GPUs. CMOS battery = CR2032.
@@ -605,6 +614,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **An open expansion slot is direct bus access** — a card in a PCI/PCIe slot sits on the system bus, and PCIe devices can use **DMA** to read and write live RAM (PCILeech-class attacks), lifting keys and decrypted data even on a full-disk-encrypted machine because the disk is unlocked while running. Physical case/slot access is the control: account for every slot and treat an unexpected add-in card as an incident. This is the same DMA exposure that makes Thunderbolt (tunnelled PCIe) risky. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **A standard board footprint helps an attacker too** — shared ATX mounting points and layout mean a tampered same-form-factor board drops into the same chassis and looks right (the physical side of a supply-chain or evil-maid swap), and small single-purpose Mini-ITX appliances (media boxes, kiosks) sit physically exposed and often unpatched. Baseline the expected board, slot count and populated headers; inventory, patch and segment the small boxes. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Inside-the-case connectors are an overlooked attack surface** — an internal **USB header** is a real USB bus behind the case panel, so an implant or rogue front-panel cable on it bypasses external-port device control; and a **discrete TPM** on a header is physically removable with a comparatively exposed bus (TPM-sniff/swap attacks on Secure Boot and disk encryption). Both need physical case access, so the chassis lock is part of the threat model. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Server boards carry out-of-band management (BMC / IPMI)** — a controller that can power-cycle the machine, mount virtual media and see the console independent of the OS, often on its own port. Exposed or default-credentialled BMCs are a direct route to full control: isolate the management network, change defaults, and patch it like any host. Platform firmware matters too — CPU microcode and management engines (Intel ME, AMD PSP) are fixed through the board's BIOS/UEFI, so patch firmware, not just the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -617,6 +627,7 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added A+ Core 1 3.5 (Motherboard compatibility): new CPU platforms and server boards topic (Intel/AMD socket rule, zero-force install, multisocket servers); one security quick hit (BMC/IPMI, platform firmware) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard connections): new Motherboard connectors topic (main power, PCIe 6/8-pin 75/150 W, SATA/eSATA/M.2, header pins); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard expansion slots): new Expansion slots (PCI and PCIe) topic; one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Motherboard form factors): new Motherboard form factors topic (ATX/micro-ATX/Mini-ITX, 20→24-pin, shared ATX mounting); one security quick hit |
