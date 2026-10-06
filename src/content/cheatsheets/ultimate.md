@@ -26,6 +26,8 @@ pinned: true
 | Copy / move / rename | `Copy-Item` / `Move-Item` / `Rename-Item` | `cp` / `mv` / `mv` | `copy` / `move` / `ren` |
 | Delete | `Remove-Item` (`-Recurse`) | `rm` (`-r`) | `del` / `rmdir /s` |
 | Show a file | `Get-Content` (`cat`) | `cat` / `less` | `type` |
+| Change file permissions           | `Set-Acl` / `icacls`                                                                             | `chmod`                                            | `icacls`                                                                  |
+| View file permissions             | `Get-Acl`                                                                                        | `ls -l`                                            | `icacls`                                                                  |
 | Follow a log | `Get-Content f -Tail 10 -Wait` | `tail -f f` | — |
 | Search text | `Select-String` | `grep` | `findstr` |
 | Help | `Get-Help x` | `man x` / `x --help` | `x /?` |
@@ -37,6 +39,7 @@ pinned: true
 | Output to file / discard errors | `>` `>>` / `2>$null` | `>` `>>` / `2>/dev/null` | `>` `>>` / `2>nul` |
 | Link status | `Get-NetAdapter` | `ip -br link` | `netsh interface show interface` |
 | IP addresses | `Get-NetIPAddress` | `ip -br addr` | `ipconfig` |
+| View interface IP config          | `ipconfig` (`/all` for detail)                                                                   | `ip addr show` (`ifconfig` legacy)                 | `ipconfig` |
 | Routing table | `Get-NetRoute` | `ip route` | `route print` |
 | ARP / neighbour cache | `Get-NetNeighbor` | `ip neigh` | `arp -a` |
 | Listening ports | `Get-NetTCPConnection -State Listen` | `sudo ss -tlnp` | `netstat -ano \| findstr LISTENING` |
@@ -100,6 +103,28 @@ pinned: true
 
 **Full notes →** [Ch. 6 The pipeline](/cyber_lab_log/resources/powershell/6/)
 
+### Adding commands: modules and snap-ins `MoL 7`
+
+- **"Management shells"** (Exchange, SQL Server, etc.) are ordinary PowerShell with one extension **preloaded** by their shortcut — not a separate engine.
+- **Snap-ins (legacy, Windows-only):** `Get-PSSnapin -Registered` (list) · `Add-PSSnapin <name>` (load) · `Get-PSSnapin` (loaded). Superseded by modules; don't work in PowerShell 7/Core.
+- **Modules (modern, cross-platform):** `Get-Module -ListAvailable` (list) · `Import-Module <name>` (load) · `Get-Module` (loaded). **Auto-load** on first use since PS 3.0.
+- **Conflicts:** same-named command from two modules → most-recently-imported wins. Avoid deliberately with `Import-Module X -Prefix Y`; unload with `Remove-Module`.
+- **Profile scripts:** `$PROFILE` = path to your personal startup script (one of several user/host scopes) — add `Import-Module` lines there to preload extensions every session.
+- **PowerShell Gallery:** `Find-Module -Name X` (search) · `Install-Module -Name X` (install; add `-Scope CurrentUser` to avoid needing admin).
+
+**Full notes →** [Ch. 7 Adding commands](/cyber_lab_log/resources/powershell/7/)
+
+### Objects: Get-Member, properties, methods `MoL 8`
+
+- **Object = properties (data) + methods (actions).** The pipeline moves real objects between commands (see Ch. 6) — this chapter is about working with one directly.
+- **`Get-Member`** (`gm`): lists every property/method an object has, with each property's data type — the standard way to learn "what can I do with this."
+- **Dot notation:** `$obj.Property` (no parentheses) for data; `$obj.Method()` (**parentheses required, even with no args**) to act — forgetting `()` just describes the method instead of running it. `$_` = the current object inside a pipeline.
+- **`Sort-Object -Property X [-Descending]`**: sorts on the real (often numeric) value, so 9 correctly sorts before 10 — unlike text sort.
+- **`Select-Object -Property a,b` / `-First n` / `-ExpandProperty x`**: narrows to specific properties, limits count, or unwraps a property's raw values. `-Property` selection returns a **new, simplified object** — the original's other properties and methods are gone.
+- **Format-\* still goes last** (reinforcing Ch. 6): everything up to that point is real objects; Format-* converts to display-only output that can't be usefully piped onward.
+
+**Full notes →** [Ch. 8 Objects](/cyber_lab_log/resources/powershell/8/)
+
 ---
 
 ## Linux and Bash
@@ -156,6 +181,28 @@ pinned: true
 - **Always quote variables:** `"$var"` — `ls $f` on `two words.txt` becomes two arguments. `printf` beats `echo -e` for `\n` / `\t`.
 
 **Full notes →** [Ch. 7 Seeing the world as the shell sees it](/cyber_lab_log/resources/linux/7/)
+
+### Keyboard tricks and history `TLCL 8`
+
+- **Readline (emacs-mode default):** `Ctrl-A`/`Ctrl-E` line start/end · `Ctrl-F`/`Ctrl-B` char · `Alt-F`/`Alt-B` word · `Ctrl-L` clear screen.
+- **Editing:** `Ctrl-T` transpose chars · `Alt-T` transpose words · `Alt-L`/`Alt-U`/`Alt-C` lower/upper/capitalise word.
+- **Kill and yank (cut/paste):** `Ctrl-K` kill to end of line · `Ctrl-U` kill to start · `Ctrl-W` kill word back · `Alt-D` kill word forward · `Ctrl-Y` yank back.
+- **Completion:** Tab once = complete as far as matches agree; Tab twice = list all matches.
+- **History:** `Ctrl-P`/`Ctrl-N` (or ↑/↓) step through; `history` lists with line numbers; **`Ctrl-R`** incremental reverse search (again = older match, `Ctrl-G` cancels).
+- **History expansion:** `!!` last command · `!n` line n · `!string` most recent starting with · `!?string?` most recent containing · `!$` last argument · `!*` all arguments · `^old^new` substitute and rerun.
+
+**Full notes →** [Ch. 8 Advanced keyboard tricks](/cyber_lab_log/resources/linux/8/)
+
+### Permissions: rwx, chmod, umask, su/sudo `TLCL 9`
+
+- **rwx per user/group/other:** on a **file** — read contents, write/modify, execute as a program. On a **directory** — list, create/delete/rename entries, enter (traverse). `ls -l` shows it as `-rwxr-xr--` (type, owner, group, other).
+- **chmod:** symbolic (`u+x`, `g-w`, `o=r`, `a+r`) or octal (`4`=r, `2`=w, `1`=x per digit — `755`=rwxr-xr-x, `644`=rw-r--r--).
+- **umask:** subtracted from defaults **666** (files) / **777** (dirs); common default **022** → 644/755. `umask 077` for stricter.
+- **Special bits:** **setuid** (4000, run as the file's **owner** — e.g. `passwd`) · **setgid** (2000, run as the file's **group**, or new files in a directory **inherit its group**) · **sticky** (1000, directory deletion restricted to a file's **own owner** — e.g. `/tmp`).
+- **su** = new **shell** as another user (own session). **sudo** = one **command** as another user, checked against **your own** password + `sudoers` policy — narrower blast radius than a long-lived su root shell.
+- **chown** = change owner (+ optional group); **chgrp** = change group only. **passwd** changes a password and is itself the classic setuid example.
+
+**Full notes →** [Ch. 9 Permissions](/cyber_lab_log/resources/linux/9/)
 
 ### Users, permissions and processes `THM 3`
 
@@ -437,10 +484,64 @@ The build-up across *Code*, each stage linking to its chapter:
 
 **Full notes →** [A+ Core 1 3.2 Copper connectors](/cyber_lab_log/resources/a-plus-core-1/3/)
 
+### Printers and multifunction devices `A+1 3.7`
+
+- **Driver** must match the **model, OS and bit-width** (32-bit OS -> 32-bit driver, 64-bit -> 64-bit) to unlock full features. **PDL** = page description language: **PCL** (Printer Command Language, HP) or **PostScript** (Adobe) — match the driver. **Firmware** is the device OS; update from the vendor site, per their process.
+- **Connect:** USB (**Type A** at PC, **Type B/USB-C** at printer) · **RJ45** Ethernet (often several at once) · Bluetooth (short range) · 802.11 **infrastructure** (via AP) or **ad hoc** (point-to-point; modern = Wi-Fi Direct).
+- **Share:** OS printer sharing (host PC off = nobody prints) or a **print server** (queue + web front end, in the printer or external).
+- **Features:** **duplex** (both sides, may need hardware) · **orientation** portrait/landscape · **paper trays** (types/sizes, a default) · **quality** (resolution e.g. 600x600, colour/grayscale, colour/toner-saving).
+- **Secure output:** user auth/permissions (print vs manage) · **badging** (release by badge) · **secured print** (release by PIN/passcode; Windows PIN printing) · **auditing** (device log / Event Viewer).
+- **Scan:** flatbed / **ADF** (multi-page) to **email** (small), **folder/SMB** (Server Message Block share, TCP 445; large), or **cloud** (Google Drive/Dropbox).
+
+**Full notes →** [Section 3.7 Multifunction devices](/cyber_lab_log/resources/a-plus-core-1/3/)
+
+### Laser printers: imaging and maintenance `A+1 3.8`
+
+- **Imaging process (exam order, 7 steps):** **Processing** (render in memory) -> **Charging** (drum charged negative: corona wire/roller) -> **Exposing** (laser discharges the image areas) -> **Developing** (negative toner sticks to the discharged areas, repelled elsewhere) -> **Transferring** (toner to paper) -> **Fusing** (heat + pressure) -> **Cleaning** (wipe the drum; repeat).
+- **Toner/drum:** low toner = fading print, out = blank. **OPC drum** (Organic Photoconductor) is **light-sensitive** — keep it bagged until fitting; may be in the cartridge or separate.
+- **Toner swap:** power down -> remove old -> unpack strips -> seat -> restart (top/side load; colour = multiple slots).
+- **Maintenance kit:** wear parts (feed rollers, fuser…); fit by the **page counter** at the maker's interval; power down (**hot fuser!**), swap, then **reset the counter**.
+- **Calibration:** a new cartridge prints at a different density -> print test pages, adjust toner (auto/manual).
+- **Cleaning:** water/**IPA**, no harsh chemicals; damp **cold** cloth outside; **no compressed air** inside (aerosolises toner) — wipe or a **toner vacuum**; rollers with IPA; toner on skin with **cold** water.
+
+**Full notes →** [Section 3.8 Laser printer maintenance](/cyber_lab_log/resources/a-plus-core-1/3/)
+
+### Inkjet printers `A+1 3.8`
+
+- **What:** ink dispersion — drops from a cartridge onto paper. Inexpensive, quiet, high-res colour (graphics/photos). **Ink** is expensive, proprietary, **fades over time** and **clogs easily**. Thermal (HP/Canon) vs piezoelectric (Epson) drop ejection.
+- **Cartridges (CMYK** = Cyan, Magenta, Yellow, **Key/black):** combined, mixed (CMY combined + black separate), or **fully separate** (most modular — replace only the empty colour). Pop out/in in seconds; **recycle** the plastic.
+- **Print head:** built into the cartridge (fresh head each swap) or **separate**; small/**delicate**.
+- **Head cleaning:** **streaks** = excess/dried ink on the head. Printers run an **auto-clean** (often ~every 24h) and a **manual** clean; heavy use needs more. Cycles **use ink** (waste-ink pad). Careful hand-cleaning of the removed head is a last resort.
+- **Calibration:** after a new cartridge (a few minutes) or any time colours drift, to **align the colours**; prints a **calibration page** with alignment marks; usually automatic, with manual tweaks for crispness.
+- **Paper path:** **feed rollers** pull paper through (clean if it won't feed). **Jams:** open the cover, pull the **whole** sheet out (feed direction; don't force the carriage), and check no scraps remain. **Duplex** on some larger models only.
+
+**Full notes →** [Section 3.8 Inkjet printers](/cyber_lab_log/resources/a-plus-core-1/3/)
+
+### Thermal printers `A+1 3.8`
+
+- **How:** no ink/toner — a fixed **heating element** (full width of the print area) darkens specially coated **thermal (thermochromic) paper** as a friction-driven **feed roller** moves it past. Quiet — mainly just the feed motor. Feels slightly **glossy** to the touch.
+- **Paper:** **printer-specific** — never substitute inkjet/laser paper; match make and model. Replacing a roll takes under a minute: load -> extend the paper -> close the cover -> push to **lock**.
+- **Cleaning the heating element:** **IPA** (isopropyl alcohol), via a **cleaning pen** (precise) or a **cleaning card** run through the printer like paper; always follow the **manufacturer's documentation** — components are sensitive.
+- **Debris:** portable printer -> take outside, blow out with air; fixed printer -> wipe inside with a **damp cloth**. **Avoid a standard vacuum** (generates static, harmful to electronics) — use an electronics-specific vacuum if available.
+- **Handle with care:** other **heat sources** (car dashboard, radiator, hairdryer) darken output unintentionally; some **clear tapes** chemically turn a touched area **white**; output also **fades over time** regardless of heat — copy to archival paper or **scan/photograph** anything needed long-term.
+
+**Full notes →** [Section 3.8 Thermal printer maintenance](/cyber_lab_log/resources/a-plus-core-1/3/)
+
+### Impact printers `A+1 3.8`
+
+- **How:** typically **dot-matrix** — a **pin matrix** in the print head strikes a **ribbon**, transferring ink to the paper as tiny dots. Head moves back and forth per line (runs warm, large heat sink); page advances between lines.
+- **Trade-offs:** can produce **carbon copies**, low cost per page — but **noisy** and **low resolution**; mostly **niche use** today.
+- **Ribbon:** one continuous loop in a **replaceable cartridge** (swap in under a minute); output **fades progressively** as it wears — that fading is the cue to replace it. Size varies by make/model.
+- **Print head:** mechanical; **pins fail** over time (consistent missing dots = a bad pin). **Let it cool** before handling (heat sink on back); removed via **screws** or a tool-free **release lever/bar** depending on the model — replace the ribbon at the same time for best combined output.
+- **Paper:** **one continuous tractor-feed sheet**, not sheets — align **edge holes on both sides**; align carefully to any **pre-printed form**; keep the **whole path** (in and out) clear of obstructions or it readjusts itself and **jams**. Paper is **tractor/fanfold** (continuous or perforated); **green bar paper** was common for printed source code.
+- **Multi-part paper:** one pass makes several copies — traditional **carbon paper**, or modern **micro-encapsulated ink + clay reaction** (can **irritate skin**). Many orgs now just print a separate copy elsewhere instead.
+
+**Full notes →** [Section 3.8 Impact printer maintenance](/cyber_lab_log/resources/a-plus-core-1/3/)
+
 ### Laptops, mobile and printers `TCM 5` `A+1 D1` `A+1 D3`
 
 - **Laptop repair:** battery out first, map the screws, plastic tools. A swollen battery means replace now.
-- **Laser printing:** Processing, Charging, Exposing, Developing, Transferring, Fusing, Cleaning.
+- **Laser printing:** the 7-step imaging process has its own topic above.
 
 **Full notes →** [TCM section 5](/cyber_lab_log/resources/tcm-help-desk/5/) · [A+ Core 1 domain 1](/cyber_lab_log/resources/a-plus-core-1/1/) · [A+ Core 1 domain 3](/cyber_lab_log/resources/a-plus-core-1/3/)
 
@@ -517,30 +618,72 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 **Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.4 Packets and Frames](/cyber_lab_log/resources/tryhackme/5/)
 
-### IPv4, IPv6 and MAC addressing `A+1 D2` `THM 5`
+### IPv4, IPv6 and MAC addressing `A+1 D2` `THM 5` `NfSA 3`
 
 - **IPv4:** 32 bits = four octets of 0–255 · 2³² ≈ 4.29 billion addresses.
-- **Private (RFC 1918) + NAT:** `10/8` · `172.16/12` (172.16–172.31 only) · `192.168/16`. NAT lets many private hosts share one public address.
+- **Netmask/CIDR:** /24 = 255.255.255.0 (254 usable) · /25 = .128 (126) · /26 = .192 (62) · /27 = .224 (30) · /28 = .240 (14) · /30 = .252 (2). In any subnet, the **network address** (all host bits 0) and **broadcast address** (all host bits 1) are always unusable.
+- **Loopback:** `127.0.0.0/8` is reserved, but `127.0.0.1` is the address used in practice. A service bound only to loopback is unreachable from the network at all.
+- **Private (RFC 1918) + NAT:** `10/8` · `172.16/12` (172.16–172.31 only) · `192.168/16`. NAT lets many private hosts share one public address — NAT is address translation, **not** a firewall.
 - **IPv6:** 128 bits = eight groups of four hex digits · ≈ 340 undecillion addresses · LANs are `/64` (64-bit prefix + 64-bit interface ID).
 - **Shortening:** drop leading zeros; `::` replaces one run of zero groups, once only. `2001:0db8:0000:0000:0000:0000:0000:0001` → `2001:db8::1`.
 - **Types:** starts `2`/`3` = global · `fe80::` = link-local (never routed) · `fd` = unique local · `::1` = loopback.
 - **MAC:** 48 bits = 12 hex digits (`a4:c3:f0:85:ac:2d`); first 6 = manufacturer (OUI), last 6 = the interface. Set at the factory but spoofable; second digit 2/6/a/e = locally set (often a randomised privacy MAC).
+- **Multihoming and aliasing:** a **multihomed** host has more than one interface (often different subnets); **IP aliasing** puts several addresses on one interface (`ip addr add 192.168.1.50/24 dev eth0` on Linux).
+- **View config per OS:** `ipconfig` (Windows) · `ip addr show` / `ip a` (modern Debian/Linux; `ifconfig` is legacy there) · `ifconfig` (FreeBSD — still the standard tool).
+- **Troubleshoot IP in layers:** local config -> local subnet -> default gateway -> beyond the gateway, checking **DNS separately** from IP reachability.
 
-**Full notes →** [A+ Core 1 2.6 IPv4 and IPv6](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.1 What is Networking?](/cyber_lab_log/resources/tryhackme/5/)
+**Full notes →** [A+ Core 1 2.6 IPv4 and IPv6](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.1 What is Networking?](/cyber_lab_log/resources/tryhackme/5/) · [Networking for Sysadmins 3 IPv4](/cyber_lab_log/resources/networking-sysadmins/3/)
 
-### Addressing, DNS and DHCP `A+1 D2` `THM 5`
+### Addressing, DNS and DHCP `A+1 D2` `THM 5` `THM 6`
 
 - **Assigning:** IP + subnet mask + default gateway (+ DNS) · static = typed on the device (routers, DHCP and DNS servers) · reservation = DHCP always gives one MAC the same IP · dynamic = from the pool. Clients pick up changes at lease renewal.
 - **Subnet anatomy (/24):** `.0` = network address (never a device) · `.1`–`.254` = hosts · `.255` = broadcast · gateway usually `.1` or `.254`. Subnetting splits one network into smaller ones (staff vs guest).
 - **Special addresses:** `169.254.1.0`–`169.254.254.255` = APIPA (DHCP failed; local segment only; chosen after an ARP probe) · `127.0.0.1` / `::1` = loopback.
-- **DNS records:** A · AAAA · CNAME · MX · TXT (SPF / DKIM / DMARC) · PTR.
+- **Domain name anatomy:** `sub.example.com` reads right to left — **TLD** (`.com`; gTLD = purpose, ccTLD = geography) · **second-level domain** (`example`, ≤63 chars, a-z/0-9/hyphens, no leading/trailing/double hyphens) · **subdomain(s)** (`sub`, same char rules, chainable) · whole name ≤253 chars, unlimited subdomains.
+- **DNS records:** **A** (IPv4) · **AAAA** (IPv6) · **CNAME** (another domain name — needs a further lookup) · **MX** (mail server + **priority** for failover) · **TXT** (free text: SPF / DKIM / DMARC / verification) · PTR.
+- **DNS resolution path:** local cache -> recursive DNS server (own cache) -> root servers -> TLD server -> authoritative server/nameserver (holds the actual record; domains have several for redundancy) -> answer cached back along the way. **TTL** = seconds a record can be cached before re-lookup.
 - **DHCP:** DORA (Discover, Offer, Request, Acknowledge) · scope · lease · reservation · exclusion.
 - **Commands:**
-  - Addressing: `ipconfig /all` · `ipconfig /release` then `/renew` · `ipconfig /flushdns`
-  - DNS lookups: `nslookup -type=mx example.com` · `Resolve-DnsName` · `dig +short`
-  - Reachability: `Test-NetConnection host -Port 443`
+  * Addressing: `ipconfig /all` · `ipconfig /release` then `/renew` · `ipconfig /flushdns`
+  * DNS lookups: `nslookup -type=mx example.com` · `Resolve-DnsName` · `dig +short`
+  * Reachability: `Test-NetConnection host -Port 443`
 
-**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/)
+**Full notes →** [A+ Core 1 domain 2](/cyber_lab_log/resources/a-plus-core-1/2/) · [TryHackMe 5.2 Intro to LAN](/cyber_lab_log/resources/tryhackme/5/) · [TryHackMe 6 DNS in Detail](/cyber_lab_log/resources/tryhackme/6/)
+
+### HTTP and the web `THM 7`
+
+- **HTTP vs HTTPS:** HTTP = rules for exchanging web page data (Tim Berners-Lee, 1989-91); **HTTPS** adds **encryption** + **server identity verification** on top.
+- **URL parts:** scheme (http/https/ftp) · user (creds) · host (domain/IP) · **port** (80 HTTP, 443 HTTPS, or any 1-65535) · path · query string (`?id=1`) · fragment (`#section`).
+- **Request/response shape:** `METHOD path HTTP/version` + headers + **blank line** = end of request; `HTTP/version STATUS` + headers + blank line + body = response.
+- **Methods:** **GET** (retrieve) · **POST** (submit/create) · **PUT** (update) · **DELETE** (remove).
+- **Status codes:** **1xx** info (rare) · **2xx** success (200 OK, 201 Created) · **3xx** redirect (301 permanent, 302 temporary) · **4xx** client error (400 bad request, 401 auth required, 403 forbidden, 404 not found, 405 wrong method) · **5xx** server error (500 internal, 503 unavailable).
+- **Headers:** request — Host, User-Agent, Content-Length, Accept-Encoding, Cookie. Response — Set-Cookie, Cache-Control, Content-Type, Content-Encoding.
+- **Cookies:** set via **Set-Cookie**, returned via **Cookie** on every later request — the fix for HTTP being **stateless**; auth cookies hold a **token**, not a password.
+
+**Full notes →** [TryHackMe 7 HTTP in Detail](/cyber_lab_log/resources/tryhackme/7/)
+
+### How websites are built `THM 8`
+
+- **Front end** (browser, client-side) renders; **back end** (server) processes requests and returns responses.
+- **HTML** = structure (elements/tags: `<!DOCTYPE html>`, `<html>`, `<head>`, `<body>`, `<h1>`, `<p>`...) · **CSS** = styling · **JavaScript** = interactivity.
+- **Attributes:** `class` (shareable, styling) vs **`id`** (unique per element, styling + JS targeting) vs `src` (resource location).
+- **JS basics:** `document.getElementById("id").innerHTML = "..."` reads/changes content; **events** (`onclick`, `onhover`) trigger JS on user action.
+- **View page source** (right-click → View/Show Page Source) — trivial for both auditors and attackers to inspect.
+- **Sensitive data exposure:** clear-text secrets (creds, hidden links) accidentally left in front-end source — check page source early in any assessment.
+- **HTML injection:** unsanitised user input rendered as real HTML on the page — same root cause as **XSS** if the input can include `<script>` tags, not just cosmetic tags. Fix: sanitise on the **server**, never rely on client-side-only filtering. Golden rule: **never trust user input**.
+
+**Full notes →** [TryHackMe 8 How Websites Work](/cyber_lab_log/resources/tryhackme/8/)
+
+### Web infrastructure: load balancers, CDNs, WAFs `THM 9`
+
+- **Load balancer:** spreads requests across multiple servers — **round-robin** (in turn) or **weighted** (least busy); runs **health checks** and pulls an unresponsive server out of rotation. Solves both high-traffic capacity and failover.
+- **CDN:** hosts static files (JS/CSS/images/video) across servers worldwide; serves each user from the **physically nearest** one.
+- **Database:** stores/retrieves site data — anything from a plain text file to a multi-server cluster; common ones: MySQL, MSSQL, MongoDB, Postgres.
+- **WAF (Web Application Firewall):** sits **between** client and web server; filters common attack patterns, bot-like requests, and enforces **rate limiting** (requests/IP/second) — drops likely attacks before they reach the server. A mitigation layer, not a substitute for the app sanitising its own input.
+- **Web server software** (Apache, Nginx, IIS, NodeJS) serves files from a **root directory**: `/var/www/html` (Linux, Apache/Nginx) · `C:\inetpub\wwwroot` (Windows, IIS). **Virtual hosts** let one server host many domains, matched by the request's **Host header**, each mapped to its own root — no match falls back to the default site.
+- **Static vs dynamic content:** static (images, JS, CSS, unchanging HTML) served as-is from disk; dynamic content is generated per request by **backend** code (PHP, Python, Ruby, NodeJS, Perl) — invisible in page source, which is only the *result* of that processing. Everything the browser renders is the **frontend**.
+
+**Full notes →** [TryHackMe 9 Putting It All Together](/cyber_lab_log/resources/tryhackme/9/)
 
 ### Network devices, PoE and ISP handoff `A+1 D2` `THM 5`
 
@@ -680,6 +823,19 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 - **64-bit is better defended, not just bigger** — 64-bit Windows enforces **driver signing** and **kernel patch protection (PatchGuard)** and makes **DEP/NX** and **ASLR** far more effective, none of which a 32-bit OS gives you; a fleet still on 32-bit is older, near end-of-support and a larger attack surface. Architecture also decides what code runs (x86/x64/ARM malware only runs on its target; emulation layers like Windows-on-ARM and Rosetta are an extra layer), and shared core caches enable Spectre/Meltdown-class side channels — patch CPU microcode and the OS. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Drivers run in the kernel, so the driver is the threat** — a malicious or merely vulnerable device driver is a full-system compromise (the basis of **BYOVD**, bring-your-own-vulnerable-driver). Install **only signed drivers from the manufacturer's official site**, avoid third-party "driver updater" tools (a malware/PUP vector), and patch drivers like any software. A **NIC** is also a network path: a second NIC can bridge networks and break segmentation, promiscuous mode sniffs traffic — review any added/unexpected NIC and audit devices in Device Manager. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Cooling is an availability control** — a failed fan/pump, dust-blocked fins or dried-out paste causes **thermal throttling** or shutdown (a self-inflicted DoS) and can **mask or mimic** compromise, since an overheating machine looks slow and unstable. Monitor temperatures (BIOS sensors / OS tools) to tell a cooling fault from an attack, and remember cooling hardware itself can leak data on air-gapped systems via fan noise (Fansmitter) or temperature (BitWhisper); at scale, the data-centre HVAC is part of the attack surface. → [A+ Core 1 3.5](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **A printer/MFD is a networked computer, not an appliance** — firmware OS, web admin, and often an internal drive that **caches scanned/printed documents** (wipe or pull it before disposal). Patch firmware, **change default admin passwords**, disable unused services (including the fax line), and segment printers off the user VLAN. **Scan-to destinations store credentials** (SMB share, SMTP, cloud token) — use a least-privilege account, never domain admin. Keep sensitive output out of the tray with **badging / PIN secured print**, and remember the **Print Spooler** (PrintNightmare) and **kernel-level print drivers** are an attack surface — patch, restrict driver install, vendor drivers only. → [A+ Core 1 3.7](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Printer servicing and RMA are data-handling events** — a laser printer (or a part swapped under warranty) that leaves the building for repair takes its **cached print/scan jobs** with it, so sanitise internal storage or cover it with a data-handling agreement, exactly as before disposal. The maintenance workflow (page counters, calibration, settings) runs through the printer's **admin interface** — privileged access to keep restricted and off the open network — and page-counter-driven preventive maintenance keeps a shared resource **available**. → [A+ Core 1 3.8](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Thermal receipts/labels are often the only copy of sensitive data** (partial card numbers, names/addresses, tracking codes) — shred rather than bin them, and treat debris pulled from the printer (torn label ends, jammed partial prints) the same way. The heat/clear-tape reaction is also a **tampering angle**: output can be darkened or whitened after printing without touching the printer, so don't rely on a thermal slip alone as proof (returns, delivery signatures) — keep a digital record too. If you scan or photograph a fading receipt to preserve it, that copy is now stored data and needs normal retention/deletion handling, not "it's just a receipt" treatment. POS thermal printers sit near payment terminals, so extend the terminal's segmentation and physical controls to them. → [A+ Core 1 3.8](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **Legacy impact printers often mean legacy connectivity** — a surviving dot-matrix unit is frequently on an old parallel/serial link to an equally old, unpatched host; isolate/segment such devices rather than leaving them exposed on the general network. **A worn ribbon or head degrades an operational process** (delivery notes, pick tickets) quietly — monitor them like any other consumable. **Pre-printed forms are controlled documents**: misalignment after maintenance can put data in the wrong field, a data-integrity issue — test-print before a production run. **Spent ribbon cartridges physically retain every character struck** (in reverse) and can in principle be read back — dispose of ribbons from sensitive output securely, like printed waste. → [A+ Core 1 3.8](/cyber_lab_log/resources/a-plus-core-1/3/)
+- **DNS leaks activity in plaintext by default** — an observer can see which domains a device resolves (DoH/DoT exist to encrypt this). **Cache poisoning** injects a false answer into a resolver's cache, redirecting everyone using it until the TTL expires. **Dangling CNAMEs enable subdomain takeover**: a CNAME left pointing at a deprovisioned cloud resource can sometimes be claimed by an attacker. **TXT records reveal email-security posture** — missing or weak SPF/DKIM/DMARC makes a domain easier to spoof in phishing. And because the **authoritative nameserver** is where a domain's records actually live, compromising the registrar/DNS-provider account redirects the *entire* domain — mail and web alike — at once. → [TryHackMe 6 DNS in Detail](/cyber_lab_log/resources/tryhackme/6/)
+- **HTTP vs HTTPS is a real security decision** — plain HTTP can be read and tampered with in transit; any login, payment or personal-data page over HTTP is exposed. **Session cookies are a prime target**: stealing one (XSS, unencrypted link, weak config) impersonates the user without their password — hence `HttpOnly`/`Secure` cookie flags in production. **Status codes leak reconnaissance info**: 403 vs 404 tells an attacker whether a resource exists-but-is-protected vs doesn't-exist-at-all, and 405 confirms a resource exists with a different expected method — some systems deliberately return 404 for both to deny that signal. → [TryHackMe 7 HTTP in Detail](/cyber_lab_log/resources/tryhackme/7/)
+- **Page source is a trivial first recon step for attackers too** — no special tooling, just "View Page Source"; never leave credentials, hidden links or other secrets in front-end HTML/JS/comments. **HTML injection is often one step from XSS**: a field that renders an injected `<h1>` will frequently render an injected `<script>` too, escalating from cosmetic defacement to arbitrary JavaScript running in another user's session. **Client-side-only input filtering is not protection** — an attacker can send requests directly and skip the browser entirely, so sanitisation must happen server-side. → [TryHackMe 8 How Websites Work](/cyber_lab_log/resources/tryhackme/8/)
+- **A WAF filters, it doesn't fix the application** — rate limiting and attack-pattern matching stop a lot of unsophisticated traffic, but a vulnerable backend behind a WAF is still vulnerable to anything its rules don't catch; server-side input validation is still required. **Backend input (e.g. PHP's `$_GET`) is client-supplied and untrusted**, same root cause as HTML injection but now with database/SQL-injection risk attached. **Virtual hosts are matched by a client-supplied Host header** — misconfiguration can serve the wrong site to the wrong request. Load balancers and CDNs multiply the number of servers/edge nodes needing **consistent patching and config** — an inconsistent one becomes the weak point. → [TryHackMe 9 Putting It All Together](/cyber_lab_log/resources/tryhackme/9/)
+- **NAT is not a firewall** (confirmed again here) — a port forwarded through it, or a connection it permits outbound, is just as reachable as a direct public address for that traffic. **Loopback-only binding (127.0.0.1)** is a genuinely strong, simple control for anything that never needs network access. **Multihomed/aliased hosts have more surface than "the" IP suggests** — audit every interface and address, not just the primary one. → [Networking for Sysadmins 3 IPv4](/cyber_lab_log/resources/networking-sysadmins/3/)
+- **`Ctrl-R` search can resurface old secrets onto your screen/scrollback** even if you cancel before running the match — the same risk as the plain-text `.bash_history` file itself. **A leading space skips history recording** if `HISTCONTROL=ignorespace` is set — useful for a genuinely one-off sensitive command. **`history -c` only clears the in-memory session**, not necessarily the on-disk history file already written — don't treat it as cleanup after the fact. → [Ch. 8 Advanced keyboard tricks](/cyber_lab_log/resources/linux/8/)
+- **World-writable files/dirs are a common privilege-escalation path** — any user can edit them, and if a root-run script is among them, editing it before it next runs is a direct route to root. **Setuid/setgid binaries are prime targets**: a flaw in a setuid-root program grants any user root through it, so keep their count minimal and investigate unfamiliar ones. **A broad `sudoers` entry can still equal full root** (a command that can spawn a shell or edit arbitrary files) — scope sudo rules tightly. Prefer **per-command `sudo` over a long-lived `su` root shell** — the blast radius of a mistyped or mis-pasted command is smaller. `chown`/`chgrp`/`passwd` changes are worth auditing — unexpected ownership or password changes are classic compromise indicators. → [Ch. 9 Permissions](/cyber_lab_log/resources/linux/9/)
+- **A PowerShell module is code, not data** — install only from trusted sources (the official Gallery listing for a known publisher); the Gallery is an open registry with the same supply-chain risk as any package registry. **`-Scope CurrentUser` narrows blast radius**, not just admin friction — a bad module affects one profile, not every user on the machine. **Profile scripts (`$PROFILE`) are a favourite persistence location** — they run automatically on every PowerShell startup, so a rogue `Import-Module` or command added there runs silently forever; review profile contents periodically and protect write access to them. → [Ch. 7 Adding commands](/cyber_lab_log/resources/powershell/7/)
+- **`Get-Member` is reconnaissance as much as discovery** — it reveals every method an object exposes, including destructive ones (`.Kill()`, `.Delete()`), to anyone who can run it; be cautious what objects you expose to less-trusted code or users. **A method call executes immediately with your current privileges** — unlike many cmdlets, raw method calls generally have no `-WhatIf`/`-Confirm` safety net, so treat them with the same caution as their cmdlet equivalents. → [Ch. 8 Objects](/cyber_lab_log/resources/powershell/8/)
 - **Silent bit flips on non-ECC memory leave no trace** — no signal when data corrupts, which is why crypto, financial and database workloads specify ECC. **Rowhammer**-class attacks deliberately induce bit flips via repeated memory access; ECC raises the bar but doesn't eliminate the risk. → [A+ Core 1 3.3](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **Physical destruction is the defensible wipe method for mechanical HDDs** — a destroyed platter is very hard to recover data from. **EEPROM write exhaustion silently stops accepting new data** while still reading fine, and small flash media is both a data-loss and an exfiltration risk. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
 - **"We have RAID" is not "we have backups"** — ransomware and deletion propagate through an array as faithfully as real data. A degraded array (RAID 5 on N−1, RAID 6 on N−2) is a live risk window; replace failed drives promptly. Decommission **every** drive in a RAID array, including parity-only ones. → [A+ Core 1 3.4](/cyber_lab_log/resources/a-plus-core-1/3/)
@@ -692,6 +848,23 @@ Ranges: 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic/
 
 | Date | Change |
 |---|---|
+| 2026-09-27 | Added Learn PowerShell MoL 8 (Objects): new Objects topic (Get-Member, properties/methods dot notation, Sort-Object/Select-Object, Format-* last reinforced); one security quick hit (Get-Member as recon, unconfirmed method calls) |
+| 2026-09-27 | Added Learn PowerShell MoL 7 (Adding Commands): new Adding commands topic (management shells, snap-ins vs modules, conflicts/-Prefix, profile scripts, PowerShell Gallery); one security quick hit (module trust, -Scope CurrentUser, profile persistence) |
+| 2026-09-27 | Added The Linux Command Line 9 (Permissions): new Permissions topic (rwx, chmod, umask, setuid/setgid/sticky, su/sudo, chown/chgrp, passwd); two Rosetta stone rows (view/change permissions); one security quick hit (world-writable files, setuid targets, sudoers scope, su vs sudo blast radius) |
+| 2026-09-27 | Added The Linux Command Line 8 (Advanced Keyboard Tricks): new Keyboard tricks and history topic (readline cursor/edit/kill-yank, tab completion, history search and expansion); one security quick hit (Ctrl-R resurfacing secrets, HISTCONTROL=ignorespace, history -c limits) |
+| 2026-09-27 | Added Networking for Sysadmins 3 (IPv4): extended IPv4, IPv6 and MAC addressing with the netmask/CIDR table, loopback detail, multihoming/aliasing, per-OS config commands (ipconfig/ip addr/ifconfig), and layered IP troubleshooting; one Rosetta stone row; one security quick hit |
+| 2026-09-27 | Added TryHackMe 9 (Putting It All Together): new Web infrastructure topic (load balancers, CDNs, databases, WAFs, web server software/virtual hosts, static vs dynamic content); one security quick hit (WAF as mitigation not fix, untrusted backend input, virtual host Host-header matching) |
+| 2026-09-27 | Added TryHackMe 8 (How Websites Work): new How websites are built topic (front end/back end, HTML/CSS/JS basics, sensitive data exposure, HTML injection); one security quick hit (page-source recon, HTML injection → XSS, server-side sanitisation) |
+| 2026-09-27 | Added TryHackMe 7 (HTTP in Detail): new HTTP and the web topic (URL anatomy, request/response shape, methods, status codes, headers, cookies); one security quick hit (HTTPS necessity, cookie theft, status-code recon) |
+| 2026-09-27 | Added TryHackMe 6 (DNS in Detail): extended Addressing, DNS and DHCP with domain-name anatomy (TLD/SLD/subdomain), the full resolution path (root/TLD/authoritative/recursive) and TTL, deepened the DNS records line; one security quick hit (plaintext DNS, cache poisoning, subdomain takeover, TXT posture, nameserver compromise) |
+| 2026-09-27 | Added A+ Core 1 3.8 (Impact printer maintenance): folded ribbon replacement (fading cue), print head replacement (cool/screws or lever, failed pins) and continuous-paper alignment/jam handling into the Impact printers topic; extended its security quick hit |
+| 2026-09-27 | Added A+ Core 1 3.8 (Impact printers): new Impact printers topic (dot-matrix pin/ribbon mechanism, tractor feed, green bar paper, multi-part paper); one security quick hit (legacy connectivity, spent-ribbon data remnant) |
+| 2026-09-27 | Added A+ Core 1 3.8 (Thermal printer maintenance): folded paper replacement, IPA heating-element cleaning, debris removal (no vacuum/static risk) and fading/archiving into the Thermal printers topic; extended its security quick hit |
+| 2026-09-27 | Added A+ Core 1 3.8 (Thermal printers): new Thermal printers topic (heating element/feed roller, thermal paper, output handling); one security quick hit (sensitive-data disposal, tampering angle) |
+| 2026-09-27 | Added A+ Core 1 3.8 (Inkjet printer maintenance): folded head cleaning (auto/manual, streaks), cartridge swap/recycle, calibration page and jam clearing into the Inkjet printers topic |
+| 2026-09-27 | Added A+ Core 1 3.8 (Inkjet printers): new Inkjet printers topic (CMYK cartridges, combined vs separate print head, feed rollers, duplex; carriage/belt and calibration noted beyond the clip) |
+| 2026-09-27 | Added A+ Core 1 3.8 (Laser printer maintenance): new Laser printers topic (7-step imaging process, toner/OPC drum, maintenance kit + page counter, calibration, cleaning); one security quick hit |
+| 2026-09-27 | Added A+ Core 1 3.7 (Multifunction devices): new Printers and multifunction devices topic (drivers/PDLs, connectivity, sharing/print server, print features, secure release, scanning); one security quick hit |
 | 2026-09-27 | Added A+ Core 1 3.5 (Cooling): new Cooling topic (airflow/fans, passive, heat sinks, thermal paste vs pads, liquid cooling); one security quick hit (cooling as availability, fan/thermal covert channels) |
 | 2026-09-27 | Added A+ Core 1 3.5 (Expansion cards): new Expansion cards and drivers topic (sound/GPU/capture/NIC, integrated vs discrete, driver install order and Device Manager); one security quick hit (kernel drivers/BYOVD, NIC paths) |
 | 2026-09-27 | Added A+ Core 1 3.5 (CPU features): new CPU features topic (32/64-bit and x86/x64, ARM, cores); one Rosetta stone row (CPU arch/bitness); one security quick hit |
